@@ -106,7 +106,7 @@ const MauExplore = () => {
   return (
     <div
       id="home"
-      className="relative max-h-screen w-full  text-gray-900 py-4 overflow-hidden"
+      className="relative max-h-screen md:min-h-screen w-full  text-gray-900 py-4 overflow-hidden"
     >
       <div className="container flex flex-col mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header/Navbar */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
 import { getContent } from "../services/contentService.js";
 
 const backendURL = "http://localhost:5000"; // ✅ Change when deployed
@@ -104,35 +104,91 @@ const ShopsOfMau = () => {
   // 🧩 Combine static + dynamic shops
   const displayShops = [...staticShops, ...shopsData];
 
-  // 🧩 Auto change images every few seconds
-  useEffect(() => {
-    const intervals = displayShops.map((_, shopIndex) => {
-      const delay = 8000 + shopIndex * 1500;
-      return setInterval(() => {
-        setActiveImageIndex((prev) => {
-          const newArr = [...prev];
-          const total = displayShops[shopIndex].images.length;
-          newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
-          return newArr;
-        });
-      }, delay);
-    });
-    return () => intervals.forEach(clearInterval);
-  }, [shopsData]);
-
-  // 🧩 Scroll tracking for outer dots
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-      setActiveShop(newIndex);
+ // ✅ Initialize activeImageIndex state *after* displayShops is populated
+    useEffect(() => {
+      if (displayShops.length > 0) {
+        setActiveImageIndex(Array(displayShops.length).fill(0));
+      }
+    }, [displayShops.length]);
+  
+  
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+  
+    // Scroll left/right functions
+    const scrollLeft = () => {
+      containerRef.current.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
     };
+  
+    const scrollRight = () => {
+      containerRef.current.scrollTo({
+        left: containerRef.current.scrollWidth,
+        behavior: "smooth",
+      });
+    };
+  
+    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
+    // This useEffect now correctly handles button states and re-runs on data load
+    useEffect(() => {
+      const container = containerRef.current;
+      if (!container || loading) return; // Wait for container and data
+  
+      const checkScroll = () => {
+        if (!container) return;
+        
+        // Check if we can scroll left
+        setCanScrollLeft(container.scrollLeft > 0);
+  
+        // Check if we can scroll right (using a 1px threshold is more robust)
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
+      };
+  
+      // Run the check once data is loaded and container is ready
+      checkScroll();
+  
+      // Add event listeners
+      container.addEventListener("scroll", checkScroll, { passive: true });
+      
+      // Also re-check on resize, since clientWidth will change
+      const resizeObserver = new ResizeObserver(checkScroll);
+      resizeObserver.observe(container);
+  
+      // Cleanup
+      return () => {
+        container.removeEventListener("scroll", checkScroll);
+        resizeObserver.unobserve(container);
+      };
+  
+    }, [loading, displayShops.length]); // Re-run when loading or data changes
+    // --
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+
+      // ✅ Auto-slide images for each food card
+      useEffect(() => {
+        // Wait for data and index initialization
+        if (displayShops.length === 0 || activeImageIndex.length === 0) return;
+    
+        const intervals = displayShops.map((_, shopIndex) => {
+          const delay = 6000 + shopIndex * 1200;
+          return setInterval(() => {
+            setActiveImageIndex((prev) => {
+              const newArr = [...prev];
+              const total = displayShops[shopIndex].images.length;
+              if (total > 0) { // Only advance if there are images
+                newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
+              }
+              return newArr;
+            });
+          }, delay);
+        });
+    
+        return () => intervals.forEach(clearInterval);
+      }, [displayShops.length, activeImageIndex.length]); // Depend on lengths
+
 
   // 🧩 Open Google Maps
   const handleGo = (location) => {
@@ -170,6 +226,32 @@ const ShopsOfMau = () => {
 
         {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
+
+          <div className=" h-10 w-full flex justify-end gap-8 px-4">
+            <button
+                onClick={scrollLeft}
+                disabled={!canScrollLeft}
+                className={` z-10 p-2 bg-indigo-800/80 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                  canScrollLeft
+                    ? "opacity-100 hover:scale-105 hover:bg-indigo-700 "
+                    : "opacity-30 cursor-not-allowed"
+                }`}
+              >
+                <ChevronLeft className=" text-white font-bold" />
+              </button>
+                  {/* Right Button */}
+              <button
+                onClick={scrollRight}
+                disabled={!canScrollRight}
+                className={`  z-10 p-2 bg-indigo-800/90 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                  canScrollRight
+                    ? "opacity-100 hover:scale-105 hover:bg-indigo-700 "
+                    : "opacity-30 cursor-not-allowed"
+                }`}
+              >
+                <ChevronRight size={22}  className="text-white font-bold"/>
+              </button>
+          </div>
           {/* Horizontal slider */}
           <div
             ref={containerRef}
@@ -178,7 +260,7 @@ const ShopsOfMau = () => {
             {displayShops.map((shop, shopIndex) => (
               <div
                 key={shopIndex}
-                className="snap-center flex-shrink-0 w-[80%] sm:w-[45%] md:w-[23%] flex flex-col gap-2"
+                className="snap-center fmin-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
                 <div className="relative h-[250px] rounded-xl overflow-hidden">
@@ -252,7 +334,7 @@ const ShopsOfMau = () => {
           </div>
 
           {/* Outer Dots */}
-          <div className="flex gap-2 justify-center py-6">
+          {/* <div className="flex gap-2 justify-center py-6">
             {displayShops.map((_, i) => (
               <motion.div
                 key={i}
@@ -263,7 +345,7 @@ const ShopsOfMau = () => {
                 transition={{ duration: 0.3 }}
               />
             ))}
-          </div>
+          </div> */}
         </section>
       </div>
 

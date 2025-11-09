@@ -103,23 +103,57 @@ const DestinationsOfMau = () => {
     }),
   };
 
-  const containerRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+// ✅ ADD THIS NEW CODE
+const [activeIndex, setActiveIndex] = useState(0);
+const containerRef = useRef(null);
+const observerRef = useRef(null); // To hold the observer instance
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+useEffect(() => {
+  const container = containerRef.current;
+  // Only run if the container exists and destinations are loaded
+  if (!container || destinations.length === 0) return;
 
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const cardWidth = container.offsetWidth;
-      const newIndex = Math.round(scrollLeft / cardWidth);
-      if (newIndex !== index) setActiveIndex(newIndex);
-    };
+  // Disconnect any previous observer before creating a new one
+  if (observerRef.current) {
+    observerRef.current.disconnect();
+  }
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [index]);
+  const options = {
+    root: container, // The scroll container itself is the viewport
+    rootMargin: "0px",
+    threshold: 0.51, // Trigger when 51% of the card is visible
+  };
+
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      // When a card becomes more than 51% visible
+      if (entry.isIntersecting) {
+        // Get the index we stored on the element
+        const index = parseInt(entry.target.dataset.index, 10);
+        if (!isNaN(index)) {
+          setActiveIndex(index);
+        }
+      }
+    });
+  };
+
+  // Create and store the new observer
+  const observer = new IntersectionObserver(callback, options);
+  observerRef.current = observer;
+
+  // Observe all the card elements (children of the container)
+  Array.from(container.children).forEach((child) => {
+    observer.observe(child);
+  });
+
+  // Cleanup function to disconnect observer when component unmounts
+  return () => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+  };
+  
+}, [destinations, loading]); // Re-run this effect when data is loaded
 
   if (loading)
     return (
@@ -156,7 +190,7 @@ const DestinationsOfMau = () => {
               <ChevronLeft className="w-6 h-6 text-black/80" />
             </button>
 
-            <div className="relative w-[100%] flex justify-center items-center h-[85vh] md:h-[90vh]">
+            <div className="relative w-[100%] flex justify-center items-center md:h-[90vh]">
               <AnimatePresence initial={false} custom={direction}>
                 {/* === Left Small Card === */}
                 <motion.div
@@ -176,7 +210,7 @@ const DestinationsOfMau = () => {
                   <img
                     src={getImagePath(destinations[leftIndex].img)}
                     alt=""
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                    className="h-[45vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm md:text-base text-center text-slate-800">
                     {destinations[leftIndex].desc}
@@ -203,7 +237,7 @@ const DestinationsOfMau = () => {
                   <img
                     src={getImagePath(destinations[index].img)}
                     alt={destinations[index].name}
-                    className="md:h-[50vh] rounded-xl object-cover border-2 border-black/20"
+                    className="md:h-[55vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm md:text-base text-slate-800">
                     {destinations[index].desc}
@@ -231,7 +265,7 @@ const DestinationsOfMau = () => {
                   <img
                     src={getImagePath(destinations[rightIndex].img)}
                     alt=""
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                    className="h-[45vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm md:text-base text-center text-slate-800">
                     {destinations[rightIndex].desc}
@@ -242,11 +276,12 @@ const DestinationsOfMau = () => {
               {/* === Mobile Scroll Cards === */}
               <div
                 ref={containerRef}
-                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4 px-2 my-auto no-scrollbar scroll-smooth"
+                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4 px-2 pt-8 my-auto no-scrollbar scroll-smooth"
               >
                 {destinations.map((place, i) => (
                   <motion.div
                     key={i}
+                    data-index={i}
                     className={`max-w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-3 text-center transition-transform duration-300 ${
                       i === activeIndex ? "scale-100" : "scale-100"
                     }`}
@@ -288,7 +323,7 @@ const DestinationsOfMau = () => {
                     ))}
                   </div>
           {/* dots  */}
-                    <div className="flex md:hidden justify-center items-center gap-2 pb-4">
+                    <div className="flex py-4 md:hidden justify-center items-center gap-2 pb-4">
                     {destinations.map((_, i) => (
                       <motion.div
                         key={i}

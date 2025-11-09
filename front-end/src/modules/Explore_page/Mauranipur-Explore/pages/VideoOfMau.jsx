@@ -91,25 +91,57 @@ const VideoOfMau2 = () => {
   };
 
   // For mobile horizontal scroll
-  const containerRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  // ✅ ADD THIS NEW CODE
+const [activeIndex, setActiveIndex] = useState(0);
+const containerRef = useRef(null);
+const observerRef = useRef(null); // To hold the observer instance
 
+useEffect(() => {
+  const container = containerRef.current;
+  // Only run if the container exists and destinations are loaded
+  if (!container || reels.length === 0) return;
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  // Disconnect any previous observer before creating a new one
+  if (observerRef.current) {
+    observerRef.current.disconnect();
+  }
 
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const cardWidth = container.offsetWidth;
-      const newIndex = Math.round(scrollLeft / cardWidth);
-      if (newIndex !== index) setActiveIndex(newIndex);
-    };
+  const options = {
+    root: container, // The scroll container itself is the viewport
+    rootMargin: "0px",
+    threshold: 0.51, // Trigger when 51% of the card is visible
+  };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [index]);
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      // When a card becomes more than 51% visible
+      if (entry.isIntersecting) {
+        // Get the index we stored on the element
+        const index = parseInt(entry.target.dataset.index, 10);
+        if (!isNaN(index)) {
+          setActiveIndex(index);
+        }
+      }
+    });
+  };
 
+  // Create and store the new observer
+  const observer = new IntersectionObserver(callback, options);
+  observerRef.current = observer;
+
+  // Observe all the card elements (children of the container)
+  Array.from(container.children).forEach((child) => {
+    observer.observe(child);
+  });
+
+  // Cleanup function to disconnect observer when component unmounts
+  return () => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+  };
+  
+}, [reels, loading]); // Re-run this effect when data is loaded
   if (loading)
     return (
       <div className="text-center text-white py-24 text-xl">Loading...</div>
@@ -243,6 +275,7 @@ const VideoOfMau2 = () => {
                 {reels.map((reel, i) => (
                   <motion.div
                     key={i}
+                    data-index={i}
                     className={`max-w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-2 text-center transition-transform duration-300 ${
                       i === activeIndex ? "scale-100" : "scale-100"
                     }`}
@@ -284,14 +317,14 @@ const VideoOfMau2 = () => {
                     ))}
                   </div>
            {/* dots  */}
-                    <div className="flex md:hidden py-2 flex justify-center items-center gap-2">
-                      {reels.map((_, i) => (
+                    <div className="flex md:hidden pb-4 flex justify-center items-center gap-2">
+                      {reels.map((_, j) => (
                         <motion.div
-                          key={i}
+                          key={j}
                           className={`h-3 w-3 rounded-full ${
-                            i === activeIndex ? "bg-blue-700" : "bg-gray-800/40"
+                            j === activeIndex ? "bg-blue-700" : "bg-gray-800/40"
                           }`}
-                          animate={{ scale: i === activeIndex ? 1 : 0.7 }}
+                          animate={{ scale: j === activeIndex ? 1 : 0.7 }}
                           transition={{ duration: 0.3 }}
                         />
                       ))}

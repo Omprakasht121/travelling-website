@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
 import { getContent } from "../services/contentService.js";
 
 const backendURL = "http://localhost:5000"; // ✅ Change when deployed
 
 // ✅ Static Hard-Coded Shops
-const staticShops = [
+const staticHotels = [
   {
     name: "Sweet Dairy (Cafe)",
     distance: "320 meter away",
@@ -18,28 +18,28 @@ const staticShops = [
     name: "Bharat Bakery",
     distance: "150 meter",
     location: "Bharat Bakery Mau Uttar Pradesh",
-    speciality: "famous for chinese",
+    price: "famous for chinese",
     images: ["bandha.jpg", "jhansi6.jpg", "panna.jpg"],
   },
   {
     name: "Tea Point",
     distance: "280 meter",
     location: "Tea Point Mau Uttar Pradesh",
-    speciality: "famous for milk",
+    price: "famous for milk",
     images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
   },
   {
     name: "Raj Sweets",
     distance: "500 meter",
     location: "Raj Sweets Mau Uttar Pradesh",
-    speciality: "famous for samosa",
+    price: "famous for samosa",
     images: ["jhansi6.jpg", "panna.jpg", "bandha.jpg"],
   },
   {
     name: "Fruit Mart",
     distance: "200 meter",
     location: "Fruit Mart Mau Uttar Pradesh",
-    speciality: "famous for patoto",
+    price: "famous for patoto",
     images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
   },
 ];
@@ -48,7 +48,6 @@ const staticShops = [
 const getImagePath = (img, folder = "") => {
   if (!img) return "/fallback.jpg";
 
-  // 🆕: detect if backend image from /uploads or /gallery
   if (img.startsWith("/uploads") || img.startsWith("uploads"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
   if (img.startsWith("/gallery") || img.startsWith("gallery"))
@@ -58,14 +57,11 @@ const getImagePath = (img, folder = "") => {
   return `${import.meta.env.BASE_URL}${folder}${img}`;
 };
 
-const ShopsOfMau = () => {
-  const [activeShop, setActiveShop] = useState(0);
+const HotelsOfMau = () => {
   const [activeImageIndex, setActiveImageIndex] = useState([]);
-
-  const [galleryShop, setGalleryShop] = useState(null);
+  const [galleryHotel, setGalleryHotel] = useState(null);
   const containerRef = useRef(null);
-
-  const [shopsData, setShopsData] = useState([]);
+  const [hotelsData, setHotelsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // 🧩 Fetch data from backend
@@ -80,20 +76,16 @@ const ShopsOfMau = () => {
           distance: item.distance || "N/A",
           location: item.location || "Mauranipur",
           price: item.price || "N/A",
-          description: item.description,
-          // 🆕 main + gallery handling
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
-            ...(item.gallery && Array.isArray(item.gallery)
-              ? item.gallery
-              : []),
+            ...(item.gallery && Array.isArray(item.gallery) ? item.gallery : []),
           ],
         }));
 
-        setShopsData(mappedData);
-        setActiveImageIndex(Array(staticShops.length + mappedData.length).fill(0));
+        setHotelsData(mappedData);
+        setActiveImageIndex(Array(staticHotels.length + mappedData.length).fill(0));
       } catch (err) {
-        console.error("Error fetching shops:", err);
+        console.error("Error fetching hotels:", err);
       } finally {
         setLoading(false);
       }
@@ -102,38 +94,79 @@ const ShopsOfMau = () => {
     fetchData();
   }, []);
 
-  // 🧩 Combine static + dynamic shops
-  const displayShops = [...staticShops, ...shopsData];
+  // 🧩 Combine static + dynamic hotels
+  const displayHotels = [...staticHotels, ...hotelsData];
 
-  // 🧩 Auto change images every few seconds
+  // ✅ Initialize activeImageIndex state *after* displayHotels is populated
   useEffect(() => {
-    const intervals = displayShops.map((_, shopIndex) => {
-      const delay = 8000 + shopIndex * 1500;
+    if (displayHotels.length > 0) {
+      setActiveImageIndex(Array(displayHotels.length).fill(0));
+    }
+  }, [displayHotels.length]);
+
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Scroll left/right functions
+  const scrollLeft = () => {
+    containerRef.current.scrollTo({
+      left: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollRight = () => {
+    containerRef.current.scrollTo({
+      left: containerRef.current.scrollWidth,
+      behavior: "smooth",
+    });
+  };
+
+  // ✅ FIXED: Button state logic
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || loading) return;
+
+    const checkScroll = () => {
+      if (!container) return;
+
+      setCanScrollLeft(container.scrollLeft > 0);
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
+    };
+
+    checkScroll();
+    container.addEventListener("scroll", checkScroll, { passive: true });
+
+    const resizeObserver = new ResizeObserver(checkScroll);
+    resizeObserver.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", checkScroll);
+      if (resizeObserver && container) resizeObserver.unobserve(container);
+    };
+  }, [loading, displayHotels.length]);
+
+  // ✅ FIXED: Auto-slide images for each card
+  useEffect(() => {
+    if (displayHotels.length === 0 || activeImageIndex.length === 0) return;
+
+    const intervals = displayHotels.map((_, hotelIndex) => {
+      const delay = 6000 + hotelIndex * 1200;
       return setInterval(() => {
         setActiveImageIndex((prev) => {
           const newArr = [...prev];
-          const total = displayShops[shopIndex].images.length;
-          newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
+          const total = displayHotels[hotelIndex].images.length;
+          if (total > 0) {
+            newArr[hotelIndex] = (newArr[hotelIndex] + 1) % total;
+          }
           return newArr;
         });
       }, delay);
     });
+
     return () => intervals.forEach(clearInterval);
-  }, [shopsData]);
-
-  // 🧩 Scroll tracking for outer dots
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-      setActiveShop(newIndex);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [displayHotels.length, activeImageIndex.length]); // ✅ fixed dependency
 
   // 🧩 Open Google Maps
   const handleGo = (location) => {
@@ -146,13 +179,13 @@ const ShopsOfMau = () => {
   if (loading) {
     return (
       <main className="flex justify-center items-center h-screen bg-sky-950 text-white">
-        <h2 className="text-2xl font-semibold">Loading Shops...</h2>
+        <h2 className="text-2xl font-semibold">Loading Hotels...</h2>
       </main>
     );
   }
 
   return (
-    <main className="relative max-h-screen w-full  text-gray-900 py-4 overflow-hidden">
+    <main className="relative max-h-screen w-full text-gray-900 py-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
         <motion.header
@@ -162,7 +195,7 @@ const ShopsOfMau = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Hotels & Banquet 
+            Hotels & Banquet
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
             Rest, relax, and rejoice — where every stay feels like home and every event feels royal.
@@ -171,25 +204,51 @@ const ShopsOfMau = () => {
 
         {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
+          <div className="h-10 w-full flex justify-end gap-8 px-4">
+            <button
+              onClick={scrollLeft}
+              disabled={!canScrollLeft}
+              className={`z-10 p-2 bg-indigo-800/80 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                canScrollLeft
+                  ? "opacity-100 hover:scale-105 hover:bg-indigo-700"
+                  : "opacity-30 cursor-not-allowed"
+              }`}
+            >
+              <ChevronLeft className="text-white font-bold" />
+            </button>
+
+            <button
+              onClick={scrollRight}
+              disabled={!canScrollRight}
+              className={`z-10 p-2 bg-indigo-800/90 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                canScrollRight
+                  ? "opacity-100 hover:scale-105 hover:bg-indigo-700"
+                  : "opacity-30 cursor-not-allowed"
+              }`}
+            >
+              <ChevronRight size={22} className="text-white font-bold" />
+            </button>
+          </div>
+
           {/* Horizontal slider */}
           <div
             ref={containerRef}
             className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-8 p-4 no-scrollbar"
           >
-            {displayShops.map((shop, shopIndex) => (
+            {displayHotels.map((hotel, hotelIndex) => (
               <div
-                key={shopIndex}
-                className="snap-center flex-shrink-0 w-[80%] sm:w-[45%] md:w-[23%] flex flex-col gap-2"
+                key={hotelIndex}
+                className="snap-center min-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
                 <div className="relative h-[250px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={activeImageIndex[shopIndex]}
+                      key={activeImageIndex[hotelIndex]}
                       src={getImagePath(
-                        shop.images[activeImageIndex[shopIndex]]
+                        hotel.images[activeImageIndex[hotelIndex]]
                       )}
-                      alt={shop.name}
+                      alt={hotel.name}
                       className="object-cover h-full w-full rounded-xl"
                       initial={{ opacity: 0, x: 80 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -198,9 +257,8 @@ const ShopsOfMau = () => {
                     />
                   </AnimatePresence>
 
-                  {/* Image icon */}
                   <button
-                    onClick={() => setGalleryShop(shop)}
+                    onClick={() => setGalleryHotel(hotel)}
                     className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                   >
                     <Image className="h-4 w-4 text-white" />
@@ -209,16 +267,16 @@ const ShopsOfMau = () => {
 
                 {/* Inner dots */}
                 <div className="flex gap-2 justify-center">
-                  {shop.images.map((_, i) => (
+                  {hotel.images.map((_, i) => (
                     <motion.div
                       key={i}
                       className={`h-2 w-2 rounded-full ${
-                        i === activeImageIndex[shopIndex]
+                        i === activeImageIndex[hotelIndex]
                           ? "bg-orange-500"
                           : "bg-gray-600/40"
                       }`}
                       animate={{
-                        scale: i === activeImageIndex[shopIndex] ? 1.3 : 1,
+                        scale: i === activeImageIndex[hotelIndex] ? 1.3 : 1,
                       }}
                     />
                   ))}
@@ -226,43 +284,29 @@ const ShopsOfMau = () => {
 
                 {/* Text info */}
                 <h1 className="font-semibold text-xl text-center md:text-left">
-                  {shop.name}
+                  {hotel.name}
                 </h1>
                 <div className="hidden flex gap-2 items-center">
                   <MapPin className="h-4 w-4" />
-                  <h4>{shop.distance}</h4>
+                  <h4>{hotel.distance}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
                   <GoalIcon className="h-4 w-4" />
-                  <h4 >{shop.location}</h4>
+                  <h4>{hotel.location}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
-                  <h4 className="text-lg font-semibold">₹ {shop.price}</h4>
+                  <h4 className="text-lg font-semibold">₹ {hotel.price}</h4>
                 </div>
                 <div>
                   <button
-                  onClick={() => handleGo(shop.location)}
-                  className="bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
-                >
-                  Direction
-                </button>
+                    onClick={() => handleGo(hotel.location)}
+                    className="bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                  >
+                    Direction
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Outer Dots */}
-          <div className="flex gap-2 justify-center py-6">
-            {displayShops.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeShop ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === activeShop ? 1 : 0.7 }}
-                transition={{ duration: 0.3 }}
-              />
             ))}
           </div>
         </section>
@@ -270,7 +314,7 @@ const ShopsOfMau = () => {
 
       {/* Fullscreen Gallery */}
       <AnimatePresence>
-        {galleryShop && (
+        {galleryHotel && (
           <motion.div
             className="fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50"
             initial={{ opacity: 0 }}
@@ -278,15 +322,14 @@ const ShopsOfMau = () => {
             exit={{ opacity: 0 }}
           >
             <button
-              onClick={() => setGalleryShop(null)}
+              onClick={() => setGalleryHotel(null)}
               className="absolute top-6 right-6 text-white hover:scale-110 transition"
             >
               <X size={28} />
             </button>
 
             <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
-              {/* 🆕 map through all images (main + gallery) */}
-              {galleryShop.images.map((img, i) => (
+              {galleryHotel.images.map((img, i) => (
                 <motion.img
                   key={i}
                   src={getImagePath(img)}
@@ -305,4 +348,4 @@ const ShopsOfMau = () => {
   );
 };
 
-export default ShopsOfMau;
+export default HotelsOfMau;

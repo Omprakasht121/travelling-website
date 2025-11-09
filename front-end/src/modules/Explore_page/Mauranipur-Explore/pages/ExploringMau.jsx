@@ -11,6 +11,7 @@ import FestivalsOfMau from "./FestivalsOfMau";
 import MauExplore from "./Mau-explore";
 
 
+
 function ExploringMau(){
     return(
         <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 

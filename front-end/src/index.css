@@ -1,0 +1,17 @@
+/* Ensure this file is processed by Tailwind via PostCSS or a Tailwind CLI build step */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "leaflet/dist/leaflet.css";
+
+
+/* Hide horizontal scrollbar (but keep horizontal scroll/drag functionality) */
+::-webkit-scrollbar {
+  height: 0;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+

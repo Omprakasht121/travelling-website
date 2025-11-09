@@ -114,7 +114,7 @@ const DestinationsOfMau = () => {
       const scrollLeft = container.scrollLeft;
       const cardWidth = container.offsetWidth;
       const newIndex = Math.round(scrollLeft / cardWidth);
-      if (newIndex !== index) setIndex(newIndex);
+      if (newIndex !== index) setActiveIndex(newIndex);
     };
 
     container.addEventListener("scroll", handleScroll);
@@ -211,18 +211,6 @@ const DestinationsOfMau = () => {
                   <button className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                     Visit Now
                   </button>
-                  <div className="flex justify-center items-center gap-2">
-                    {destinations.map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className={`h-3 w-3 rounded-full ${
-                          i === index ? "bg-blue-500" : "bg-gray-700/40"
-                        }`}
-                        animate={{ scale: i === index ? 1.3 : 1 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    ))}
-                  </div>
                 </motion.div>
 
                 {/* === Right Small Card === */}
@@ -260,7 +248,7 @@ const DestinationsOfMau = () => {
                   <motion.div
                     key={i}
                     className={`max-w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-3 text-center transition-transform duration-300 ${
-                      i === activeIndex ? "scale-100" : "opacity-80"
+                      i === activeIndex ? "scale-100" : "scale-100"
                     }`}
                   >
                     <h1 className="font-bold text-xl mb-2">{place.name}</h1>
@@ -273,18 +261,7 @@ const DestinationsOfMau = () => {
                     <button className="text-white text-lg w-full py-2 rounded-xl bg-blue-700 hover:bg-blue-600 transition-transform duration-300 easeInOut hover:scale-110 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                       Visit Now
                     </button>
-                    <div className="flex justify-center items-center gap-2 py-4">
-                    {destinations.map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className={`h-3 w-3 rounded-full ${
-                          i === index ? "bg-blue-500" : "bg-gray-700/40"
-                        }`}
-                        animate={{ scale: i === index ? 1 : .8 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    ))}
-                  </div>
+                    
                   </motion.div>
                 ))}
               </div>
@@ -297,6 +274,32 @@ const DestinationsOfMau = () => {
               <ChevronRight className="w-6 h-6 text-black" />
             </button>
           </div>
+           {/* pc dots  */}
+                  <div className="hidden md:flex justify-center items-center gap-2">
+                    {destinations.map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={`h-3 w-3 rounded-full ${
+                          i === index ? "bg-blue-500" : "bg-gray-700/40"
+                        }`}
+                        animate={{ scale: i === index ? 1.3 : 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    ))}
+                  </div>
+          {/* dots  */}
+                    <div className="flex md:hidden justify-center items-center gap-2 pb-4">
+                    {destinations.map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={`h-3 w-3 rounded-full ${
+                          i === activeIndex ? "bg-blue-500" : "bg-gray-700/40"
+                        }`}
+                        animate={{ scale: i === activeIndex ? 1 : .8 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    ))}
+                  </div>
         </section>
       </div>
     </main>

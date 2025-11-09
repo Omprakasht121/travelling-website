@@ -265,7 +265,7 @@ const MauExplore = () => {
               </div>
 
               <div className="bg-blue-500 w-6xl px-4 py-2 md:p-4 rounded-lg z-50  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
-                <h1 className="text-2xl md:text-5xl font-bold text-center">
+                <h1 className="text-2xl md:text-5xl font-bold text-center text-white">
                   MAURANIPUR
                 </h1>
               </div>

@@ -11,7 +11,7 @@ const ContentList = ({ contents = [] }) => {
     if (!window.confirm("Are you sure you want to delete this content?")) return;
     await deleteContent(id);
     alert("Content deleted successfully!");
-    window.location.reload();
+    // window.location.reload();
   };
 
   if (!contents.length)

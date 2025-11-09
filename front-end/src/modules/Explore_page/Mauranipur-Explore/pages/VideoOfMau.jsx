@@ -94,6 +94,7 @@ const VideoOfMau2 = () => {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -191,18 +192,7 @@ const VideoOfMau2 = () => {
                   className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                     Watch Now
                   </button>
-                  <div className="md:py-4 flex justify-center items-center gap-2">
-                    {reels.map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className={`h-3 w-3 rounded-full ${
-                          i === index ? "bg-blue-700" : "bg-gray-800/40"
-                        }`}
-                        animate={{ scale: i === index ? 1 : 0.8 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    ))}
-                  </div>
+                 
                 </motion.div>
 
                 {/* Right small card */}
@@ -236,7 +226,7 @@ const VideoOfMau2 = () => {
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3"
                 >
-                  <div className="rounded-xl overflow-hidden h-[70vh]">
+                  <div className="rounded-xl overflow-hidden h-[10vh]">
                     <InstagramEmbed
                       permalink={reels[farRightIndex].url}
                       maxWidth={300}
@@ -254,7 +244,7 @@ const VideoOfMau2 = () => {
                   <motion.div
                     key={i}
                     className={`max-w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-2 text-center transition-transform duration-300 ${
-                      i === activeIndex ? "scale-100" : "scale-95 opacity-80"
+                      i === activeIndex ? "scale-100" : "scale-100"
                     }`}
                   >
                     <div className="rounded-xl overflow-hidden flex justify-center items-center">
@@ -265,18 +255,7 @@ const VideoOfMau2 = () => {
                     className="text-white text-lg md:text-xl my-2 px-6  w-full py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                       Watch Now
                     </button>
-                    <div className="py-2 flex justify-center items-center gap-2">
-                      {reels.map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className={`h-3 w-3 rounded-full ${
-                            i === index ? "bg-blue-700" : "bg-gray-800/40"
-                          }`}
-                          animate={{ scale: i === index ? 1 : 0.7 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      ))}
-                    </div>
+                   
                   </motion.div>
                 ))}
               </div>
@@ -290,6 +269,33 @@ const VideoOfMau2 = () => {
               <ChevronRight className="w-6 h-6 text-black" />
             </button>
           </div>
+
+           {/* desktop dots  */}
+                  <div className="md:py-4 hidden md:flex justify-center items-center gap-2">
+                    {reels.map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={`h-3 w-3 rounded-full ${
+                          i === index ? "bg-blue-700" : "bg-gray-800/40"
+                        }`}
+                        animate={{ scale: i === index ? 1 : 0.8 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    ))}
+                  </div>
+           {/* dots  */}
+                    <div className="flex md:hidden py-2 flex justify-center items-center gap-2">
+                      {reels.map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className={`h-3 w-3 rounded-full ${
+                            i === activeIndex ? "bg-blue-700" : "bg-gray-800/40"
+                          }`}
+                          animate={{ scale: i === activeIndex ? 1 : 0.7 }}
+                          transition={{ duration: 0.3 }}
+                        />
+                      ))}
+                    </div>
         </section>
       </div>
     </main>

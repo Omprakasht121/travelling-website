@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { act } from "react";
 
 
 
@@ -147,27 +148,25 @@ export default function Explore() {
   };
 
 
-    // For mobile active card scaling
-    const containerRef = useRef(null);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [ index1, setIndex1] = useState(0);
-  
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-  
-    const handleScroll = () => {
-      // Calculate the current visible card index
-      const scrollLeft = container.scrollLeft;
-      const cardWidth = container.offsetWidth;
-      const newIndex = Math.round(scrollLeft / cardWidth);
-  
-      if (newIndex !== index1) setIndex1(newIndex);
-    };
-  
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [index1]);
+const containerRef = useRef(null);
+const [activeIndex, setActiveIndex] = useState(0);
+
+useEffect(() => {
+  const container = containerRef.current;
+  if (!container) return;
+
+  const handleScroll = () => {
+    const scrollLeft = container.scrollLeft;
+    const cardWidth = container.offsetWidth;
+    const newIndex = Math.round(scrollLeft / cardWidth);
+
+    // Update only when index actually changes
+    setActiveIndex((prev) => (prev !== newIndex ? newIndex : prev));
+  };
+
+  container.addEventListener("scroll", handleScroll);
+  return () => container.removeEventListener("scroll", handleScroll);
+}, []); // ✅ run once only
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center text-gray-900 py-12">
@@ -334,7 +333,7 @@ export default function Explore() {
                 onClick={() => handleSelect(i)}
                 whileTap={{ scale: 0.98 }}
                 className={` snap-center min-w-[100%] md:min-w-[60%] bg-white/5 rounded-xl overflow-hidden border border-black/10 shadow-lg ${
-                    i === activeIndex ? "scale-100" : "scale- opacity-80"
+                    i === activeIndex ? "scale-100" : "scale-100"
                     } `}
               >
                 <img src={d.img} alt={d.name} className="w-full  object-cover h-[50vh] border-b-2 border-blue-500" />
@@ -360,8 +359,8 @@ export default function Explore() {
                   
                   <p className="text-sm text-slate-900 mt-2 line-clamp-3">{d.desc}</p>
                   <div className=" flex mt-3 justify-between">
-                    <button onClick={current.link}
-                  aria-label={`Discover more about ${current.name}`}
+                    <button onClick={d.link}
+                  aria-label={`Discover more about ${d.name}`}
                   className="inline-block bg-white text-slate-900 font-semibold px-5 py-2 rounded-full hover:scale-105 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(20,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                 >
                   Discover more
@@ -409,9 +408,9 @@ export default function Explore() {
               <motion.div
                 key={i}
                 className={`h-3 w-3 rounded-full ${
-                  i === index1 ? "bg-blue-500" : "bg-gray-600/90"
+                  i === activeIndex ? "bg-blue-500" : "bg-gray-600/90"
                 }`}
-                animate={{ scale: i === index1 ? 1.2 : .9 }}
+                animate={{ scale: i === activeIndex ? 1.2 : .9 }}
                 transition={{ duration: 0.3 }}
               />
             ))}

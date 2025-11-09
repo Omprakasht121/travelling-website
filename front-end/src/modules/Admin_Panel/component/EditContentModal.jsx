@@ -89,7 +89,7 @@ const EditContentModal = ({ content, onClose }) => {
     await updateContent(content._id, data);
     alert("✅ Content updated successfully!");
     onClose();
-    window.location.reload();
+    // window.location.reload();
   } catch (error) {
     console.error("Error updating content:", error);
     alert("❌ Failed to update content");

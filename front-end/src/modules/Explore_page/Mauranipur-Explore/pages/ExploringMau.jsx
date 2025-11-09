@@ -14,7 +14,7 @@ import MauExplore from "./Mau-explore";
 function ExploringMau(){
     return(
         <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 
-            
+        <>
         <MauExplore/>
         <ImagesOfMau/>
         <DestinationsOfMau/>
@@ -24,7 +24,7 @@ function ExploringMau(){
         <FestivalsOfMau/>
         <VideoOfMau/>
         <EnquiryOfMau/>
-        
+        </>
         </div>
     )
 }

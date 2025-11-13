@@ -9,6 +9,7 @@ import VideoOfMau from "./VideoOfMau";
 import EnquiryOfMau from "./EnquiryOfMau";
 import FestivalsOfMau from "./FestivalsOfMau";
 import MauExplore from "./Mau-explore";
+import Creators from "./CreatorOfMau";
 
 
 
@@ -24,6 +25,7 @@ function ExploringMau(){
         <ShopsOfMau/>
         <FestivalsOfMau/>
         <VideoOfMau/>
+        <Creators/>
         <EnquiryOfMau/>
         </>
         </div>

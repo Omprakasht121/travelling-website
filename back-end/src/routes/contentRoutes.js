@@ -45,7 +45,7 @@ router.post(
         price,
         special_dish,
         rating,
-        reel_url,
+        reel_url,instagram_url, facebook_url, youtube_url, phone, whatsapp, email, segment,posts, followers, following
       } = req.body;
 
       const mainFile = req.files?.mainImage?.[0];
@@ -70,6 +70,16 @@ router.post(
         location,
         price,
         reel_url, // ✅ this will now be saved
+        instagram_url, 
+        facebook_url, 
+        youtube_url, 
+        phone, 
+        whatsapp, 
+        email, 
+        segment,
+        posts,
+        followers,
+        following,
         mainImage: mainImagePath,
         gallery: galleryPaths,
       });

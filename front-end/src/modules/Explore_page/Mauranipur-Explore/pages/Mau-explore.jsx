@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Sun, X } from "lucide-react";
+import { Menu, Search, Sun, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getContent } from "../services/contentService.js";
 
@@ -12,6 +12,7 @@ const MauExplore = () => {
   const [direction, setDirection] = useState(1);
   const [adsImage, setAdsImage] = useState([]);
   const [loading, setLoading] = useState(true);
+  const[search, setSearch] = useState(false);
 
   // ✅ Static images (converted to object form for consistent structure)
   const staticImages = [
@@ -106,7 +107,7 @@ const MauExplore = () => {
   return (
     <div
       id="home"
-      className="relative max-h-screen md:min-h-screen w-full  text-gray-900 py-4 overflow-hidden"
+      className="relative min-h-auto  w-full  text-gray-900 py-4 overflow-hidden"
     >
       <div className="container flex flex-col mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header/Navbar */}
@@ -128,22 +129,22 @@ const MauExplore = () => {
               </Link>
             </div>
 
-            <nav className="hidden md:flex md:gap-4 lg:gap-8">
+            <nav className=" text-sm md:text-lg flex gap-4 lg:gap-8">
               <a
                 href="#home"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Home
               </a>
               <a
                 href="#images"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+                className=" hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Images
               </a>
               <a
                 href="#explore"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Explore
               </a>
@@ -165,6 +166,13 @@ const MauExplore = () => {
               <button className="hidden p-1 md:p-2 rounded-full border-[1px] border-black/40 bg-gray-200 hover:scale-110 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]">
                 <Sun />
               </button>
+
+              <button
+              onClick={() => setSearch(prev => !prev)} // 👈 toggles true/false
+              className="p-1 md:p-2 hover:scale-110 transition-transform duration-900 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]"
+            >
+              <Search className="w-6 h-6 text-black" />
+            </button>
               <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.6)]">
                 <button className="px-6 py-1 rounded-full bg-orange-500 hover:bg-orange-600px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
                   SignIn
@@ -178,7 +186,19 @@ const MauExplore = () => {
             </div>
           </motion.div>
         </header>
-
+        {/* sear slider  */}
+        <div
+        className={` top-0 left-0 w-full h-16  z-30 flex items-center justify-center
+          transform transition-transform duration-500 easeInOut
+          ${search ? " translate-y-0 md: translate-y-0 opacity-100" : "hidden -translate-y-full opacity-0"}
+        `}
+      >
+        <input
+          type="text"
+          placeholder="Search..."
+          className="w-9/12 md:w-1/3 h-10 px-4 border border-gray-300 rounded-md outline-none"
+        />
+      </div>
         {/* Mobile Overlay */}
         <div
           className={`fixed inset-0 bg-black/70 z-50 transition-opacity md:hidden ${
@@ -233,9 +253,9 @@ const MauExplore = () => {
         </div>
 
         {/* Main Section */}
-        <section className="relative flex-1 w-full md:flex-col justify-center items-center md:px-12 lg:px-24 py-8">
+        <section className="relative  flex-1 w-full md:flex-col justify-center items-center md:px-12 lg:px-32 py-8">
           <div className="relative flex justify-center flex-col items-center">
-            <div className="w-full h-[30vh] md:h-[60vh] flex justify-center items-center relative overflow-hidden rounded-xl">
+            <div className="w-full md:w-[60vw] h-[30vh] md:min-h-[60vh] flex justify-center items-center relative overflow-hidden rounded-xl">
               <AnimatePresence custom={direction}>
                 <motion.img
                   key={current}
@@ -251,7 +271,7 @@ const MauExplore = () => {
               </AnimatePresence>
             </div>
 
-            <div className="absolute z-50 -bottom-5 md:-bottom-10 space-y-2">
+            <div className="absolute z-30 -bottom-5 md:-bottom-8 space-y-2">
               {/* Dots */}
               <div className="w-full flex gap-2 justify-center bottom-12 md:bottom-14">
                 {advertisementImages.map((_, i) => (
@@ -264,7 +284,7 @@ const MauExplore = () => {
                 ))}
               </div>
 
-              <div className="bg-blue-500 w-6xl px-4 py-2 md:p-4 rounded-lg z-50  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+              <div className="bg-blue-500 w-6xl  py-2 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                 <h1 className="text-2xl md:text-5xl font-bold text-center text-white">
                   MAURANIPUR
                 </h1>

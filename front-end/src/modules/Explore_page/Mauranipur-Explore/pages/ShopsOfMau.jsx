@@ -47,7 +47,6 @@ const staticShops = [
 // ✅ Helper to get image path
 const getImagePath = (img, folder = "") => {
   if (!img) return "/fallback.jpg";
-
   // 🆕: detect if backend image from /uploads or /gallery
   if (img.startsWith("/uploads") || img.startsWith("uploads"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
@@ -152,8 +151,6 @@ const ShopsOfMau = () => {
   
       // Add event listeners
       container.addEventListener("scroll", checkScroll, { passive: true });
-      
-      // Also re-check on resize, since clientWidth will change
       const resizeObserver = new ResizeObserver(checkScroll);
       resizeObserver.observe(container);
   
@@ -198,13 +195,10 @@ const ShopsOfMau = () => {
     window.open(url, "_blank");
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <main className="flex justify-center items-center h-screen bg-sky-950 text-white">
-        <h2 className="text-2xl font-semibold">Loading Shops...</h2>
-      </main>
+      <div className="text-center text-white bg-black py-24 text-xl">Loading Shops...</div>
     );
-  }
 
   return (
     <main className="relative max-h-screen w-full  text-gray-900 py-4 overflow-hidden">
@@ -227,29 +221,29 @@ const ShopsOfMau = () => {
         {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
 
-          <div className=" h-10 w-full flex justify-end gap-8 px-4">
+          <div className=" flex justify-end items-center gap-4 px-4">
             <button
                 onClick={scrollLeft}
                 disabled={!canScrollLeft}
-                className={` z-10 p-2 bg-indigo-800/80 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
                   canScrollLeft
-                    ? "opacity-100 hover:scale-105 hover:bg-indigo-700 "
-                    : "opacity-30 cursor-not-allowed"
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
                 }`}
               >
-                <ChevronLeft className=" text-white font-bold" />
+                <ChevronLeft className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
               </button>
                   {/* Right Button */}
               <button
                 onClick={scrollRight}
                 disabled={!canScrollRight}
-                className={`  z-10 p-2 bg-indigo-800/90 rounded-full transition-all duration-300 easeInOut shadow-[inset_2px_4px_6px_rgba(0,0,20,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.6)] ${
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
                   canScrollRight
-                    ? "opacity-100 hover:scale-105 hover:bg-indigo-700 "
-                    : "opacity-30 cursor-not-allowed"
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
                 }`}
               >
-                <ChevronRight size={22}  className="text-white font-bold"/>
+                <ChevronRight className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
               </button>
           </div>
           {/* Horizontal slider */}
@@ -260,7 +254,7 @@ const ShopsOfMau = () => {
             {displayShops.map((shop, shopIndex) => (
               <div
                 key={shopIndex}
-                className="snap-center fmin-w-[250px] md:min-w-[300px] flex flex-col gap-2"
+                className="snap-center min-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
                 <div className="relative h-[250px] rounded-xl overflow-hidden">

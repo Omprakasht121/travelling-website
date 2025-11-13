@@ -51,7 +51,7 @@ const Oneview = () => {
   }&mute=${muted ? 1 : 0}&modestbranding=1&rel=0&showinfo=0`;
 
   return (
-    <main className="max-h-screen w-full flex flex-col items-center  py-12 overflow-hidden">
+    <main className="min-h-auto w-full flex flex-col items-center  py-12 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
         <header className="mb-8 ">

@@ -82,7 +82,7 @@ const RegionMap = () => {
   };
 
   return (
-    <main className="max-h-screen w-full flex flex-col items-center  text-white py-12">
+    <main className="min-h-auto w-full flex flex-col items-center  text-white py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full text-gray-900 ">
         {/* Header */}
         <motion.header
@@ -91,9 +91,11 @@ const RegionMap = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mb-8"
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tigh">Map And Region</h1>
+          {/* ✅ CHANGED: Fixed typo tracking-tigh -> tracking-tight */}
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Map And Region</h1>
           <p className="mt-2 text-sm text-gray-800">
-            Trace your journey through the heart of India — from the hilltop forts of Jhansi to the sacred rivers of Chitrakoot.
+            Trace your journey through the heart of India — from the hilltop
+            forts of Jhansi to the sacred rivers of Chitrakoot.
           </p>
         </motion.header>
 
@@ -103,7 +105,8 @@ const RegionMap = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="relative h-[75vh] rounded-xl p-2 z-0 overflow-hidden border border-slate-700 max-w-6xl mx-auto rounded-3xl shadow-lg  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_4px_8px_12px_rgba(0,0,0,0.6)]"
+            /* ✅ CHANGED: Replaced h-[75vh] with h-[70vh] (mobile) and md:h-[40rem] (desktop) */
+            className="relative h-[60vh] md:h-[35rem] rounded-xl p-2 z-0 overflow-hidden border border-slate-700 max-w-4xl mx-auto rounded-3xl shadow-lg  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_4px_8px_12px_rgba(0,0,0,0.6)]"
           >
             <MapContainer
               center={bundelkhandCenter}

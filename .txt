@@ -1,0 +1,5 @@
+destinatios.jsx change : c+z
+videoofmay.jsx : c+z
+explore.jsx: c+z 
+about.jsx : c+z
+mapregion.jsx : c+z

@@ -3,6 +3,7 @@ import cors from "cors";
 import contentRoutes from "./src/routes/contentRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 
+
 const app = express();
 
 app.use(cors());
@@ -13,6 +14,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/uploads/gallery", express.static("uploads/gallery"));
 
 // ✅ Routes
+
+
 app.use("/api/auth", authRoutes);
 app.use("/api/content", contentRoutes);
 

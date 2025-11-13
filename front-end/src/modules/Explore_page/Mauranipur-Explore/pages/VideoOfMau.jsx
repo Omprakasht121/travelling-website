@@ -92,63 +92,65 @@ const VideoOfMau2 = () => {
 
   // For mobile horizontal scroll
   // ✅ ADD THIS NEW CODE
-const [activeIndex, setActiveIndex] = useState(0);
-const containerRef = useRef(null);
-const observerRef = useRef(null); // To hold the observer instance
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef(null);
+  const observerRef = useRef(null); // To hold the observer instance
 
-useEffect(() => {
-  const container = containerRef.current;
-  // Only run if the container exists and destinations are loaded
-  if (!container || reels.length === 0) return;
+  useEffect(() => {
+    const container = containerRef.current;
+    // Only run if the container exists and destinations are loaded
+    if (!container || reels.length === 0) return;
 
-  // Disconnect any previous observer before creating a new one
-  if (observerRef.current) {
-    observerRef.current.disconnect();
-  }
-
-  const options = {
-    root: container, // The scroll container itself is the viewport
-    rootMargin: "0px",
-    threshold: 0.51, // Trigger when 51% of the card is visible
-  };
-
-  const callback = (entries) => {
-    entries.forEach((entry) => {
-      // When a card becomes more than 51% visible
-      if (entry.isIntersecting) {
-        // Get the index we stored on the element
-        const index = parseInt(entry.target.dataset.index, 10);
-        if (!isNaN(index)) {
-          setActiveIndex(index);
-        }
-      }
-    });
-  };
-
-  // Create and store the new observer
-  const observer = new IntersectionObserver(callback, options);
-  observerRef.current = observer;
-
-  // Observe all the card elements (children of the container)
-  Array.from(container.children).forEach((child) => {
-    observer.observe(child);
-  });
-
-  // Cleanup function to disconnect observer when component unmounts
-  return () => {
+    // Disconnect any previous observer before creating a new one
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
-  };
-  
-}, [reels, loading]); // Re-run this effect when data is loaded
+
+    const options = {
+      root: container, // The scroll container itself is the viewport
+      rootMargin: "0px",
+      threshold: 0.51, // Trigger when 51% of the card is visible
+    };
+
+    const callback = (entries) => {
+      entries.forEach((entry) => {
+        // When a card becomes more than 51% visible
+        if (entry.isIntersecting) {
+          // Get the index we stored on the element
+          const index = parseInt(entry.target.dataset.index, 10);
+          if (!isNaN(index)) {
+            setActiveIndex(index);
+          }
+        }
+      });
+    };
+
+    // Create and store the new observer
+    const observer = new IntersectionObserver(callback, options);
+    observerRef.current = observer;
+
+    // Observe all the card elements (children of the container)
+    Array.from(container.children).forEach((child) => {
+      observer.observe(child);
+    });
+
+    // Cleanup function to disconnect observer when component unmounts
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [reels, loading]); // Re-run this effect when data is loaded
   if (loading)
     return (
-      <div className="text-center text-white py-24 text-xl">Loading...</div>
+      <div className="text-center text-white py-24 text-xl">
+        Loading Reels...
+      </div>
     );
 
   return (
-    <main className="relative min-h-screen w-full text-gray-900 py-4 overflow-hidden">
+    // ✅ CHANGED: min-h-screen -> min-h-auto (Lets content define height)
+    <main className="relative min-h-auto w-full text-gray-900 py-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
         <motion.header
@@ -168,7 +170,7 @@ useEffect(() => {
 
         {/* Main Section */}
         <section className="relative justify-center items-center lg:px-28 md:py-8">
-          <div className="relative flex justify-center items-center md:gap-6 overflow-hidden">
+          <div className="relative flex justify-center items-center md:gap-6">
             {/* Left Arrow */}
             <button
               onClick={prevSlide}
@@ -178,7 +180,11 @@ useEffect(() => {
             </button>
 
             {/* Desktop Animation */}
-            <div className="relative w-[100%] flex justify-center items-center h-[100vh] md:h-[92vh]">
+            {/* ✅ CHANGED: 
+                - h-[100vh] -> h-auto (Lets mobile content define height)
+                - md:min-h-[110vh] -> md:min-h-[95vh] (Reduces min-height to prevent overflow on short laptops)
+            */}
+            <div className="relative w-[100%] flex justify-center items-center h-auto md:min-h-[95vh]">
               <AnimatePresence initial={false} custom={direction}>
                 {/* Left small card */}
                 <motion.div
@@ -186,13 +192,15 @@ useEffect(() => {
                   custom={direction}
                   variants={variants}
                   initial="enter"
-                  animate={{ x: "-110%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
+                  // ✅ CHANGED: x: "-110%" -> x: "-100%" (Pulls card in slightly)
+                  animate={{ x: "-100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
                   exit="exit"
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer blur-sm"
                   onClick={prevSlide}
                 >
-                  <div className="rounded-xl overflow-hidden h-[70vh]">
+                  {/* ✅ CHANGED: h-[70vh] -> h-auto (Lets embed define its own height) */}
+                  <div className="rounded-xl overflow-hidden h-auto">
                     <InstagramEmbed
                       permalink={reels[leftIndex].url}
                       maxWidth={350}
@@ -214,17 +222,34 @@ useEffect(() => {
                   }}
                   className="absolute hidden md:flex flex-col gap-2 w-[100%] md:w-[40%] text-center md:px-2"
                 >
-                  <div className="rounded-2xl overflow-fit h-full">
+                  {/* ✅ CHANGED: h-full -> h-auto (Lets embed define its own height) */}
+                  <div className="rounded-2xl overflow-fit h-auto">
                     <InstagramEmbed
                       permalink={reels[index].url}
                       maxWidth={400}
                     />
                   </div>
-                  <button onClick={() => reels[index].url && window.open(reels[index].url, "_blank")}
-                  className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+                  <button
+                    onClick={() =>
+                      reels[index].url && window.open(reels[index].url, "_blank")
+                    }
+                    className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                  >
                     Watch Now
                   </button>
-                 
+                  {/* desktop dots  */}
+                  <div className="md:py-4 hidden md:flex justify-center items-center gap-2">
+                    {reels.map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={`h-3 w-3 rounded-full ${
+                          i === index ? "bg-blue-700" : "bg-gray-800/40"
+                        }`}
+                        animate={{ scale: i === index ? 1 : 0.8 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    ))}
+                  </div>
                 </motion.div>
 
                 {/* Right small card */}
@@ -233,13 +258,15 @@ useEffect(() => {
                   custom={direction}
                   variants={variants}
                   initial="enter"
-                  animate={{ x: "110%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
+                  // ✅ CHANGED: x: "110%" -> x: "100%" (Pulls card in slightly)
+                  animate={{ x: "100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
                   exit="exit"
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer blur-sm"
                   onClick={nextSlide}
                 >
-                  <div className="rounded-xl overflow-hidden h-[70vh]">
+                  {/* ✅ CHANGED: h-[70vh] -> h-auto (Lets embed define its own height) */}
+                  <div className="rounded-xl overflow-hidden h-auto">
                     <InstagramEmbed
                       permalink={reels[rightIndex].url}
                       maxWidth={350}
@@ -253,12 +280,12 @@ useEffect(() => {
                   custom={direction}
                   variants={variants}
                   initial="enter"
-                  animate={{ x: "220%", scale: 0.7, opacity: 0 }}
+                  animate={{ x: "200%", scale: 0.7, opacity: 0 }}
                   exit="exit"
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3"
                 >
-                  <div className="rounded-xl overflow-hidden h-[10vh]">
+                  <div className="rounded-xl overflow-hidden h-auto">
                     <InstagramEmbed
                       permalink={reels[farRightIndex].url}
                       maxWidth={300}
@@ -270,13 +297,13 @@ useEffect(() => {
               {/* Mobile horizontal scroll section */}
               <div
                 ref={containerRef}
-                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4 no-scrollbar scroll-smooth"
+                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4  no-scrollbar scroll-smooth"
               >
                 {reels.map((reel, i) => (
                   <motion.div
                     key={i}
                     data-index={i}
-                    className={`max-w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-2 text-center transition-transform duration-300 ${
+                    className={`w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-1 text-center transition-transform duration-300 ${
                       i === activeIndex ? "scale-100" : "scale-100"
                     }`}
                   >
@@ -284,11 +311,15 @@ useEffect(() => {
                       <InstagramEmbed permalink={reel.url} maxWidth={380} />
                     </div>
                     <p className="text-sm text-slate-800 mb-3">{reel.desc}</p>
-                    <button onClick={() => reels[index].url && window.open(reels[index].url, "_blank")}
-                    className="text-white text-lg md:text-xl my-2 px-6  w-full py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+                    <button
+                      onClick={() =>
+                        reels[index].url &&
+                        window.open(reels[index].url, "_blank")
+                      }
+                      className="text-white text-lg md:text-xl my-2 px-6  w-full py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                    >
                       Watch Now
                     </button>
-                   
                   </motion.div>
                 ))}
               </div>
@@ -303,32 +334,19 @@ useEffect(() => {
             </button>
           </div>
 
-           {/* desktop dots  */}
-                  <div className="md:py-4 hidden md:flex justify-center items-center gap-2">
-                    {reels.map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className={`h-3 w-3 rounded-full ${
-                          i === index ? "bg-blue-700" : "bg-gray-800/40"
-                        }`}
-                        animate={{ scale: i === index ? 1 : 0.8 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    ))}
-                  </div>
-           {/* dots  */}
-                    <div className="flex md:hidden pb-4 flex justify-center items-center gap-2">
-                      {reels.map((_, j) => (
-                        <motion.div
-                          key={j}
-                          className={`h-3 w-3 rounded-full ${
-                            j === activeIndex ? "bg-blue-700" : "bg-gray-800/40"
-                          }`}
-                          animate={{ scale: j === activeIndex ? 1 : 0.7 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      ))}
-                    </div>
+          {/* dots  */}
+          <div className="flex md:hidden pb-4 flex justify-center items-center gap-2">
+            {reels.map((_, j) => (
+              <motion.div
+                key={j}
+                className={`h-3 w-3 rounded-full ${
+                  j === activeIndex ? "bg-blue-700" : "bg-gray-800/40"
+                }`}
+                animate={{ scale: j === activeIndex ? 1 : 0.7 }}
+                transition={{ duration: 0.3 }}
+              />
+            ))}
+          </div>
         </section>
       </div>
     </main>

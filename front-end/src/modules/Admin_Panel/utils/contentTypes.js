@@ -13,6 +13,7 @@ export const categories = [
   { label: "Shops", value: "shops" },
   { label: "Destinations", value: "destinations" },
   { label: "Festivals", value: "festivals" },
+  { label: "Creators", value: "creators" },
   { label: "Videos", value: "videos" },
   { label: "Images", value: "images" },
 ];

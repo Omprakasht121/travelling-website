@@ -5,7 +5,8 @@ import { Heart, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { act } from "react";
 
-export default function Explore() {
+
+export default function Explore({product}) {
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const wrapperRef = useRef(null);
@@ -298,6 +299,9 @@ export default function Explore() {
                       }`}
                     />
                   </motion.button>
+
+                  {/* <WishlistButton itemData={product} /> */}
+
                   <p className="text-slate-200 font-semibold">{likes}</p>
                 </div>
               </div>

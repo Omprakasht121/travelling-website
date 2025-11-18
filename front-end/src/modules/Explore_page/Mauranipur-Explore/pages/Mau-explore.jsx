@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Search, Sun, X } from "lucide-react";
+import { Menu, Search, Sun, User, User2, User2Icon, UserCog2Icon, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getContent } from "../services/contentService.js";
+import UserProfileModal from "../../modals/UserProfileModal.jsx";
+import { useAuthModal } from "../../../../context/AuthModalContext.jsx";
 
 const backendURL = "http://localhost:5000";
 
 const MauExplore = () => {
   const [mobile, setMobile] = useState(false);
+  const [account, setAccount] = useState(false);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [adsImage, setAdsImage] = useState([]);
   const [loading, setLoading] = useState(true);
   const[search, setSearch] = useState(false);
+
+
+const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
 
   // ✅ Static images (converted to object form for consistent structure)
   const staticImages = [
@@ -148,18 +154,19 @@ const MauExplore = () => {
               >
                 Explore
               </a>
-              <Link
-                to="/creators"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+              <a
+                href="#creators"
+                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Creators
-              </Link>
-              <Link
-                to="/events"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+              </a>
+              <a
+                href="#events"
+                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Events
-              </Link>
+              </a>
+              
             </nav>
 
             <div className="flex gap-4 justify-center items-center">
@@ -172,6 +179,12 @@ const MauExplore = () => {
               className="p-1 md:p-2 hover:scale-110 transition-transform duration-900 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]"
             >
               <Search className="w-6 h-6 text-black" />
+            </button>
+              <button
+              onClick={() => setAccount(prev => !prev)}
+              className="p-1 md:p-2 hover:scale-110 border border-sky-800/30 rounded-full transition-transform duration-900 ease-in-out shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_8px_rgba(0,0,0,0.6)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_12px_rgba(0,0,150,0.6)]"
+            >
+              <User2 className="w-6 h-6 text-black" />
             </button>
               <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.6)]">
                 <button className="px-6 py-1 rounded-full bg-orange-500 hover:bg-orange-600px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
@@ -190,15 +203,51 @@ const MauExplore = () => {
         <div
         className={` top-0 left-0 w-full h-16  z-30 flex items-center justify-center
           transform transition-transform duration-500 easeInOut
-          ${search ? " translate-y-0 md: translate-y-0 opacity-100" : "hidden -translate-y-full opacity-0"}
+          ${search ? " translate-y-0 md: translate-y-0 opacity-100 " : "hidden -translate-y-full opacity-0"}
         `}
       >
         <input
           type="text"
           placeholder="Search..."
-          className="w-9/12 md:w-1/3 h-10 px-4 border border-gray-300 rounded-md outline-none"
+          className="w-9/12 md:w-1/3 h-10 px-4 border border-gray-300 rounded-md outline-none shadow-[inset_4px_4px_6px_rgba(0,0,80,0.1),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_4px_6px_rgba(0,0,0,0.4)]"
         />
       </div>
+        {/* screen Overlay */}
+        <div
+          className={`fixed inset-0 bg-black/70 z-50 transition-opacity ${
+            account ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+          onClick={() => setAccount(false)}
+        ></div>
+
+       
+         {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={account}
+        onClose={() => setAccount(false)}
+        
+        user={userData} // <-- Pass userData from context
+
+        onLoginClick={() => {
+          setAccount(false);
+          requestAuth(() => setAccount(true)); // Re-open profile after login
+        }}
+        
+        onRegisterClick={() => {
+          setAccount(false);
+          requestRegisterAuth(() => setAccount(true)); // Re-open profile after register
+        }}
+        
+        onLogoutClick={() => {
+          // --- UPDATED ---
+          logout(); // Call context logout function
+          setAccount(false);
+        }}
+        
+        onEditProfileClick={() => console.log("Edit profile")}
+        onWishlistClick={() => console.log("Wishlist")}
+        wishlistCount={4}
+      />
         {/* Mobile Overlay */}
         <div
           className={`fixed inset-0 bg-black/70 z-50 transition-opacity md:hidden ${

@@ -193,7 +193,7 @@ const DestinationsOfMau = () => {
         </motion.header>
 
         {/* ==== Main Section ==== */}
-        <section className="relative justify-center items-center lg:px-28 md:py-8">
+        <section className="relative  justify-center items-center lg:px-28 md:py-8">
           <div className="relative flex justify-center items-center md:gap-6 overflow-hidden">
             <button
               onClick={prevSlide}
@@ -202,11 +202,8 @@ const DestinationsOfMau = () => {
               <ChevronLeft className="w-6 h-6 text-black/80" />
             </button>
 
-            {/* ✅ CHANGED: 
-                - md:w-[75%] -> md:w-[90%] lg:w-[80%] xl:w-[75%] (Makes the "stage" wider on smaller desktops)
-                - md:h-[90vh] -> md:h-auto md:min-h-[85vh] (Removes fixed height, preventing vertical cutoff)
-            */}
-            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:h-auto md:min-h-[85vh]">
+          
+            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:h-auto md:min-h-[90vh]">
               <AnimatePresence initial={false} custom={direction}>
                 {/* === Left Small Card === */}
                 <motion.div
@@ -255,8 +252,7 @@ const DestinationsOfMau = () => {
                   <img
                     src={getImagePath(destinations[index].img)}
                     alt={destinations[index].name}
-                    // ✅ CHANGED: md:h-[55vh] -> md:h-[50vh] (Reduces height to prevent vertical cutoff)
-                    className="md:h-[55vh] rounded-xl object-cover border-2 border-black/20"
+                    className="md:h-[50vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm md:text-base text-slate-800">
                     {destinations[index].desc}

@@ -44,10 +44,20 @@ const fieldConfig = {
     { name: "phone", label: "Phone-Number", type: "number" },
     { name: "whatsapp", label: "WhatsApp-No.", type: "number" },
     { name: "email", label: "Email-id", type: "text" },
-    { name: "posts", label: "Posts", type: "number" },
-    { name: "followers", label: "Followers", type: "number" },
-    { name: "following", label: "Following", type: "number" },
+    { name: "posts", label: "Posts", type: "text" },
+    { name: "followers", label: "Followers", type: "text" },
+    { name: "following", label: "Following", type: "text" },
     { name: "description", label: "Description", type: "textarea" },
+  ],
+  events: [
+    { name: "title", label: "title", type: "text" },
+    { name: "segment", label: "event name", type: "text" },
+    { name: "location", label: "Location", type: "text" },
+    { name: "day", label: "date", type: "text" },
+    { name: "month", label: "month", type: "text" },
+    { name: "date", label: "date", type: "text" },
+    { name: "description", label: "Description", type: "textarea" },
+
   ],
   Images:[
     { name: "title", label: "title", type: "text" },

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion, easeInOut } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuthModal } from "../../../context/AuthModalContext";
+
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,11 +12,11 @@ import {
   Sun,
   X,
   Search,
-  ArrowBigLeft,
-  ArrowDownLeft,
-  ArrowLeft,
   ArrowRight,
+  User2,
 } from "lucide-react";
+import UserProfileModal from "../../Explore_page/modals/UserProfileModal";
+
 
 const useTheme = () => {
   const [theme, setTheme] = useState("light");
@@ -22,21 +26,21 @@ const useTheme = () => {
   return { theme, toggleTheme };
 };
 
-const useNavigate = () => {
-  return (path) => console.log(`Navigating to ${path}`);
-}
 
 
 
 const Hero = () => {
   const [mobile, setMobile] = useState(false);
+  const [account, setAccount] = useState(false);
   const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Bandha"];
   const [index, setIndex] = useState(0);
-  const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
-  const handleAdmin = () => navigate("/admin");
+  const { theme, toggleTheme } = useTheme();;
   const[search, setSearch] = useState(false);
-
+  const navigate = useNavigate()
+  const { userData, logout, requestAuth,wishlist, requestRegisterAuth } = useAuthModal();
+  
+  // ⭐ GLOBAL AUTH MODAL FUNCTION
+ 
   
   const images = [
     "/gwalior.jpg",
@@ -44,7 +48,7 @@ const Hero = () => {
     "/jhansi6.jpg",
     "/jhansi.jpg",
   ];
-
+  
   const [direction, setDirection] = useState(1);
 
   const [index1, setIndex1] = useState(0);
@@ -85,6 +89,17 @@ const Hero = () => {
     setIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // ⭐ UNIVERSAL PROTECTED CLICK HANDLER
+  const protectedClick = (path) => {
+    const token = localStorage.getItem("userToken");
+
+    if (!token) {
+      requestAuth(path);   // open login popup & remember path
+    } else {
+      navigate(path);      // user already logged in
+    }
+  };
+
   return (
     // Added 'dark' class here to respect the theme
     <div className={`max-h-screen flex flex-col overflow-hidden ${theme}`}>
@@ -108,17 +123,35 @@ const Hero = () => {
             </a>
           </div>
 
-          <nav className="hidden md:flex md:gap-4 lg:gap-8 ">
-            {["Home", "About", "Explore", "Creators", "Events"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-1000 ease-in-out"
-              >
-                {item}
-              </a>
-            ))}
+          {/* NAV LINKS */}
+          <nav className="hidden md:flex gap-8 font-semibold text-gray-900 dark:text-white">
+
+            {/* ⭐ PROTECTED LINKS */}
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              onClick={() => protectedClick("/mauranipur")}
+            >
+              Explore
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              onClick={() => protectedClick("/jhansi")}
+            >
+              Creators
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              onClick={() => ("/events")}
+            >
+              Events
+            </a>
+
+            <a className="hover:scale-110">Home</a>
+            <a className="hover:scale-110">About</a>
           </nav>
+
 
           {/* Theme & Menu */}
           <div className="flex gap-4 justify-center items-center">
@@ -138,8 +171,15 @@ const Hero = () => {
             >
               <Search className="w-6 h-6 text-black" />
             </button>
+            <button
+              onClick={() => setAccount(prev => !prev)}
+              className="p-1 md:p-2 hover:scale-110 md:border border-sky-800/30 rounded-full transition-transform duration-900 ease-in-out md:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_8px_rgba(0,0,0,0.6)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_12px_rgba(0,0,150,0.6)]"
+            >
+              <User2 className="w-6 h-6 text-black" />
+            </button>
             <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-1000 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.6)] ">
-              <button className="px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] text-white">
+              <button onClick={() => protectedClick("/login")}
+              className="px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] text-white">
                 SIGNUP
               </button>
             </div>
@@ -168,6 +208,47 @@ const Hero = () => {
         />
       </div>
 
+
+           {/* screen Overlay */}
+        <div
+          className={`fixed inset-0 bg-black/70 z-50 transition-opacity ${
+            account ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+          onClick={() => setAccount(false)}
+        ></div>
+
+       
+         {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={account}
+        onClose={() => setAccount(false)}
+        
+        user={userData} // <-- Pass userData from context
+
+        onLoginClick={() => {
+          setAccount(false);
+          requestAuth(() => setAccount(true)); // Re-open profile after login
+        }}
+        
+        onRegisterClick={() => {
+          setAccount(false);
+          requestRegisterAuth(() => setAccount(true)); // Re-open profile after register
+        }}
+        
+        onLogoutClick={() => {
+          // --- UPDATED ---
+          logout(); // Call context logout function
+          setAccount(false);
+        }}
+        
+        onEditProfileClick={() => console.log("Edit profile")}
+        onWishlistClick={() => {
+          setAccount(false); // Close the modal
+          navigate('/wishlist'); // Go to the wishlist page
+        }}
+        wishlistCount={wishlist.length}
+      />
+
       {/* Sidebar */}
       <div
         className={`fixed inset-0 bg-black/70 z-40 transition-opacity md:hidden ${
@@ -187,31 +268,20 @@ const Hero = () => {
             <X />
           </button>
           <nav className="flex flex-col gap-4">
-            {["Home", "About", "Explore", "Creators", "Events"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
-              >
-                {item}
-              </a>
-            ))}
+            <a onClick={() => protectedClick("/explore")}>Explore</a>
+            <a onClick={() => protectedClick("/creators")}>Creators</a>
+            <a onClick={() => protectedClick("/events")}>Events</a>
+            <a>Home</a>
+            <a>About</a>
+
           </nav>
         </div>
       </div>
 
       {/* Hero Section */}
-      {/* ✅ FIX 1: Added `flex flex-col` here.
-        This makes the section a vertical flex container on ALL screen sizes,
-        so the 'flex-1' content (line 210) and the button/dot bar (line 255)
-        stack vertically as intended.
-      */}
       <section className="relative w-full flex-1 flex flex-col justify-center items-center lg:px-8 md:py-8 bg-cover bg-center overflow-hidden text-white">
         {/* ✅ Animated Background */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
-          {/* ✅ FIX 2: The <AnimatePresence> tag now ONLY wraps the
-            single <motion.img> component that it needs to animate.
-          */}
           <AnimatePresence custom={direction}>
             <motion.img
               key={images[index]}
@@ -224,15 +294,11 @@ const Hero = () => {
               className="absolute w-full h-full object-cover"
             />
           </AnimatePresence>
-          {/* This overlay div is now a SIBLING to AnimatePresence,
-            not a child. This stops the animation bug.
-          */}
+          
           <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_60%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
         </div>
         
-        {/* This gradient overlay was in your original code,
-           I'm keeping it to maintain the dark look for text readability.
-        */}
+        
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.45 }}
@@ -242,9 +308,7 @@ const Hero = () => {
         />
         
         {/* Content */}
-        {/* This container has 'flex-1', so it will grow to fill the available
-          space, pushing the dot/button bar (line 255) to the bottom.
-        */}
+        
         <div className="flex relative flex-1 rounded-2xl overflow-hidden md:px-0 lg:mx-32 justify-center items-center w-full">
           <button
             onClick={handlePrev}
@@ -311,7 +375,7 @@ const Hero = () => {
         </div>
 
         {/* Dots & Mobile Buttons */}
-        {/* This div will be pushed to the bottom by the 'flex-1' div above */}
+       
         <div className="pb-8 flex justify-center items-center gap-2 z-10">
           <button
             onClick={handlePrev}

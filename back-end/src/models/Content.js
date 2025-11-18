@@ -23,9 +23,12 @@ const contentSchema = new mongoose.Schema(
     gallery: { type: [String], default: [] }, // ✅ multiple gallery image paths
     distance: { type: String },
     rating: { type: Number, default: 0 },
-    posts: { type: Number, default: 0 },
-    followers: { type: Number, default: 0 },
-    following: { type: Number, default: 0 },
+    posts: { type: String, default: 0 },
+    followers: { type: String, default: 0 },
+    following: { type: String, default: 0 },
+    day: { type: String, default: 1 },
+    month: { type: String, default: "JAN" },
+    date: { type: String, default: 0 },
   },
   { timestamps: true }
 );

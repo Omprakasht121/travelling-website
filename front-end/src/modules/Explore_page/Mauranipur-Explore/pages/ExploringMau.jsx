@@ -7,9 +7,10 @@ import FoodsOfMau from "./FoodsOfMau";
 import HotelsOfMau from "./HotelsOfMau";
 import VideoOfMau from "./VideoOfMau";
 import EnquiryOfMau from "./EnquiryOfMau";
-import FestivalsOfMau from "./FestivalsOfMau";
+import FestivalsOfMau from "./EventsOfMau";
 import MauExplore from "./Mau-explore";
 import Creators from "./CreatorOfMau";
+import CreatorProfileModal from "./modals/CreatorProfileModal";
 
 
 
@@ -24,9 +25,10 @@ function ExploringMau(){
         <HotelsOfMau/>
         <ShopsOfMau/>
         <FestivalsOfMau/>
-        <VideoOfMau/>
         <Creators/>
+        <VideoOfMau/>
         <EnquiryOfMau/>
+        <CreatorProfileModal/>
         </>
         </div>
     )

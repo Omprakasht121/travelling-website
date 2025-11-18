@@ -150,7 +150,7 @@ const VideoOfMau2 = () => {
 
   return (
     // ✅ CHANGED: min-h-screen -> min-h-auto (Lets content define height)
-    <main className="relative min-h-auto w-full text-gray-900 py-4 overflow-hidden">
+    <main className="relative min-h-auto w-full text-gray-900 py-8 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
         <motion.header
@@ -159,10 +159,10 @@ const VideoOfMau2 = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-3xl text-center md:text-5xl font-extrabold tracking-tight">
             Videos / Social Media
           </h1>
-          <p className="mt-2 text-sm md:text-base text-slate-800">
+          <p className="mt-2 text-sm text-center md:text-base text-slate-800">
             Experience the essence of Bundelkhand through stories, reels, and
             travel moments.
           </p>
@@ -184,7 +184,7 @@ const VideoOfMau2 = () => {
                 - h-[100vh] -> h-auto (Lets mobile content define height)
                 - md:min-h-[110vh] -> md:min-h-[95vh] (Reduces min-height to prevent overflow on short laptops)
             */}
-            <div className="relative w-[100%] flex justify-center items-center h-auto md:min-h-[95vh]">
+            <div className="relative w-[100%] flex justify-center items-center h-auto md:min-h-[103vh]">
               <AnimatePresence initial={false} custom={direction}>
                 {/* Left small card */}
                 <motion.div

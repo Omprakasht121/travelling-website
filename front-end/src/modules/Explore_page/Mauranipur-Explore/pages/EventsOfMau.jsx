@@ -20,7 +20,7 @@ const staticEvents = [
     title: "DJ Night Party",
     date: "11 Nov 2022",
     location: "Aura Nightclub, CityName",
-    img: "https://placehold.co/400x600/0a0a2a/c0c0ff?text=DJ+Night",
+    img: `${import.meta.BASE_URL}orchha.jpg`,
     gallery: ["/jhansi6.jpg"],
     badgeDate: { month: "NOV", day: "19" },
     description: "Lorem ipsum dolor sit amet...",
@@ -261,9 +261,9 @@ export default function EventsOfMau() {
     );
 
   return (
-    <main id="events" className="bg-gray-900 text-white overflow-hidden">
+    <main id="events" className="relative w-full min-h-auto bg-gray-900 text-white overflow-hidden">
       {/* HERO SECTION */}
-      <div className="container mx-auto max-w-7xl px-6 py-16 flex flex-col lg:flex-row items-center gap-12 ">
+      <div className= "relative w-full md:w-[50vw] h-[60vh] md:min-h-[60vh] mx-auto  my-4 ">
         <AnimatePresence custom={direction}>
         <motion.section
           key={current}
@@ -272,13 +272,14 @@ export default function EventsOfMau() {
           initial="enter"
           animate="center"
           exit="exit"
-          className=" container mx-auto max-w-7xl px-6 py-16 lg:py-24 
-              flex flex-col lg:flex-row items-center gap-12 rounded-xl"
+          className="absolute bg-red-500 h-full w-full py-8
+            px-4 flex flex-col lg:flex-row items-center rounded-xl  "
           style={{
               backgroundImage: `
                 linear-gradient(to top right, rgba(0,0,0,0.9), rgba(0,0,0,0)),
                 url(${getImagePath(events[current]?.img)})
               `,
+              
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}

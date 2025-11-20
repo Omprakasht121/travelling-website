@@ -16,6 +16,7 @@ import {
   User2,
 } from "lucide-react";
 import UserProfileModal from "../../Explore_page/modals/UserProfileModal";
+import GlobalSearch from "../../../components/GlobalSearch";
 
 
 const useTheme = () => {
@@ -30,6 +31,17 @@ const useTheme = () => {
 
 
 const Hero = () => {
+
+  
+  const images = [
+    "/gwalior.jpg",
+    "/orchha2.jpg",
+    "/jhansi6.jpg",
+    "/jhansi.jpg",
+  ];
+ 
+
+
   const [mobile, setMobile] = useState(false);
   const [account, setAccount] = useState(false);
   const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Bandha"];
@@ -38,20 +50,13 @@ const Hero = () => {
   const[search, setSearch] = useState(false);
   const navigate = useNavigate()
   const { userData, logout, requestAuth,wishlist, requestRegisterAuth } = useAuthModal();
-  
-  // ⭐ GLOBAL AUTH MODAL FUNCTION
- 
-  
-  const images = [
-    "/gwalior.jpg",
-    "/orchha2.jpg",
-    "/jhansi6.jpg",
-    "/jhansi.jpg",
-  ];
-  
-  const [direction, setDirection] = useState(1);
 
+  const [direction, setDirection] = useState(1);
   const [index1, setIndex1] = useState(0);
+
+  
+
+
 
   // Automatically change every 6 seconds
   useEffect(() => {
@@ -110,7 +115,7 @@ const Hero = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
           viewport={{ once: false, amount: 0.2 }}
-          className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg font-semibold flex justify-between items-center text-gray-900 dark:text-white"
+          className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg font-semibold flex justify-between items-center text-gray-900 "
         >
           <div>
             <a href="#hero">
@@ -193,20 +198,9 @@ const Hero = () => {
         </motion.div>
       </header>
 
-      {/* search slider  */}
+      
+    <GlobalSearch open={search} onClose={() => setSearch(false)} />
 
-       <div
-        className={`fixed top-0 left-0 w-full h-16  shadow-md z-30 flex items-center justify-center
-          transform transition-transform duration-500 easeInOut
-          ${search ? "translate-y-16 md:translate-y-20 opacity-100" : "-translate-y-full opacity-0"}
-        `}
-      >
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-9/12 md:w-1/3 h-10 px-4 border border-gray-300 rounded-md outline-none"
-        />
-      </div>
 
 
            {/* screen Overlay */}

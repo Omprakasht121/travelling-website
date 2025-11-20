@@ -3,37 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, GalleryVertical, Heart, Image } from "lucide-react";
 import { getContent } from "../services/contentService.js";
 
+import { staticDestinations } from "../staticdata/StaticDestinations.jsx";
+
 const backendURL = "http://localhost:5000";
 
 const DestinationsOfMau = () => {
-  const staticDestinations = [
-    {
-      name: "Orchha",
-      img: "jhansi.jpg",
-      desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising.",
-      images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
-    },
-    {
-      name: "Datia",
-      img: "datia.jpg",
-      desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising.",
-    },
-    {
-      name: "Chanderi",
-      img: "jhansi2.jpg",
-      desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising.",
-    },
-    {
-      name: "Jhansi",
-      img: "jhansi6.jpg",
-      desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising.",
-    },
-    {
-      name: "Tikamgarh",
-      img: "jhansi3.jpg",
-      desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising.",
-    },
-  ];
+
 
   const getImagePath = (img) => {
     if (!img) return "/fallback.jpg";

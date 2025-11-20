@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import contentRoutes from "./src/routes/contentRoutes.js";
 import { userRoutes } from "./src/routes/userRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
+import searchRoutes from "./src/routes/searchRoutes.js";
+
 
 
 
@@ -24,6 +26,8 @@ app.use("/uploads/gallery", express.static("uploads/gallery"));
 app.use('/',userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/search", searchRoutes);
+
 
 
 

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getContent } from "../services/contentService.js";
 import UserProfileModal from "../../modals/UserProfileModal.jsx";
 import { useAuthModal } from "../../../../context/AuthModalContext.jsx";
+import GlobalSearch from "../../../../components/GlobalSearch.jsx";
 
 const backendURL = "http://localhost:5000";
 
@@ -16,6 +17,7 @@ const MauExplore = () => {
   const [adsImage, setAdsImage] = useState([]);
   const [loading, setLoading] = useState(true);
   const[search, setSearch] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
 
 const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
@@ -90,6 +92,16 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
     }),
   };
 
+  useEffect(() => {
+  const handleScroll = () => {
+    if (window.scrollY > 5) setIsScrolled(true);
+    else setIsScrolled(false);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
   // ✅ Typing animation text
   const text =
     "To run the test, you'll be connected to Measurement Lab (M-Lab) and your IP address will be shared with them and processed by them in accordance with their privacy policy.";
@@ -110,6 +122,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
       <div className="text-center text-white py-24 text-xl">Loading...</div>
     );
 
+
   return (
     <div
       id="home"
@@ -117,13 +130,15 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
     >
       <div className="container flex flex-col mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header/Navbar */}
-        <header className="z-40 h-12 md:h-16 top-4 w-full bg-white flex justify-between items-center transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] rounded-full bg-black/10 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50  shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+        <header className={`fixed left-0 right-0 z-40 h-12 md:h-16 w-full bg-white flex justify-between items-center rounded-full bg-black/10 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50  shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] md:shadow-sm
+          ${isScrolled ? "top-1" : "top-4"}
+        `}>
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             viewport={{ once: false, amount: 0.2 }}
-            className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg  font-semibold flex justify-between items-center"
+            className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg  font-semibold flex justify-between md:justify-around items-center"
           >
             <div>
               <Link to="/">
@@ -182,7 +197,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
             </button>
               <button
               onClick={() => setAccount(prev => !prev)}
-              className="p-1 md:p-2 hover:scale-110 border border-sky-800/30 rounded-full transition-transform duration-900 ease-in-out shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_8px_rgba(0,0,0,0.6)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_12px_rgba(0,0,150,0.6)]"
+              className="p-1 md:p-2 hover:scale-110 md:border border-sky-800/30 rounded-full transition-transform duration-900 ease-in-out md:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_8px_rgba(0,0,0,0.6)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,40,0.3),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_6px_12px_rgba(0,0,150,0.6)]"
             >
               <User2 className="w-6 h-6 text-black" />
             </button>
@@ -199,19 +214,9 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
             </div>
           </motion.div>
         </header>
-        {/* sear slider  */}
-        <div
-        className={` top-0 left-0 w-full h-16  z-30 flex items-center justify-center
-          transform transition-transform duration-500 easeInOut
-          ${search ? " translate-y-0 md: translate-y-0 opacity-100 " : "hidden -translate-y-full opacity-0"}
-        `}
-      >
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-9/12 md:w-1/3 h-10 px-4 border border-gray-300 rounded-md outline-none shadow-[inset_4px_4px_6px_rgba(0,0,80,0.1),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_4px_6px_rgba(0,0,0,0.4)]"
-        />
-      </div>
+        {/* search slider  */}
+        <GlobalSearch open={search} onClose={() => setSearch(false)} />
+        
         {/* screen Overlay */}
         <div
           className={`fixed inset-0 bg-black/70 z-50 transition-opacity ${
@@ -302,7 +307,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
         </div>
 
         {/* Main Section */}
-        <section className="relative  flex-1 w-full md:flex-col justify-center items-center md:px-12 lg:px-32 py-8">
+        <section className="relative  flex-1 w-full md:flex-col justify-center items-center md:px-12 lg:px-32 py-8 pt-16 md:pt-24">
           <div className="relative flex justify-center flex-col items-center">
             <div className="w-full md:w-[60vw] h-[30vh] md:min-h-[60vh] flex justify-center items-center relative overflow-hidden rounded-xl">
               <AnimatePresence custom={direction}>

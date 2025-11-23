@@ -6,7 +6,7 @@ import { getContent } from "../../../../shared/services/contentService.js";
 import UserProfileModal from "../../../../shared/modals/UserProfileModal.jsx";
 import { useAuthModal } from "../../../../context/AuthModalContext.jsx";
 import GlobalSearch from "../../../../components/GlobalSearch.jsx";
-import { useNavigate } from "react-router-dom";
+
 
 const backendURL = import.meta.env.VITE_BASE_URL;
 
@@ -19,8 +19,7 @@ const MauExplore = () => {
   const [loading, setLoading] = useState(true);
   const[search, setSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const navigate = useNavigate();
-  const handleLogin = navigate("/login")
+
 
 
 const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
@@ -207,7 +206,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
               <User2 className="w-6 h-6 text-black" />
             </button>
               <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.6)]">
-                <button onClick={handleLogin}
+                <button 
                 className="px-6 py-1 rounded-full bg-orange-500 hover:bg-orange-600px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
                   SignIn
                 </button>

@@ -24,8 +24,8 @@ export const  AppRoutes = () => {
             <Route path="/register" element={<RegisterModal/>}/>
             <Route path="/creators" element={<Creators/>}/>
             <Route path="/events" element={<Events/>}/>
-
-            <Route path="/login" element={<Login/>}/>
+{/* 
+            <Route path="/login" element={<Login/>}/> */}
             <Route path="/maucreators" element={<CreatorProfileModal/>}/>
             <Route path="/wishlist" element={<WishlistPage/>}/>
             <Route path="/:region/:category" element={<RegionRouter />} />

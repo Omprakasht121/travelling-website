@@ -45,7 +45,7 @@ router.post(
         price,
         special_dish,
         rating,
-        reel_url,instagram_url, facebook_url, youtube_url, phone, whatsapp, email, segment,posts, followers, following,
+        reel_url,ytvideo_link,instagram_url, facebook_url, youtube_url, phone, whatsapp, email, segment,posts, followers, following,
         month, day, date,
       } = req.body;
 
@@ -70,7 +70,8 @@ router.post(
         distance,
         location,
         price,
-        reel_url, // ✅ this will now be saved
+        reel_url,
+        ytvideo_link,
         instagram_url,
         facebook_url,
         youtube_url,

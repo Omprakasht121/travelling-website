@@ -1,4 +1,5 @@
 export const regions = [
+  { label: "Landing", value: "landing" },
   { label: "Jhansi", value: "jhansi" },
   { label: "Orchha", value: "orchha" },
   { label: "Mauranipur", value: "mauranipur" },

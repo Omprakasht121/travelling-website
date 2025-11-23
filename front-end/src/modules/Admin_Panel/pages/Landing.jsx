@@ -25,8 +25,7 @@ const categories = [
 const fieldMap = {
   videos: [
     { name: "title", label: "Title", type: "text" },
-    { name: "yt_url", label: "YouTube URL", type: "text" },
-    { name: "description", label: "Description", type: "textarea" },
+    { name: "ytvideo_link", label: "YouTube video link", type: "text" },
   ],
   images: [
     { name: "title", label: "Title", type: "text" },
@@ -39,7 +38,7 @@ const fieldMap = {
   destinations: [
     { name: "title", label: "Destination Name", type: "text" },
     { name: "description", label: "Description", type: "textarea" },
-    { name: "distance", label: "Distance (km)", type: "text" },
+    { name: "location", label: "Location", type: "text" },
   ],
   about: [
     { name: "title", label: "Heading", type: "text" },

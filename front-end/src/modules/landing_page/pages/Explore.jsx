@@ -21,8 +21,15 @@ export default function Explore({product}) {
 
   const [exploreData, setExploreData] = useState([]);
   // navigation of page
-  const handlemau = () => navigate("/mauranipur");
-  
+const exploreLinks = [
+  () => navigate("/jhansi"),
+  () => navigate("/mauranipur"),
+  () => navigate("/orchha"),
+  () => navigate("/khajuraho"),
+  () => navigate("/banda"),
+  () => navigate("/chitrakoot"),
+];
+
 
 
  
@@ -49,7 +56,7 @@ export default function Explore({product}) {
   
           const mappedData = data.map((item) => ({
             name: item.title,
-            desc: item.description,
+            description: item.description,
             location:item.location,
             img: item.mainImage || "",
             // images: [item.mainImage, ...(item.gallery || [])], // ⭐ ALWAYS ARRAY
@@ -238,12 +245,12 @@ export default function Explore({product}) {
                 {current.name}
               </h2>
               <p className="hidden md:flex max-w-3xl mt-2 text-sm md:text-base text-slate-200">
-                {current.desc}
+                {current.description}
               </p>
               <div className="mt-4 flex items-center justify-between  ">
                 <div className="flex gap-4">
                   <button
-                    onClick={handlemau}
+                    onClick={exploreLinks[index]}
                     aria-label={`Discover more about ${current.name}`}
                     className="inline-block bg-white text-slate-900 font-semibold px-5 py-2 rounded-full  hover:scale-105 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_4px_4px_12px_rgba(50,20,10.6)]"
                   >
@@ -360,7 +367,7 @@ export default function Explore({product}) {
         >
           <div
             ref={containerRef}
-            // ✅ CHANGED: Added px-[5%] for proper centering of w-[90%] cards
+           
             className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide z-30 "
           >
             {allDestinations.map((d, i) => (
@@ -369,7 +376,7 @@ export default function Explore({product}) {
                 data-index={i} // ✅ Added data-index for observer
                 onClick={() => handleSelect(i)}
                 whileTap={{ scale: 0.98 }}
-                // ✅ CHANGED: Replaced min-w-[100%] with w-[90%] and flex-shrink-0 for correct snapping
+                
                 className={` snap-center w-[100%] flex-shrink-0 md:min-w-[60%] bg-white/5 rounded-xl overflow-hidden border border-black/10 shadow-lg ${
                   i === activeIndex ? "scale-100" : "scale-100"
                 } `}
@@ -377,7 +384,7 @@ export default function Explore({product}) {
                 <img
                   src={d.img}
                   alt={d.name}
-                  // ✅ CHANGED: Reduced h-[50vh] to h-[45vh] to prevent vertical overflow
+                 
                   className="w-full  object-cover h-[45vh] border-b-2 border-blue-500"
                 />
                 <div className="p-4">
@@ -403,11 +410,11 @@ export default function Explore({product}) {
                   </div>
 
                   <p className="text-sm text-slate-900 mt-2 line-clamp-3">
-                    {d.desc}
+                    {d.description}
                   </p>
                   <div className=" flex mt-3 justify-between">
                     <button
-                      onClick={d.link}
+                     onClick={exploreLinks[i]}
                       aria-label={`Discover more about ${d.name}`}
                       className="inline-block bg-white text-slate-900 font-semibold px-5 py-2 rounded-full hover:scale-105 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(20,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                     >

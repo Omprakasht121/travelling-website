@@ -8,6 +8,7 @@ const contentSchema = new mongoose.Schema(
     special_dish : {type:String},
     description: { type: String },
     reel_url: { type: String },
+    ytvideo_link:{type:String},
     instagram_url: { type: String },
     youtube_url: { type: String },
     facebook_url: { type: String },
@@ -15,20 +16,20 @@ const contentSchema = new mongoose.Schema(
     distance: { type: String },
     location: { type: String },
     price:{type:String},
-    rating: { type: Number, default: 0 },
-    phone: { type: Number, default: 0},
-    whatsapp: { type: Number, default: 0 },
+    rating: { type: Number},
+    phone: { type: Number},
+    whatsapp: { type: Number},
     email: { type: String },              // ✅ single image path
     mainImage: { type: String },              // ✅ single image path
     gallery: { type: [String], default: [] }, // ✅ multiple gallery image paths
     distance: { type: String },
-    rating: { type: Number, default: 0 },
-    posts: { type: String, default: 0 },
-    followers: { type: String, default: 0 },
-    following: { type: String, default: 0 },
-    day: { type: String, default: 1 },
-    month: { type: String, default: "JAN" },
-    date: { type: String, default: 0 },
+    rating: { type: Number },
+    posts: { type: String},
+    followers: { type: String},
+    following: { type: String },
+    day: { type: String},
+    month: { type: String,  },
+    date: { type: String },
   },
   { timestamps: true }
 );

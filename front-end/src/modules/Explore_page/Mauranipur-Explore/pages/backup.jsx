@@ -1,73 +1,137 @@
-import React, { useState, useRef, useEffect } from "react";
+// Explore.jsx
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, GalleryVertical, Heart, Image } from "lucide-react";
-import { getContent } from "../../../../shared/services/contentService.js";
-
-import { staticDestinations } from "../staticdata/StaticDestinations.jsx";
-
-const backendURL = "http://localhost:5000";
-
-const DestinationsOfMau = () => {
+import { Heart, MapPin } from "lucide-react";
+import { act } from "react";
+import { Destinations } from "../staticdata/ExploreStaticData";
+import { useNavigate } from "react-router-dom";
+import { getContent } from "../../../shared/services/contentService";
 
 
-  const getImagePath = (img, folder = "") => {
-  if (!img) return "/fallback.jpg";
-  // 🆕: detect if backend image from /uploads or /gallery
-  if (img.startsWith("/uploads") || img.startsWith("uploads"))
-    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
-  if (img.startsWith("/gallery") || img.startsWith("gallery"))
-    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+const backendURL = import.meta.env.VITE_BASE_URL;
 
-  if (img.startsWith("http")) return img;
-  return `${import.meta.env.BASE_URL}${folder}${img}`;
-};
-
-
+export default function Explore({product}) {
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const wrapperRef = useRef(null);
+  const autoTimerRef = useRef(null);
+  
 
-  const [destinationData, setDestinationsData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const [galleryDestination, setGalleryDestination] = useState(null);
+  const [exploreData, setExploreData] = useState([]);
+  // navigation of page
+const exploreLinks = [
+  () => navigate("/jhansi"),
+  () => navigate("/mauranipur"),
+  () => navigate("/orchha"),
+  () => navigate("/khajuraho"),
+  () => navigate("/banda"),
+  () => navigate("/chitrakoot"),
+];
 
-  // ✅ Fetch dynamic destinations from backend
+
+
+ 
+// image path 
+ const getImagePath = (img) => {
+    if (!img) return "/fallback.jpg";
+    if (img.startsWith("http")) return img;
+
+    if (img.startsWith("/uploads") || img.startsWith("uploads"))
+      return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+
+    if (img.startsWith("/gallery") || img.startsWith("gallery"))
+      return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+
+    return `${import.meta.env.BASE_URL}${img}`;
+  };
+  // ================================
+    // ✅ Fetch backend data (gallery fixed)
+    // ================================
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const data = await getContent("Landing", "destinations");
+  
+          const mappedData = data.map((item) => ({
+            name: item.title,
+            description: item.description,
+            location:item.location,
+            img: item.mainImage || "",
+            // images: [item.mainImage, ...(item.gallery || [])], // ⭐ ALWAYS ARRAY
+          }));
+  
+          setExploreData(mappedData);
+        } catch (err) {
+          console.error("Error fetching destinations:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+  
+    // ================================
+    // ✅ Merge static + backend (gallery ensured)
+    // ================================
+    const allDestinations = [
+      ...Destinations.map((s) => ({
+        ...s,
+        images: [s.img ], // ⭐ ensure array
+      })),
+      ...exploreData,
+    ];
+
+
+
+
+
+  const AUTO_SLIDE_MS = 8000; // auto change every 8s
+  // preload images
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getContent("mauranipur", "destinations");
-        const mappedData = data.map((item) => ({
-          name: item.title,
-          desc: item.description,
-          img: item.mainImage ||  "",
-          images: item.galleryImages?.[0] || "",
-        }));
-        setDestinationsData(mappedData);
-      } catch (err) {
-        console.error("Error fetching destinations:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    allDestinations.forEach((d) => {
+      const img = new Image();
+      img.src = d.img;
+    });
   }, []);
 
-  // ✅ Merge static + dynamic destinations
-  const destinations = [...staticDestinations, ...destinationData];
+  // auto slide with pause-on-interaction
+  useEffect(() => {
+    if (isPaused) return;
+    autoTimerRef.current = setInterval(() => {
+      setIndex((prev) => (prev + 1) % allDestinations.length);
+    }, AUTO_SLIDE_MS);
+    return () => clearInterval(autoTimerRef.current);
+  }, [isPaused]);
 
-  const nextSlide = () => {
-    setDirection(1);
-    setIndex((prev) => (prev + 1) % destinations.length);
+  // pause when mouse is over the hero / wrapper (desktop)
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
+
+  // when mobile card clicked, set index
+  const handleSelect = (i) => {
+    setIndex(i);
+    // small UX: pause auto-slide briefly so user can read
+    setIsPaused(true);
+    window.setTimeout(() => setIsPaused(false), 4000);
   };
 
-  const prevSlide = () => {
-    setDirection(-1);
-    setIndex((prev) => (prev - 1 + destinations.length) % destinations.length);
-  };
+  // keyboard accessibility
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowLeft")
+        setIndex((p) => (p - 1 + allDestinations.length) % allDestinations.length);
+      if (e.key === "ArrowRight")
+        setIndex((p) => (p + 1) % allDestinations.length);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  const leftIndex = (index - 1 + destinations.length) % destinations.length;
-  const rightIndex = (index + 1) % destinations.length;
-  const farRightIndex = (index + 2) % destinations.length;
+  const current = allDestinations[index];
+
   const [likes, setLikes] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -78,51 +142,29 @@ const DestinationsOfMau = () => {
     // remove red fill after 1s
     setTimeout(() => setIsLiked(false), 8000);
   };
-  const variants = {
-    enter: (dir) => ({
-      x: dir > 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.8,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      zIndex: 10,
-    },
-    exit: (dir) => ({
-      x: dir < 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.8,
-    }),
-  };
 
-  // ✅ ADD THIS NEW CODE
-  const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const observerRef = useRef(null); // To hold the observer instance
 
+  // ✅ CHANGED: Replaced scroll logic with IntersectionObserver for mobile
   useEffect(() => {
     const container = containerRef.current;
-    // Only run if the container exists and destinations are loaded
-    if (!container || destinations.length === 0) return;
+    if (!container || allDestinations.length === 0) return;
 
-    // Disconnect any previous observer before creating a new one
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
 
     const options = {
-      root: container, // The scroll container itself is the viewport
+      root: container,
       rootMargin: "0px",
       threshold: 0.51, // Trigger when 51% of the card is visible
     };
 
     const callback = (entries) => {
       entries.forEach((entry) => {
-        // When a card becomes more than 51% visible
         if (entry.isIntersecting) {
-          // Get the index we stored on the element
           const index = parseInt(entry.target.dataset.index, 10);
           if (!isNaN(index)) {
             setActiveIndex(index);
@@ -131,288 +173,310 @@ const DestinationsOfMau = () => {
       });
     };
 
-    // Create and store the new observer
     const observer = new IntersectionObserver(callback, options);
     observerRef.current = observer;
 
-    // Observe all the card elements (children of the container)
     Array.from(container.children).forEach((child) => {
       observer.observe(child);
     });
 
-    // Cleanup function to disconnect observer when component unmounts
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, [destinations, loading]); // Re-run this effect when data is loaded
-
-  if (loading)
-    return (
-      <div className="text-center text-white py-24 text-xl">Loading...</div>
-    );
+  }, [allDestinations]); // Re-run when Destinations are loaded
 
   return (
-    <main
-      id="explore"
-      className="relative min-h-auto w-full  text-gray-900 py-4 overflow-hidden"
-    >
+    <main id="explore" className="min-h-screen w-full flex flex-col items-center text-gray-900 py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
+        {/* header */}
         <motion.header
-          className="md:px-16"
+          className="mb-8"
           initial={{ opacity: 0, y: -30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: false, amount: 0.2 }}
         >
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Destinations
+            Explore Bundelkhand
           </h1>
-          <p className="mt-2 text-sm md:text-base text-slate-800">
-            Reach out and let’s bring you closer to the heart of Bundelkhand..
+          <p className="mt-2 text-sm md:text-base text-gray-800  mx-auto md:mx-0">
+            Unveil the soul of Bundelkhand. Trace the footsteps of kings, saints,
+            and artists as you explore its forts, forests, and festivals.
           </p>
         </motion.header>
+        {/* main content wrapper */}
+        <section
+          ref={wrapperRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="relative  w-full flex md:flex-col justify-center items-center lg:px-8 md:py-8"
+        >
+          {/* MAIN IMAGE PANEL */}
+          <motion.div
+            initial={{ opacity: 0, y: -30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            viewport={{ once: false, amount: 0.2 }}
+            // ✅ CHANGED: Replaced rigid w-[70%] and lg:mx-32 with flexible widths and mx-auto
+            className="hidden md:w-[90%] lg:w-[85%] xl:w-[75%] mx-auto md:flex relative flex-1 rounded-2xl overflow-hidden shadow-2xl bg-black md:px-0"
+          >
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={current.id}
+                src={current.img}
+                alt={current.name}
+                initial={{ opacity: 0, scale: 1.03 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.03 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                // ✅ CHANGED: Reduced md:h-[65vh] to md:h-[55vh] to prevent vertical overflow on laptops
+                className="w-full h-[60vh] md:h-[55vh] object-cover "
+              />
+            </AnimatePresence>
 
-        {/* ==== Main Section ==== */}
-        <section className="relative  justify-center items-center lg:px-28 md:py-8">
-          <div className="relative flex justify-center items-center md:gap-6 overflow-hidden">
-            <button
-              onClick={prevSlide}
-              className="hidden md:flex ml-2 p-2 bg-gray-700/60 rounded-full hover:bg-gray-700/40 hover:scale-105 transition-transform duration-300 easeInOut"
-            >
-              <ChevronLeft className="w-6 h-6 text-black/80" />
-            </button>
+            {/* dark gradient overlay for readability */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
-          
-            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:h-auto md:min-h-[90vh]">
-              <AnimatePresence initial={false} custom={direction}>
-                {/* === Left Small Card === */}
-                <motion.div
-                  key={`left-${leftIndex}`}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  // ✅ CHANGED: x: "-110%" -> x: "-100%" (Pulls the card in slightly)
-                  animate={{ x: "-100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
-                  exit="exit"
-                  transition={{ duration: 0.6 }}
-                  className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer"
-                  onClick={prevSlide}
-                >
-                  <h1 className="font-bold text-2xl text-center">
-                    {destinations[leftIndex].name}
-                  </h1>
-                  <img
-                    src={getImagePath(destinations[leftIndex].img)}
-                    alt=""
-                    // ✅ CHANGED: h-[45vh] -> h-[40vh] (Reduces height to prevent vertical cutoff)
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
-                  />
-                  <p className="text-sm md:text-base text-center text-slate-800">
-                    {destinations[leftIndex].desc}
-                  </p>
-                </motion.div>
-
-                {/* === Main Center Card === */}
-                <motion.div
-                  key={`main-${index}`}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { type: "spring", stiffness: 200, damping: 25 },
-                    opacity: { duration: 0.3 },
-                  }}
-                  className="absolute hidden md:flex flex-col gap-4 w-[90%] md:w-[40%] text-center md:p-2"
-                >
-                  <h1 className="font-bold text-2xl">
-                    {destinations[index].name}
-                  </h1>
-                  <div className="relative ">
-                    <img
-                    src={getImagePath(destinations[index].img)}
-                    alt={destinations[index].name}
-                    className="md:h-[50vh] rounded-xl object-cover border-2 border-black/20"
-                  />
-                  <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleLike}
-                        className="absolute top-0 right-0 p-2 rounded-full transition-colors"
-                        aria-label="Like"
-                      >
-                        <Heart
-                          className={`h-6 w-6 transition-colors duration-300 ${
-                            isLiked
-                              ? "fill-red-500 text-red-500"
-                              : "text-gray-900"
-                          }`}
-                        />
-                      </motion.button>
-                     <button
-                        onClick={() => setGalleryDestination(destinations[index])}
-                        className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
-                      >
-                        <Image className="h-4 w-4 text-white" />
-                      </button>
-                  </div>
-                  <p className="text-sm md:text-base text-slate-800">
-                    {destinations[index].desc}
-                  </p>
-                  <button className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
-                    Visit Now
-                  </button>
-                </motion.div>
-
-                {/* === Right Small Card === */}
-                <motion.div
-                  key={`right-${rightIndex}`}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  
-                  animate={{ x: "100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
-                  exit="exit"
-                  transition={{ duration: 0.6 }}
-                  className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer"
-                  onClick={nextSlide}
-                >
-                  <h1 className="font-bold text-2xl text-center">
-                    {destinations[rightIndex].name}
-                  </h1>
-                  <img
-                    src={getImagePath(destinations[rightIndex].img)}
-                    alt=""
-                  
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
-                  />
-                  <p className="text-sm md:text-base text-center text-slate-800">
-                    {destinations[rightIndex].desc}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* === Mobile Scroll Cards === */}
-              <div
-                ref={containerRef}
-                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4  pt-8 my-auto no-scrollbar scroll-smooth"
-              >
-                {destinations.map((place, i) => (
-                  <motion.div
-                    key={i}
-                    data-index={i}
-                    className={`w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-3 text-center transition-transform duration-300 ${
-                      i === activeIndex ? "scale-100" : "scale-100"
-                    }`}
+            {/* title + description anchored bottom-left */}
+            <div className="absolute left-6 w-full pr-12  bottom-6 right-6 md:right-auto md:bottom-8 z-10  pr-6 ">
+              <h2 className="hidden md:flex text-2xl md:text-4xl text-white font-bold drop-shadow-lg">
+                {current.name}
+              </h2>
+              <p className="hidden md:flex max-w-3xl mt-2 text-sm md:text-base text-slate-200">
+                {current.description}
+              </p>
+              <div className="mt-4 flex items-center justify-between  ">
+                <div className="flex gap-4">
+                  <button
+                    onClick={exploreLinks[index]}
+                    aria-label={`Discover more about ${current.name}`}
+                    className="inline-block bg-white text-slate-900 font-semibold px-5 py-2 rounded-full  hover:scale-105 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_4px_4px_12px_rgba(50,20,10.6)]"
                   >
-                    <h1 className="font-bold text-xl mb-2">{place.name}</h1>
-                   <div className=" relative ">
-                     <img
-                      src={getImagePath(place.img)}
-                      alt={place.name}
-                      className="h-[50vh] w-full rounded-xl object-cover mb-2 border-2 border-black/40"
-                    />
-                    <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleLike}
-                        className="absolute top-0 right-0 p-2 rounded-full transition-colors"
-                        aria-label="Like"
-                      >
-                        <Heart
-                          className={`h-6 w-6 transition-colors duration-300 ${
-                            isLiked
-                              ? "fill-red-500 text-red-500"
-                              : "text-gray-900"
-                          }`}
-                        />
-                      </motion.button>
-                     <button
-                        onClick={() => setGalleryDestination(place)}
-                        className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
-                      >
-                        <Image className="h-4 w-4 text-white" />
-                      </button>
-                   </div>
-                    <p className="text-sm text-slate-800 mb-3">{place.desc}</p>
-                    <button className="text-white text-lg w-full py-2 rounded-xl bg-blue-700 hover:bg-blue-600 transition-transform duration-300 easeInOut hover:scale-110 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_2px_4px_rgba(0,0,0,0.2)]">
-                      Visit Now
+                    Discover more
+                  </button>
+                  <div className="hidden md:flex">
+                    <button
+                      onClick={() => {
+                        // Ask for current location
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                              const { latitude, longitude } = position.coords;
+                              const destination = encodeURIComponent(
+                                current.name
+                              );
+                              const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}`;
+                              window.open(mapsUrl, "_blank");
+                            },
+                            (error) => {
+                              console.error(
+                                "Location access denied or unavailable:",
+                                error
+                              );
+                              const destination = encodeURIComponent(
+                                current.name
+                              );
+                              const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                              window.open(fallbackUrl, "_blank");
+                            }
+                          );
+                        } else {
+                          const destination = encodeURIComponent(current.name);
+                          const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                          window.open(fallbackUrl, "_blank");
+                        }
+                      }}
+                      aria-label={`Get directions to ${current.name}`}
+                    >
+                      <MapPin className="h-6 w-6 hover:scale-125 hover:shadow-lg text-white transition-transform duration-300 easeInOut" />
                     </button>
-                  </motion.div>
-                ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pr-5">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleLike}
+                    className="relative p-2 rounded-full transition-colors"
+                    aria-label="Like"
+                  >
+                    <Heart
+                      className={`h-6 w-6 transition-colors duration-300 ${
+                        isLiked
+                          ? "fill-red-500 text-red-500"
+                          : "text-slate-300"
+                      }`}
+                    />
+                  </motion.button>
+
+                  {/* <WishlistButton itemData={product} /> */}
+
+                  <p className="text-slate-200 font-semibold">{likes}</p>
+                </div>
               </div>
             </div>
-
-            <button
-              onClick={nextSlide}
-              className="hidden md:flex ml-2 p-2 bg-gray-700/60 rounded-full hover:bg-gray-700/40 hover:scale-105 transition-transform duration-300 easeInOut"
-            >
-              <ChevronRight className="w-6 h-6 text-black" />
-            </button>
-          </div>
-          {/* pc dots  */}
-          <div className="hidden md:flex justify-center items-center gap-2">
-            {destinations.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === index ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === index ? 1.3 : 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div>
-          {/* dots  */}
-          <div className="flex py-4 md:hidden justify-center items-center gap-2 pb-4">
-            {destinations.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeIndex ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === activeIndex ? 1 : 0.8 }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div>
-        </section>
-      </div>
-      {/* Fullscreen Gallery */}
-      <AnimatePresence>
-        {galleryDestination && (
-          <motion.div
-            className="fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <button
-              onClick={() => setGalleryDestination(null)}
-              className="absolute top-6 right-6 text-white hover:scale-110 transition"
-            >
-              <X size={28} />
-            </button>
-
-            <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
-              {/* 🆕 map through all images (main + gallery) */}
-              {galleryDestination.images.map((img, i) => (
-                <motion.img
-                  key={i}
-                  src={getImagePath(img)}
-                  alt=""
-                  className="snap-center object-cover rounded-xl w-[85vw] sm:w-[60vw] md:w-[30vw] max-h-[80vh]"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                />
-              ))}
-            </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {/* THUMBNAILS row - Desktop only */}
+          <motion.aside
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            viewport={{ once: false, amount: 0.2 }}
+            className="hidden md:flex justify-center items-center mt-6 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-slate-500 scrollbar-track-transparent pb-4"
+          >
+            <div className="flex gap-4 px-4 py-2">
+              {allDestinations.map((d, i) => {
+                const active = i === index;
+                return (
+                  <motion.button
+                    key={d.id}
+                    onClick={() => handleSelect(i)}
+                    whileHover={{ scale: 1.1 }}
+                    aria-pressed={active}
+                    className={`relative flex-shrink-0 rounded-lg overflow-hidden hover:scale-125 border-2 transform transition-all duration-300 ${
+                      active
+                        ? "border-black/80 scale-110 shadow-[0_0_25px_rgba(0,0,240,0.6)] hover:shadow-[0_0_25px_5px_rgba(0,0,240,0.4)]"
+                        : "border-transparent"
+                    } shadow-lg focus:outline-none`}
+                  >
+                    <img
+                      src={d.img}
+                      alt={d.name}
+                      // ✅ CHANGED: Replaced vw units with more stable fixed widths
+                      className="w-40 h-28 lg:w-48 lg:h-32 object-cover"
+                    />
+                    {active && (
+                      <span className="absolute -bottom-1 left-0 right-0 h-1 rounded-t-md bg-blue-400 " />
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.aside>
+        </section>
+
+        {/* MOBILE HORIZONTAL CARDS (visible < md) */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          viewport={{ once: false, amount: 0.2 }}
+          className="md:hidden mt-8"
+        >
+          <div
+            ref={containerRef}
+           
+            className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide z-30 "
+          >
+            {allDestinations.map((d, i) => (
+              <motion.article
+                key={d.id}
+                data-index={i} // ✅ Added data-index for observer
+                onClick={() => handleSelect(i)}
+                whileTap={{ scale: 0.98 }}
+                
+                className={` snap-center w-[100%] flex-shrink-0 md:min-w-[60%] bg-white/5 rounded-xl overflow-hidden border border-black/10 shadow-lg ${
+                  i === activeIndex ? "scale-100" : "scale-100"
+                } `}
+              >
+                <img
+                  src={d.img}
+                  alt={d.name}
+                 
+                  className="w-full  object-cover h-[45vh] border-b-2 border-blue-500"
+                />
+                <div className="p-4">
+                  <div className="flex items-center justify-between gap-2 pr-2">
+                    <h3 className="text-3xl font-bold text-black">{d.name}</h3>
+                    <div className="flex items-center gap-2 pr-5">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleLike}
+                        className="relative p-2 rounded-full transition-colors"
+                        aria-label="Like"
+                      >
+                        <Heart
+                          className={`h-6 w-6 transition-colors duration-300 ${
+                            isLiked
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-900"
+                          }`}
+                        />
+                      </motion.button>
+                      <p className="text-gray-900 font-semibold">{likes}</p>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-slate-900 mt-2 line-clamp-3">
+                    {d.description}
+                  </p>
+                  <div className=" flex mt-3 justify-between">
+                    <button
+                     onClick={exploreLinks[i]}
+                      aria-label={`Discover more about ${d.name}`}
+                      className="inline-block bg-white text-slate-900 font-semibold px-5 py-2 rounded-full hover:scale-105 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(20,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
+                    >
+                      Discover more
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Ask for current location
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                              const { latitude, longitude } = position.coords;
+                              const destination = encodeURIComponent(
+                                current.name
+                              );
+                              const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}`;
+                              window.open(mapsUrl, "_blank");
+                            },
+                            (error) => {
+                              console.error(
+                                "Location access denied or unavailable:",
+                                error
+                              );
+                              const destination = encodeURIComponent(
+                                current.name
+                              );
+                              const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                              window.open(fallbackUrl, "_blank");
+                            }
+                          );
+                        } else {
+                          const destination = encodeURIComponent(current.name);
+                          const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                          window.open(fallbackUrl, "_blank");
+                        }
+                      }}
+                      aria-label={`Get directions to ${current.name}`}
+                      className="flex gap-2 border justify-center items-center border-orange-950 rounded-full bg-orange-600 px-4 py-1 hover:scale-110 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
+                    >
+                      <MapPin className="h-6 w-6 hover:shadow-lg " />
+                      <p>Let's Go</p>
+                    </button>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+          {/* Dots */}
+          <div className="md:hidden py-6 flex justify-center items-center gap-2">
+            {allDestinations.map((_, i) => (
+              <motion.div
+                key={i}
+                className={`h-3 w-3 rounded-full ${
+                  i === activeIndex ? "bg-blue-500" : "bg-gray-600/90"
+                }`}
+                animate={{ scale: i === activeIndex ? 1.2 : 0.9 }}
+                transition={{ duration: 0.3 }}
+              />
+            ))}
+          </div>
+        </motion.section>
+      </div>
     </main>
   );
-};
-
-export default DestinationsOfMau;
+}

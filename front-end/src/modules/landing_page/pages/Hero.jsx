@@ -15,7 +15,7 @@ import {
   ArrowRight,
   User2,
 } from "lucide-react";
-import UserProfileModal from "../../Explore_page/modals/UserProfileModal";
+import UserProfileModal from "../../../shared/modals/UserProfileModal";
 import GlobalSearch from "../../../components/GlobalSearch";
 
 
@@ -107,7 +107,7 @@ const Hero = () => {
 
   return (
     // Added 'dark' class here to respect the theme
-    <div className={`max-h-screen flex flex-col overflow-hidden ${theme}`}>
+    <div id="home" className={`max-h-screen flex flex-col overflow-hidden ${theme}`}>
       {/* Navbar */}
       <header className="fixed z-50 h-12 top-4 md:h-16 w-full px-4 bg-white flex justify-between items-center transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 ">
         <motion.div
@@ -121,40 +121,41 @@ const Hero = () => {
             <a href="#hero">
               {/* ✅ FIX: Removed `import.meta.env.BASE_URL` */}
               <img
-                src={"/vite.svg"}
+                src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="logo"
-                className="h-6 w-6 lg:h-8 lg:w-8 hover:scale-110 transition-transform duration-1000 ease-in-out"
+                className="h-auto w-12 md:w-20  hover:scale-110 transition-transform duration-1000 ease-in-out"
               />
             </a>
           </div>
 
           {/* NAV LINKS */}
-          <nav className="hidden md:flex gap-8 font-semibold text-gray-900 dark:text-white">
+          <nav className="hidden md:flex gap-8 font-semibold text-blue-800 ">
 
             {/* ⭐ PROTECTED LINKS */}
+            <a href="#home"
+            className="hover:scale-110">Home</a>
+            <a href="#about"
+            className="hover:scale-110">About</a>
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
-              onClick={() => protectedClick("/mauranipur")}
+              href="#explore"
             >
               Explore
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
-              onClick={() => protectedClick("/jhansi")}
+              onClick={() => protectedClick("/creators")}
             >
               Creators
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
-              onClick={() => ("/events")}
+              onClick={() => protectedClick("/events")}
             >
               Events
             </a>
-
-            <a className="hover:scale-110">Home</a>
-            <a className="hover:scale-110">About</a>
           </nav>
 
 
@@ -191,7 +192,7 @@ const Hero = () => {
 
             <div className="md:hidden flex hover:scale-110 transition-transform duration-900 ease-in-out">
               <button onClick={() => setMobile(true)}>
-                <Menu className="h-6 w-6 text-black dark:text-white" />
+                <Menu className="h-6 w-6 text-black " />
               </button>
             </div>
           </div>
@@ -253,20 +254,39 @@ const Hero = () => {
       ></div>
 
       <div
-        className={`fixed top-0 right-0 h-full w-28 bg-blue-500 z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-28 bg-blue-800 z-50 transform transition-transform duration-300 ease-in-out shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] ${
           mobile ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col bg-blue-500 justify-center items-center gap-6 p-8">
+        <div className="flex flex-col justify-center items-center gap-6 p-8">
           <button onClick={() => setMobile(false)}>
             <X />
           </button>
-          <nav className="flex flex-col gap-4">
-            <a onClick={() => protectedClick("/explore")}>Explore</a>
-            <a onClick={() => protectedClick("/creators")}>Creators</a>
-            <a onClick={() => protectedClick("/events")}>Events</a>
-            <a>Home</a>
-            <a>About</a>
+          <nav className="flex flex-col gap-4 font-semibold text-white">
+             <a href="#home"
+            className="hover:scale-110">Home</a>
+            <a href="#about"
+            className="hover:scale-110">About</a>
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              href="#explore"
+            >
+              Explore
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              onClick={() => protectedClick("/creators")}
+            >
+              Creators
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition"
+              onClick={() => protectedClick("/events")}
+            >
+              Events
+            </a>
 
           </nav>
         </div>
@@ -350,7 +370,7 @@ const Hero = () => {
                   <Search className="w-8 h-8 text-black mx-4" />
                 </div>
 
-                <a href="#">
+                <a href="#explore">
                   <button className=" bg-indigo-700 flex justify-center items-center gap-2 rounded-full z-20 font-semibold px-10 md:px-10 py-3 text-xl text-white hover:scale-110 hover:bg-indigo-600 transition-all duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
                     Explore
                     <ArrowRight className="text-orange-500"/>

@@ -30,15 +30,23 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const results = await Content.find(filter)
-      .select("title category mainImage slug")
-      .limit(20);
+  const results = await Content.find(filter)
+    .select("title category region mainImage slug")
+    .limit(20);
 
-    res.json(results);
-  } catch (err) {
-    console.error("Search Error:", err);
-    res.status(500).json({ message: "Server Error" });
-  }
+  // add "source" so frontend knows this item is from DB
+  const dbResults = results.map(item => ({
+    ...item._doc,
+    source: "db"
+  }));
+
+  res.json(dbResults);
+} 
+catch (err) {
+  console.error("Search Error:", err);
+  res.status(500).json({ message: "Server Error" });
+}
+
 });
 
 

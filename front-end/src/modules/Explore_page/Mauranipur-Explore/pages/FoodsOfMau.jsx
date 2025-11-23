@@ -9,7 +9,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { getContent } from "../services/contentService.js";
+import { getContent } from "../../../../shared/services/contentService.js";
 
 const backendURL = "http://localhost:5000";
 

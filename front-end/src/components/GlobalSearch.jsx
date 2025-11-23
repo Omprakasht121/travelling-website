@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Filter, Search, X } from "lucide-react";
-import { staticSearchData } from "../modules/Explore_page/Mauranipur-Explore/staticdata/StaticSearchData";
+import { staticSearchData } from "./StaticSearchData";
 import PreviousMap_ from "postcss/lib/previous-map";
 
 export default function GlobalSearch({ open, onClose }) {
@@ -32,13 +32,17 @@ export default function GlobalSearch({ open, onClose }) {
         let finalResults = [];
 
         // 1️⃣ Filter static items
-        const staticResults = staticSearchData.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase())
-        );
+        const staticResults = staticSearchData
+  .filter(item => item.title.toLowerCase().includes(query.toLowerCase()))
+  .map(item => ({ ...item, source: "static" }));
 
         // 2️⃣ Fetch from backend
         const res = await fetch(`/api/search?query=${query}&category=${category}`);
-        const dbResults = await res.json();
+        const dbResults = (await res.json()).map(item => ({
+  ...item,
+  source: "db"
+}));
+
 
         // 3️⃣ Combine both
         finalResults = [...staticResults, ...dbResults];
@@ -165,9 +169,28 @@ export default function GlobalSearch({ open, onClose }) {
         className={`p-3 flex items-center gap-3 cursor-pointer border-b ${
           index === activeIndex ? "bg-gray-200" : "hover:bg-gray-100"
         }`}
-        onClick={() => {
-          window.location.href = `/${item.slug}`;
-        }}
+       onClick={() => {
+  if (item.source === "static") {
+    if (!item.slug) {
+      console.error("Static item missing slug:", item);
+      return;
+    }
+    window.location.href = `/${item.slug}`;
+    return;
+  }
+
+  if (item.source === "db") {
+    if (!item.region || !item.category) {
+      console.error("DB result missing region/category:", item);
+      return;
+    }
+    window.location.href = `/${item.region}/${item.category}`;
+    return;
+  }
+
+  console.error("Unknown item type", item);
+}}
+
       >
         <img
           src={

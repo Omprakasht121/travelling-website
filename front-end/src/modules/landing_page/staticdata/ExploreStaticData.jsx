@@ -1,0 +1,66 @@
+
+export const Destinations = [
+    {
+      id: 0,
+      name: "Jhansi",
+      img: `${import.meta.env.BASE_URL}jhansi6.jpg`,
+      location: "Jhansi",
+      description: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising. It serves as a gateway to Bundelkhand’s forts, rivers and cultural landscapes.",
+    },
+    {
+      id: 1,
+      name: "Mauranipur",
+      img: `${import.meta.env.BASE_URL}orchha3.jpg`,
+      location: "Mauranipur",
+      description: "Located in the Jhansi district of Uttar Pradesh, Mauranipur is known for its historical textile craftsmanship and deep cultural roots. Formerly called Madhupuri, it lies amid Bundelkhand’s fields and traditions.",
+    },
+    {
+      id: 2,
+      name: "Orchha",
+      img: `${import.meta.env.BASE_URL}orchha5.jpg`,
+      location: "Orchha",
+      description: "Orchha is a tranquil historic town in the Bundelkhand region, nestled on the banks of the Betwa River and marked by palaces, temples and riverside forts that date back to the 16th–17th centuries.",
+    },
+    {
+      id: 3,
+      name: "Khajuraho",
+      location: "Khajuraho",
+      img: `${import.meta.env.BASE_URL}khajuraho.jpg`,
+      description: "A world-renowned destination in Madhya Pradesh’s Bundelkhand, Khajuraho is celebrated for its exquisite medieval Hindu and Jain temples featuring intricate carvings and rich symbolism. The temple complex is a UNESCO World Heritage site, testifying to the artistic zenith of the Chandela dynasty.",
+    },
+    {
+      id: 4,
+      name: "Bandha",
+      location: "Bandha",
+      img: `${import.meta.env.BASE_URL}bandha.jpg`,
+      description: "Situated in Uttar Pradesh’s Bundelkhand region, the district of Banda is known for its strategic hills and historic forts like Kalinjar, as well as its distinctive culture and connection to the wider Bundelkhand plateau.",
+    },
+    {
+      id: 5,
+      name: "Panna",
+      location: "Panna",
+      img: `${import.meta.env.BASE_URL}panna.jpg`,
+      description: "Nestled in Madhya Pradesh’s Bundelkhand, Panna combines royal history, diamond-mining heritage and lush wilderness. It is famous for the Panna National Park and Tiger Reserve, as well as for being part of the region’s geological and cultural richness.",
+    },
+    {
+      id: 6,
+      name: "Datia",
+      location: "Datia",
+      img: `${import.meta.env.BASE_URL}datia.jpg`,
+      description: "A historic town in the northern Bundelkhand region of Madhya Pradesh, Datia enchants visitors with its seven-storied palace built by Raja Bir Singh Deo in 1614 — a remarkable example of Bundela architecture and a fusion of Hindu-Mughal styles.",
+    },
+    {
+      id: 7,
+      name: "Chitrakoot",
+      location: "Chitrakoot",
+      img: `${import.meta.env.BASE_URL}chhitrakoot.jpg`,
+      description: "A sacred and tranquil region straddling Uttar Pradesh and Madhya Pradesh, Chitrakoot is celebrated in Hindu mythology — as the place where Lord Rama spent part of his exile. It offers a blend of spiritual ambience, riverside serenity and forested hills in the Vindhya range.",
+    },
+    {
+      id: 8,
+      name: "Chhatarpur",
+      location: "Chhatarpur",
+      img: `${import.meta.env.BASE_URL}chhatarpur.jpg`,
+      description: "Chhatarpur is a district and city in north-eastern Madhya Pradesh’s Bundelkhand region, offering access to ancient temples and rugged landscapes, and serving as a gateway to deeper heritage destinations.",
+    },
+  ];

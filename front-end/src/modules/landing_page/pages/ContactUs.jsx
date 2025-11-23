@@ -8,13 +8,34 @@ import {
   Instagram,
   Twitter,
   Linkedin,
+  Globe,
 } from "lucide-react";
+import { useContact } from "../hooks/contacthook.js";
 
-const intaUrl = import.meta.env.VITE_INSTAGRAM_URL;
+const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const mailTo = import.meta.env.VITE_GMAIL_URL;
+const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
+const twitterUrl = import.meta.env.VITE_TWITTER_URL;
+const linkedinUrl = import.meta.env.VITE_LINKEDINURL_URL;
+const websiteUrl = import.meta.env.VITE_WEBSITE_URL;
+
 
 
 const ContactUs = () => {
+    const { register, handleSubmit, doSubmit, errors, loading } = useContact();
+    const openWhatsApp = (phone, message = "") => {
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+    }
+    const socialLinks = [
+        facebookUrl,
+        instagramUrl,
+        twitterUrl,
+        linkedinUrl,
+        websiteUrl,
+    ];
+
+
   return (
     <main className="min-h-screen w-full flex flex-col items-center  text-gray-900 py-12 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
@@ -56,29 +77,42 @@ const ContactUs = () => {
                             product? Feel free to contact us below.
                         </p>
 
-                        <form className="space-y-5">
+                        <form  onSubmit={handleSubmit(doSubmit)}
+                        className="space-y-5">
                             <div className="grid md:grid-cols-2 gap-5 text-black">
                             <motion.input
                                 whileFocus={{ scale: 1.03 }}
+                                {...register("name")}
                                 type="text"
                                 placeholder="Enter your first name"
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                             />
+                             {errors.name && (
+                                <p className="text-sm text-red-600">{errors.name.message}</p>
+                            )}
                             <motion.input
                                 whileFocus={{ scale: 1.03 }}
+                                {...register("address")}
                                 type="text"
-                                placeholder="Enter your last name"
+                                placeholder="Enter Address"
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                             />
+                            {errors.address && (
+                <p className="text-sm text-red-600">{errors.address.message}</p>
+              )}
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-5 text-black">
                             <motion.input
                                 whileFocus={{ scale: 1.03 }}
+                                {...register("email")}
                                 type="email"
                                 placeholder="Enter your email"
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
+                            {errors.email && (
+                <p className="text-sm text-red-600">{errors.email.message}</p>
+              )}
                             <div className="flex border border-gray-300 rounded-full overflow-hidden">
                                 <select className="px-3 bg-gray-100 text-gray-700 outline-none">
                                     <option value="+91">+91</option>
@@ -88,28 +122,42 @@ const ContactUs = () => {
                                 </select>
                                 <motion.input
                                 whileFocus={{ scale: 1.03 }}
+                                {...register("phone")}
                                 type="tel"
                                 placeholder="Enter your contact number"
                                 className="flex-1 px-4 py-3 outline-none text-black"
                                 />
+                                {errors.phone && (
+                <p className="text-sm text-red-600">{errors.phone.message}</p>
+              )}
                             </div>
                             </div>
 
                             <motion.textarea
                             whileFocus={{ scale: 1.02 }}
+                            {...register("message")}
                             rows="4"
                             placeholder="Enter your message"
                             className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                             ></motion.textarea>
+                            {errors.message && (
+              <p className="text-sm text-red-600">{errors.message.message}</p>
+            )}
 
                             <div className="text-center md:text-left">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 type="submit"
-                                className="bg-[#0a1a4c] text-white px-8 py-3 rounded-full shadow hover:bg-blue-900 transition-all duration-300 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_10px_rgba(0,0,0,0.6)]"
+                                className={`self-start border border-indigo-600 text-white font-semibold px-12 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-600 hover:scale-105 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_10px_rgba(0,0,0,0.6)] 
+                                ${
+                                loading
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                                }`}
+                                
                             >
-                                Send a Message
+                             {loading ? "Sending..." : "Send"}
                             </motion.button>
                             </div>
                         </form>
@@ -136,7 +184,7 @@ const ContactUs = () => {
                                 <Instagram size={20} />
                                 <div>
                                 <p className="text-sm">instagram:</p>
-                                <a href={intaUrl}><p className="font-semibold">The Unseen Bundelkhand</p></a>
+                                <a href={instagramUrl}><p className="font-semibold">The Unseen Bundelkhand</p></a>
                                 </div>
                             </motion.div>
 
@@ -147,7 +195,7 @@ const ContactUs = () => {
                                 <MessageCircle size={20} />
                                 <div>
                                 <p className="text-sm">SMS / WhatsApp:</p>
-                                <a href={`mailto:${mailTo}`} ><p className="font-semibold">+91 9297863623</p></a>
+                                <a onClick={() => openWhatsApp("918888888888", "Hello! OMM")} ><p className="font-semibold">+91 9297863623</p></a>
                                 </div>
                             </motion.div>
 
@@ -158,7 +206,7 @@ const ContactUs = () => {
                                 <Mail size={20} />
                                 <div>
                                 <p className="text-sm">Email:</p>
-                                <a href=""><p className="font-semibold">omprakasht5689@gmail.com</p></a>
+                                <a href={`mailto:${mailTo}`}><p className="font-semibold">omprakasht5689@gmail.com</p></a>
                                 </div>
                             </motion.div>
                             </div>
@@ -167,16 +215,19 @@ const ContactUs = () => {
                         <div className="mt-8">
                             <p className="text-sm mb-3 text-gray-300">Connect with us</p>
                             <div className="flex gap-4">
-                            {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
-                                <motion.a
+                            {[Facebook, Instagram, Twitter, Linkedin, Globe].map((Icon, i) => (
+                            <motion.a
                                 key={i}
                                 whileHover={{ scale: 1.2, rotate: 5 }}
-                                href="#"
+                                href={socialLinks[i]}           // 🔥 correct URL for each icon
+                                target="_blank"                 // opens in new tab
+                                rel="noopener noreferrer"       // security best practice
                                 className="p-2 bg-[#11224d] rounded-lg hover:bg-blue-700 transition-all duration-300"
-                                >
+                            >
                                 <Icon size={18} />
-                                </motion.a>
+                            </motion.a>
                             ))}
+                            
                             </div>
                         </div>
                         </motion.div>

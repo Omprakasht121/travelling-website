@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
-import { getContent } from "../services/contentService.js";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = "http://localhost:5000"; // ✅ Change when deployed
+const backendURL =  import.meta.env.VITE_BASE_URL // ✅ Change when deployed
 
 // ✅ Static Hard-Coded Shops
 const staticHotels = [

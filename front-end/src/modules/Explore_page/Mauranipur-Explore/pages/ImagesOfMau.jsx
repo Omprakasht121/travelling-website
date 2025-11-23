@@ -1,9 +1,9 @@
 // ImagesOfMau.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion"; // ✅ Import motion
-import { getContent } from "../services/contentService.js";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = "http://localhost:5000";
+const backendURL =  import.meta.env.VITE_BASE_URL;
 
 const ImagesOfMau = () => {
   const staticImages = [
@@ -187,7 +187,7 @@ const ImagesOfMau = () => {
             ))}
             <button
               onClick={() => setShowAll(false)}
-              className="fixed top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full px-4 py-2"
+              className="fixed top-4 right-4 bg-gray-700/80 hover:bg-white/40 text-white rounded-full px-4 py-2  shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
             >
               Close
             </button>

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Search, Sun, User, User2, User2Icon, UserCog2Icon, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getContent } from "../services/contentService.js";
-import UserProfileModal from "../../modals/UserProfileModal.jsx";
+import { getContent } from "../../../../shared/services/contentService.js";
+import UserProfileModal from "../../../../shared/modals/UserProfileModal.jsx";
 import { useAuthModal } from "../../../../context/AuthModalContext.jsx";
 import GlobalSearch from "../../../../components/GlobalSearch.jsx";
+import { useNavigate } from "react-router-dom";
 
-const backendURL = "http://localhost:5000";
+const backendURL = import.meta.env.VITE_BASE_URL;
 
 const MauExplore = () => {
   const [mobile, setMobile] = useState(false);
@@ -18,6 +19,8 @@ const MauExplore = () => {
   const [loading, setLoading] = useState(true);
   const[search, setSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const handleLogin = navigate("/login")
 
 
 const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
@@ -57,6 +60,8 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
     fetchData();
   }, []);
 
+
+  
   // ✅ Merge static + dynamic ads
   const advertisementImages = [...staticImages, ...adsImage];
 
@@ -140,12 +145,12 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
             viewport={{ once: false, amount: 0.2 }}
             className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg  font-semibold flex justify-between md:justify-around items-center"
           >
-            <div>
-              <Link to="/">
+            <div className=" ">
+              <Link to="/" >
                 <img
-                  src={`${import.meta.env.BASE_URL}vite.svg`}
+                  src={`${import.meta.env.BASE_URL}logo.png`}
                   alt="logo"
-                  className="h-6 w-6 lg:h-8 lg:w-8 hover:scale-110 transition-transform duration-700 ease-in-out"
+                  className="h-auto w-12 md:w-20  hover:scale-110 transition-transform duration-700 ease-in-out"
                 />
               </Link>
             </div>
@@ -170,16 +175,16 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
                 Explore
               </a>
               <a
-                href="#creators"
-                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
-              >
-                Creators
-              </a>
-              <a
                 href="#events"
                 className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Events
+              </a>
+               <a
+                href="#creators"
+                className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+              >
+                Creators
               </a>
               
             </nav>
@@ -202,7 +207,8 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
               <User2 className="w-6 h-6 text-black" />
             </button>
               <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.6)]">
-                <button className="px-6 py-1 rounded-full bg-orange-500 hover:bg-orange-600px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
+                <button onClick={handleLogin}
+                className="px-6 py-1 rounded-full bg-orange-500 hover:bg-orange-600px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
                   SignIn
                 </button>
               </div>
@@ -255,7 +261,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
       />
         {/* Mobile Overlay */}
         <div
-          className={`fixed inset-0 bg-black/70 z-50 transition-opacity md:hidden ${
+          className={`fixed inset-0 bg-black/80  z-50 transition-opacity md:hidden ${
             mobile ? "opacity-100 visible" : "opacity-0 invisible"
           }`}
           onClick={() => setMobile(false)}
@@ -263,45 +269,45 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
 
         {/* Sidebar */}
         <div
-          className={`fixed inset top-0 right-0 h-full w-28 bg-blue-500 z-50 transform transition-transform duration-300 ease-in-out ${
+          className={`fixed inset top-0 right-0 h-full w-28 bg-blue-800 z-50 transform transition-transform duration-300 ease-in-out  shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] ${
             mobile ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="flex flex-col bg-blue-500 justify-center items-center gap-6 p-8">
+          <div className="flex flex-col  justify-center items-center gap-6 p-8">
             <button onClick={() => setMobile(false)}>
               <X />
             </button>
-            <nav className="flex flex-col gap-4">
-              <Link
-                to="/"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
+            <nav className="flex flex-col gap-4 text-white font-semibold ">
+              <a
+                href="#home"
+                className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Home
-              </Link>
-              <Link
-                to="/about"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
+              </a>
+              <a
+                href="#images"
+                className="  hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                About
-              </Link>
-              <Link
-                to="/explore"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
+                Images
+              </a>
+              <a
+                href="#explore"
+                className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Explore
-              </Link>
-              <Link
-                to="/creators"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
-              >
-                Creators
-              </Link>
-              <Link
-                to="/events"
-                className="hover:scale-110 hover:text-blue-950 hover:underline"
+              </a>
+              <a
+                href="#events"
+                className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
                 Events
-              </Link>
+              </a>
+               <a
+                href="#creators"
+                className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
+              >
+                Creators
+              </a>
             </nav>
           </div>
         </div>
@@ -354,7 +360,8 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
           </div>
 
           <div className=" text-white flex justify-center items-center mt-4">
-            <button className=" bg-blue-700 px-8 py-2 rounded-full text-lg font-bold hover:scale-110 transition-transform duration-500  shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_0_16px_rgba(200,10,20,0.5)]">
+            <button onClick={() => (window.location.hash = "explore")}
+            className=" bg-blue-700 px-8 py-2 rounded-full text-lg font-bold hover:scale-110 transition-transform duration-500  shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_0_16px_rgba(200,10,20,0.5)]">
               Explore
             </button>
           </div>

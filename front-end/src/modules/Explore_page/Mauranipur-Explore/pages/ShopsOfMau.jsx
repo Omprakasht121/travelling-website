@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
-import { getContent } from "../services/contentService.js";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = "http://localhost:5000"; // ✅ Change when deployed
+const backendURL =  import.meta.env.VITE_BASE_URL; // ✅ Change when deployed
 
 // ✅ Static Hard-Coded Shops
 const staticShops = [
@@ -326,20 +326,6 @@ const ShopsOfMau = () => {
               </div>
             ))}
           </div>
-
-          {/* Outer Dots */}
-          {/* <div className="flex gap-2 justify-center py-6">
-            {displayShops.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeShop ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === activeShop ? 1 : 0.7 }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div> */}
         </section>
       </div>
 

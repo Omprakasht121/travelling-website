@@ -1,183 +1,418 @@
-// --------------------------------------------------
-// CREATOR PROFILE MODAL
-// --------------------------------------------------
-const CreatorProfileModal = ({ creator, onClose }) => {
-  const cover = makeImageUrl(creator.coverPhoto) || fallbackCover;
-  const profile = makeImageUrl(creator.profilePic) || makeImageUrl(creator.coverPhoto) || fallbackProfile;
-  const gallery = Array.isArray(creator.bestPhotos) ? creator.bestPhotos.map(makeImageUrl).filter(Boolean) : [];
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, GalleryVertical, Heart, Image } from "lucide-react";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-  const socialIcons = {
-    instagram: <Instagram className="w-5 h-5" />,
-    youtube: <Youtube className="w-5 h-5" />,
-    facebook: <Facebook className="w-5 h-5" />,
+import { staticDestinations } from "../staticdata/StaticDestinations.jsx";
+
+const backendURL = "http://localhost:5000";
+
+const DestinationsOfMau = () => {
+
+
+  const getImagePath = (img, folder = "") => {
+  if (!img) return "/fallback.jpg";
+  // 🆕: detect if backend image from /uploads or /gallery
+  if (img.startsWith("/uploads") || img.startsWith("uploads"))
+    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+  if (img.startsWith("/gallery") || img.startsWith("gallery"))
+    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+
+  if (img.startsWith("http")) return img;
+  return `${import.meta.env.BASE_URL}${folder}${img}`;
+};
+
+
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const [destinationData, setDestinationsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [galleryDestination, setGalleryDestination] = useState(null);
+
+  // ✅ Fetch dynamic destinations from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getContent("mauranipur", "destinations");
+        const mappedData = data.map((item) => ({
+          name: item.title,
+          desc: item.description,
+          img: item.mainImage ||  "",
+          images: item.galleryImages?.[0] || "",
+        }));
+        setDestinationsData(mappedData);
+      } catch (err) {
+        console.error("Error fetching destinations:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // ✅ Merge static + dynamic destinations
+  const destinations = [...staticDestinations, ...destinationData];
+
+  const nextSlide = () => {
+    setDirection(1);
+    setIndex((prev) => (prev + 1) % destinations.length);
   };
 
+  const prevSlide = () => {
+    setDirection(-1);
+    setIndex((prev) => (prev - 1 + destinations.length) % destinations.length);
+  };
+
+  const leftIndex = (index - 1 + destinations.length) % destinations.length;
+  const rightIndex = (index + 1) % destinations.length;
+  const farRightIndex = (index + 2) % destinations.length;
+  const [likes, setLikes] = useState(1);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleLike = () => {
+    setLikes((prev) => prev + 1);
+    setIsLiked(true);
+
+    // remove red fill after 1s
+    setTimeout(() => setIsLiked(false), 8000);
+  };
+  const variants = {
+    enter: (dir) => ({
+      x: dir > 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.8,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      zIndex: 10,
+    },
+    exit: (dir) => ({
+      x: dir < 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.8,
+    }),
+  };
+
+  // ✅ ADD THIS NEW CODE
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef(null);
+  const observerRef = useRef(null); // To hold the observer instance
+
+  useEffect(() => {
+    const container = containerRef.current;
+    // Only run if the container exists and destinations are loaded
+    if (!container || destinations.length === 0) return;
+
+    // Disconnect any previous observer before creating a new one
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    const options = {
+      root: container, // The scroll container itself is the viewport
+      rootMargin: "0px",
+      threshold: 0.51, // Trigger when 51% of the card is visible
+    };
+
+    const callback = (entries) => {
+      entries.forEach((entry) => {
+        // When a card becomes more than 51% visible
+        if (entry.isIntersecting) {
+          // Get the index we stored on the element
+          const index = parseInt(entry.target.dataset.index, 10);
+          if (!isNaN(index)) {
+            setActiveIndex(index);
+          }
+        }
+      });
+    };
+
+    // Create and store the new observer
+    const observer = new IntersectionObserver(callback, options);
+    observerRef.current = observer;
+
+    // Observe all the card elements (children of the container)
+    Array.from(container.children).forEach((child) => {
+      observer.observe(child);
+    });
+
+    // Cleanup function to disconnect observer when component unmounts
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [destinations, loading]); // Re-run this effect when data is loaded
+
+  if (loading)
+    return (
+      <div className="text-center text-white py-24 text-xl">Loading...</div>
+    );
+
   return (
-    <motion.div
-        className="fixed inset-0 z-50 bg-gray-900 text-white flex flex-col "
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ duration: 0.45 }}
-      >
-        <div className="flex-1 container mx-auto overflow-y-auto px-4 sm:px-6 lg:px-24">
+    <main
+      id="explore"
+      className="relative min-h-auto w-full  text-gray-900 py-4 overflow-hidden"
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
+        <motion.header
+          className="md:px-16"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Destinations
+          </h1>
+          <p className="mt-2 text-sm md:text-base text-slate-800">
+            Reach out and let’s bring you closer to the heart of Bundelkhand..
+          </p>
+        </motion.header>
 
-       <header className=" top-0 flex items-center justify-between p-4 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 rounded-lg">
-        <h2 className="text-xl font-bold">{creator.name}</h2>
-        <button onClick={onClose} className="p-2 rounded-full bg-white/30 hover:scale-125 hover:bg-gray-600 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,0,0,0.05),_1px_3px_8px_rgba(0,100,100,0.6)]">
-          <X className="w-6 h-6" />
-        </button>
-      </header>
+        {/* ==== Main Section ==== */}
+        <section className="relative  justify-center items-center lg:px-28 md:py-8">
+          <div className="relative flex justify-center items-center md:gap-6 overflow-hidden">
+            <button
+              onClick={prevSlide}
+              className="hidden md:flex ml-2 p-2 bg-gray-700/60 rounded-full hover:bg-gray-700/40 hover:scale-105 transition-transform duration-300 easeInOut"
+            >
+              <ChevronLeft className="w-6 h-6 text-black/80" />
+            </button>
 
-      <div className="flex-1 overflow-y-auto ">
-        <div className="relative h-64 md:h-96 border border-white/30 rounded-xl">
-          <img src="https://images.unsplash.com/photo-1683721003111-070bcc053d8b?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="w-full h-full object-cover rounded-xl" alt={creator.name} />
-          <div className="absolute inset-0 bg-black/40"></div>
-
-          <img
-            src={cover}
-            className="absolute -bottom-12 left-6 w-24 h-24 rounded-full border border-white/20 object-cover shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
-            alt={`${creator.name} profile`}
-          />
-        </div>
-        {/* basic information  */}
-        <div className="mt-16 px-8 md:flex-row justify-between items-center gap-6  ">
-          <div>
-            <h2 className="text-4xl font-extrabold">{creator.name}</h2>
-            <p className="text-xl text-orange-400 font-semibold">{creator.category}</p>
-          </div>
-          {/* social media icons  */}
-          <div className=" md:px-8 flex justify-between items-center">
-            <div className="flex gap-3 mt-4 ">
-              {Object.entries(creator.social || {}).map(([key, url]) =>
-                url ? (
-                  <a
-                    key={key}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-gray-700 rounded-full hover:bg-orange-600 transition"
-                  >
-                    {socialIcons[key]}
-                  </a>
-                ) : null
-              )}
-            </div>
-            
-            <a
-            href={`mailto:${creator.contact?.email || ""}`}
-            className="px-6 py-3 bg-orange-600 rounded-full font-semibold hover:bg-orange-700 hover:scale-110 transition-transform duration-300 easeInOut flex items-center gap-2 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
-          >
-            Contact <ArrowRight className="w-5 h-5" />
-          </a>
           
-          </div>
-        </div>
-        {/* profile cards  */}
-        <div className="md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 pb-32 ">
-          {/* left container  */}
-          <div className=" p-2 lg:px-12 rounded-2xl  border border-gray-700 flex flex-col justify-center items-center">
-            <div className="relative w-28 h-28 rounded-full overflow-hidden mb-4 border-2 border-sky-500/40 transition-transform duration-300 easeInOut  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
-              <img
-                src={cover}
-                alt={creator.name}
-                className="w-full h-full object-cover"
-              />
-              {/* Placeholder for a logo/icon in the center of the profile pic if needed */}
-              {/* <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold">
-                B
-              </div> */}
-            </div>
-            {/* Name and Category */}
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white text-center">
-              {creator.name}
-            </h2>
-            <p className="text-orange-400 text-lg font-medium text-center mb-6">
-              {creator.bio}
-            </p>
+            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:h-auto md:min-h-[90vh]">
+              <AnimatePresence initial={false} custom={direction}>
+                {/* === Left Small Card === */}
+                <motion.div
+                  key={`left-${leftIndex}`}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  // ✅ CHANGED: x: "-110%" -> x: "-100%" (Pulls the card in slightly)
+                  animate={{ x: "-100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
+                  exit="exit"
+                  transition={{ duration: 0.6 }}
+                  className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer"
+                  onClick={prevSlide}
+                >
+                  <h1 className="font-bold text-2xl text-center">
+                    {destinations[leftIndex].name}
+                  </h1>
+                  <img
+                    src={getImagePath(destinations[leftIndex].img)}
+                    alt=""
+                    // ✅ CHANGED: h-[45vh] -> h-[40vh] (Reduces height to prevent vertical cutoff)
+                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                  />
+                  <p className="text-sm md:text-base text-center text-slate-800">
+                    {destinations[leftIndex].desc}
+                  </p>
+                </motion.div>
 
-             {/* Stats */}
-            <div className="flex justify-around w-full mb-8">
-              
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-white">
-                  {creator.stats.posts}
-                </span>
-                <p className="text-sm text-gray-400">Posts</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-white">
-                  {creator.stats.followers}
-                </span>
-                <p className="text-sm text-gray-400">Followers</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-white">
-                  {creator.stats.following}
-                </span>
-                <p className="text-sm text-gray-400">Following</p>
-              </div>
-            </div>
-            {/* Action Buttons */}
-                  <div className="flex gap-6 w-full mb-8">
-                    <motion.a
-                     href={`${creator.social.instagram}`}
-                    target="_blank"
-                    rel="noopener noreferrer" // or creator.social.instagram for 'Follow'
-                      className="flex-1 text-center py-3 bg-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-transform duration-300 easeInOut  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_8px_rgba(0,0,0,0.6)]"
-                      whileHover={{ scale: 1.05}}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Follow
-                    </motion.a>
-                    <motion.a
-                      href={`tel:${creator.contact.phone}`} // or other contact method
-                      className="flex-1  py-3 bg-gray-700 text-gray-200 font-semibold rounded-xl text-lg text-center transition-transform duration-300 easeInOut  shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_8px_rgba(0,0,0,0.6)]"
-                      whileHover={{ scale: 1.05, backgroundColor: "#4B5563" }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Message
-                    </motion.a>
+                {/* === Main Center Card === */}
+                <motion.div
+                  key={`main-${index}`}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 200, damping: 25 },
+                    opacity: { duration: 0.3 },
+                  }}
+                  className="absolute hidden md:flex flex-col gap-4 w-[90%] md:w-[40%] text-center md:p-2"
+                >
+                  <h1 className="font-bold text-2xl">
+                    {destinations[index].name}
+                  </h1>
+                  <div className="relative ">
+                    <img
+                    src={getImagePath(destinations[index].img)}
+                    alt={destinations[index].name}
+                    className="md:h-[50vh] rounded-xl object-cover border-2 border-black/20"
+                  />
+                  <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleLike}
+                        className="absolute top-0 right-0 p-2 rounded-full transition-colors"
+                        aria-label="Like"
+                      >
+                        <Heart
+                          className={`h-6 w-6 transition-colors duration-300 ${
+                            isLiked
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-900"
+                          }`}
+                        />
+                      </motion.button>
+                     <button
+                        onClick={() => setGalleryDestination(destinations[index])}
+                        className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
+                      >
+                        <Image className="h-4 w-4 text-white" />
+                      </button>
                   </div>
-            <h3 className="text-xl font-bold mb-3">Gallery</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {gallery.length ? (
-                gallery.map((src, i) => (
-                  <img key={i} src={src} alt={`gallery-${i}`} className="w-full h-48 object-cover rounded-lg" />
-                ))
-              ) : (
-                <p className="text-gray-300 p-4">No gallery images</p>
-              )}
-            </div>
-          </div>
+                  <p className="text-sm md:text-base text-slate-800">
+                    {destinations[index].desc}
+                  </p>
+                  <button className=" text-white text-lg md:text-xl my-2 px-6 py-2 font-semibold rounded-xl bg-blue-700 hover:bg-blue-600 hover:scale-110 transition-transform duration-300 easeInOut   shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+                    Visit Now
+                  </button>
+                </motion.div>
 
+                {/* === Right Small Card === */}
+                <motion.div
+                  key={`right-${rightIndex}`}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  
+                  animate={{ x: "100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
+                  exit="exit"
+                  transition={{ duration: 0.6 }}
+                  className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer"
+                  onClick={nextSlide}
+                >
+                  <h1 className="font-bold text-2xl text-center">
+                    {destinations[rightIndex].name}
+                  </h1>
+                  <img
+                    src={getImagePath(destinations[rightIndex].img)}
+                    alt=""
+                  
+                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                  />
+                  <p className="text-sm md:text-base text-center text-slate-800">
+                    {destinations[rightIndex].desc}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
 
-              {/* right side container  */}
-          <div className=" flex flex-col gap-4 rounded-xl">
-            <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-            <h3 className="text-2xl font-bold mb-6">Contact Details</h3>
-            <ul className="space-y-4">
-              {creator.contact?.phone && (
-                <li className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-orange-400" /> +91<span>{creator.contact.phone}</span>
-                </li>
-              )}
-              {creator.contact?.email && (
-                <li className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-orange-400" /> <span>{creator.contact.email}</span>
-                </li>
-              )}
-              {creator.contact?.whatsapp && (
-                <li className="flex items-center gap-3">
-                  <MessageSquare className="w-5 h-5 text-orange-400" /> +91<span>{creator.contact.whatsapp}</span>
-                </li>
-              )}
-            </ul>
+              {/* === Mobile Scroll Cards === */}
+              <div
+                ref={containerRef}
+                className="flex md:hidden overflow-x-auto snap-x snap-mandatory space-x-4  pt-8 my-auto no-scrollbar scroll-smooth"
+              >
+                {destinations.map((place, i) => (
+                  <motion.div
+                    key={i}
+                    data-index={i}
+                    className={`w-[100%] snap-center flex-shrink-0 bg-white/10 rounded-xl p-3 text-center transition-transform duration-300 ${
+                      i === activeIndex ? "scale-100" : "scale-100"
+                    }`}
+                  >
+                    <h1 className="font-bold text-xl mb-2">{place.name}</h1>
+                   <div className=" relative ">
+                     <img
+                      src={getImagePath(place.img)}
+                      alt={place.name}
+                      className="h-[50vh] w-full rounded-xl object-cover mb-2 border-2 border-black/40"
+                    />
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleLike}
+                        className="absolute top-0 right-0 p-2 rounded-full transition-colors"
+                        aria-label="Like"
+                      >
+                        <Heart
+                          className={`h-6 w-6 transition-colors duration-300 ${
+                            isLiked
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-900"
+                          }`}
+                        />
+                      </motion.button>
+                     <button
+                        onClick={() => setGalleryDestination(place)}
+                        className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
+                      >
+                        <Image className="h-4 w-4 text-white" />
+                      </button>
+                   </div>
+                    <p className="text-sm text-slate-800 mb-3">{place.desc}</p>
+                    <button className="text-white text-lg w-full py-2 rounded-xl bg-blue-700 hover:bg-blue-600 transition-transform duration-300 easeInOut hover:scale-110 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_2px_4px_rgba(0,0,0,0.2)]">
+                      Visit Now
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
             </div>
+
+            <button
+              onClick={nextSlide}
+              className="hidden md:flex ml-2 p-2 bg-gray-700/60 rounded-full hover:bg-gray-700/40 hover:scale-105 transition-transform duration-300 easeInOut"
+            >
+              <ChevronRight className="w-6 h-6 text-black" />
+            </button>
           </div>
-        </div>
+          {/* pc dots  */}
+          <div className="hidden md:flex justify-center items-center gap-2">
+            {destinations.map((_, i) => (
+              <motion.div
+                key={i}
+                className={`h-3 w-3 rounded-full ${
+                  i === index ? "bg-blue-500" : "bg-gray-700/40"
+                }`}
+                animate={{ scale: i === index ? 1.3 : 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            ))}
+          </div>
+          {/* dots  */}
+          <div className="flex py-4 md:hidden justify-center items-center gap-2 pb-4">
+            {destinations.map((_, i) => (
+              <motion.div
+                key={i}
+                className={`h-3 w-3 rounded-full ${
+                  i === activeIndex ? "bg-blue-500" : "bg-gray-700/40"
+                }`}
+                animate={{ scale: i === activeIndex ? 1 : 0.8 }}
+                transition={{ duration: 0.3 }}
+              />
+            ))}
+          </div>
+        </section>
       </div>
-     </div>
-    </motion.div>
+      {/* Fullscreen Gallery */}
+      <AnimatePresence>
+        {galleryDestination && (
+          <motion.div
+            className="fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <button
+              onClick={() => setGalleryDestination(null)}
+              className="absolute top-6 right-6 text-white hover:scale-110 transition"
+            >
+              <X size={28} />
+            </button>
+
+            <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
+              {/* 🆕 map through all images (main + gallery) */}
+              {galleryDestination.images.map((img, i) => (
+                <motion.img
+                  key={i}
+                  src={getImagePath(img)}
+                  alt=""
+                  className="snap-center object-cover rounded-xl w-[85vw] sm:w-[60vw] md:w-[30vw] max-h-[80vh]"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 };
+
+export default DestinationsOfMau;

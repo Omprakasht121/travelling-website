@@ -7,6 +7,7 @@ import RegionMap from "./RegionMap";
 import About from "./About";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
+import { Toaster } from "react-hot-toast";
 
 function Landing(){
     return(
@@ -22,6 +23,14 @@ function Landing(){
         <Footer/>
         </div>
      </div>
+     <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: { fontSize: "16px" },
+        }}
+      />
       </>
     )
 }

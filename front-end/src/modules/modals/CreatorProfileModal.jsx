@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 
-const backendURL = "http://localhost:5000";
+const backendURL = import.meta.env.VITE_BASE_URL;
 const fallbackProfile = "/default-profile.jpg";
 const fallbackCover = "/default-cover.jpg";
 

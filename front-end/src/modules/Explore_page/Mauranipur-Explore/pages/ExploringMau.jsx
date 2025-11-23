@@ -10,7 +10,8 @@ import EnquiryOfMau from "./EnquiryOfMau";
 import FestivalsOfMau from "./EventsOfMau";
 import MauExplore from "./Mau-explore";
 import Creators from "./CreatorOfMau";
-import CreatorProfileModal from "./modals/CreatorProfileModal";
+import CreatorProfileModal from "../../../modals/CreatorProfileModal";
+import PopularHomes from "./PopularHomes";
 
 
 
@@ -27,8 +28,6 @@ function ExploringMau(){
         <FestivalsOfMau/>
         <Creators/>
         <VideoOfMau/>
-        <EnquiryOfMau/>
-        <CreatorProfileModal/>
         </>
         </div>
     )

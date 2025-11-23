@@ -71,6 +71,7 @@ const AdminLanding = () => {
     try {
       const payload = new FormData();
       // send category (backend expects "category")
+      payload.append("region", "Landing");
       payload.append("category", category);
 
       // append fields

@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import InstagramEmbed from "../../../../shared/instagram-component/InstagramEmbed";
-import { getContent } from "../services/contentService.js";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = "http://localhost:5000";
+const backendURL =  import.meta.env.VITE_BASE_URL;
 
 const VideoOfMau2 = () => {
   // --- Static Reels ---

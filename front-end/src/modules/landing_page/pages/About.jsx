@@ -60,7 +60,7 @@ const About = () => {
 
   return (
     // Switched to a dark theme for a more dramatic, "historic" feel
-    <main className="min-h-screen w-full flex flex-col items-center bg-gray-900 text-gray-100 py-16 overflow-hidden">
+    <main id="about" className="min-h-screen w-full flex flex-col items-center bg-gray-900 text-gray-100 py-16 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* --- HEADER --- */}
         <motion.header

@@ -1,5 +1,4 @@
-import { staticDestinations } from "./StaticDestinations";
-
+import { staticDestinations } from "../modules/Explore_page/Mauranipur-Explore/staticdata/StaticDestinations";
 
 export const staticSearchData = [
   ...staticDestinations.map((item) => ({
@@ -10,4 +9,5 @@ export const staticSearchData = [
     description: item.desc,
     source: "static",
   })),
+
 ]

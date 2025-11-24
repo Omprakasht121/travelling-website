@@ -10,7 +10,7 @@ import GlobalSearch from "../../../../components/GlobalSearch.jsx";
 
 const backendURL = import.meta.env.VITE_BASE_URL;
 
-const MauExplore = () => {
+const BandaExplore = () => {
   const [mobile, setMobile] = useState(false);
   const [account, setAccount] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -45,7 +45,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("mauranipur", "advertisement");
+        const data = await getContent("Banda", "advertisement");
         const mappedData = data.map((item) => ({
           img: item.mainImage || item.galleryImages?.[0] || "",
         }));
@@ -345,7 +345,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
 
               <div className="bg-blue-500 w-6xl  py-2 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                 <h1 className="text-2xl md:text-5xl font-bold text-center text-white">
-                  MAURANIPUR
+                  Banda (बाँदा)
                 </h1>
               </div>
             </div>
@@ -370,4 +370,4 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
   );
 };
 
-export default MauExplore;
+export default BandaExplore;

@@ -1,4 +1,4 @@
-// src/modules/events/EventsOfMau.jsx
+// src/modules/events/EventsOfJhansi.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = import.meta.env.VITE_BASE_URL;
+const backendURL =import.meta.env.VITE_BASE_URL;
 
 // Static events (unchanged)
 const staticEvents = [
@@ -98,7 +98,7 @@ const EventCard = ({
 };
 
 // MAIN COMPONENT
-export default function EventsOfMau() {
+export default function EventsOfJhansi() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -116,7 +116,7 @@ export default function EventsOfMau() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await getContent("mauranipur", "events");
+        const data = await getContent("jhansi", "events");
 
         const mapped = (Array.isArray(data) ? data : []).map((it) => ({
           id: it._id,

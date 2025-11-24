@@ -58,11 +58,9 @@ const staticFood = [
   },
 ];
 
-// ✅ Helper to get image path
+
 const getImagePath = (img, folder = "") => {
   if (!img) return "/fallback.jpg";
-
-  // 🆕: detect if backend image from /uploads or /gallery
   if (img.startsWith("/uploads") || img.startsWith("uploads"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
   if (img.startsWith("/gallery") || img.startsWith("gallery"))
@@ -72,8 +70,8 @@ const getImagePath = (img, folder = "") => {
   return `${import.meta.env.BASE_URL}${folder}${img}`;
 };
 
-const FoodsOfJhansi = () => {
-  // const [activeFood, setActiveFood] = useState(0);
+const FoodsOfBanda = () => {
+
   const [activeImageIndex, setActiveImageIndex] = useState([]);
   const [galleryFood, setGalleryFood] = useState(null);
   const containerRef = useRef(null);
@@ -81,16 +79,15 @@ const FoodsOfJhansi = () => {
   const [foodsData, setFoodsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("jhansi", "food");
+        const data = await getContent("banda", "food");
 
         const mappedData = data.map((item) => ({
           name: item.title,
           distance: item.distance || "N/A",
-          location: item.location || "Jhansi",
+          location: item.location || "banda",
           description: item.description || "Famous local cuisine",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
@@ -114,10 +111,9 @@ const FoodsOfJhansi = () => {
     fetchData();
   }, []);
 
-  // ✅ Combine static + dynamic foods
+
   const displayFoods = [...staticFood, ...foodsData];
 
-  // ✅ Initialize activeImageIndex state *after* displayFoods is populated
     useEffect(() => {
       if (displayFoods.length > 0) {
         setActiveImageIndex(Array(displayFoods.length).fill(0));
@@ -143,46 +139,30 @@ const FoodsOfJhansi = () => {
       });
     };
   
-    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
-    // This useEffect now correctly handles button states and re-runs on data load
     useEffect(() => {
       const container = containerRef.current;
-      if (!container || loading) return; // Wait for container and data
+      if (!container || loading) return; 
   
       const checkScroll = () => {
         if (!container) return;
-        
-        // Check if we can scroll left
         setCanScrollLeft(container.scrollLeft > 0);
-  
-        // Check if we can scroll right (using a 1px threshold is more robust)
         const maxScrollLeft = container.scrollWidth - container.clientWidth;
         setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
       };
-  
-      // Run the check once data is loaded and container is ready
       checkScroll();
-  
-      // Add event listeners
       container.addEventListener("scroll", checkScroll, { passive: true });
-      
-      // Also re-check on resize, since clientWidth will change
       const resizeObserver = new ResizeObserver(checkScroll);
       resizeObserver.observe(container);
-  
-      // Cleanup
+
       return () => {
         container.removeEventListener("scroll", checkScroll);
         resizeObserver.unobserve(container);
       };
   
-    }, [loading, displayFoods.length]); // Re-run when loading or data changes
-    // --
+    }, [loading, displayFoods.length]); 
 
-
-      // ✅ Auto-slide images for each food card
       useEffect(() => {
-        // Wait for data and index initialization
+
         if (displayFoods.length === 0 || activeImageIndex.length === 0) return;
     
         const intervals = displayFoods.map((_, foodIndex) => {
@@ -191,7 +171,7 @@ const FoodsOfJhansi = () => {
             setActiveImageIndex((prev) => {
               const newArr = [...prev];
               const total = displayFoods[foodIndex].images.length;
-              if (total > 0) { // Only advance if there are images
+              if (total > 0) {
                 newArr[foodIndex] = (newArr[foodIndex] + 1) % total;
               }
               return newArr;
@@ -200,7 +180,7 @@ const FoodsOfJhansi = () => {
         });
     
         return () => intervals.forEach(clearInterval);
-      }, [displayFoods.length, activeImageIndex.length]); // Depend on lengths
+      }, [displayFoods.length, activeImageIndex.length]); 
 
     
 
@@ -396,4 +376,4 @@ const FoodsOfJhansi = () => {
   );
 };
 
-export default FoodsOfJhansi;
+export default FoodsOfBanda;

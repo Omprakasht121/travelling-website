@@ -23,34 +23,30 @@ const Oneview = () => {
 
   // ⭐ Fetch video links dynamically
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getContent("landing", "videos");
+  const fetchData = async () => {
+    try {
+      const data = await getContent("landing", "videos");
 
-        // ⭐ Convert dynamic URLs → YouTube IDs
-        const dynamicIDs = data
-          .map((item) => {
-            const url = item.ytvideo_link;
-            if (!url) return null;
+      const dynamicIDs = data
+        .map((item) => {
+          const match = item.ytvideo_link?.match(/(?:v=|be\/|embed\/)([A-Za-z0-9_-]{11})/);
+          return match ? match[1] : null;
+        })
+        .filter(Boolean);
 
-            // extract video ID from ANY YouTube link
-            const match = url.match(/(?:v=|be\/|embed\/)([A-Za-z0-9_-]{11})/);
-            return match ? match[1] : null;
-          })
-          .filter(Boolean);
+      // ⭐ no double merging → direct set
+      setVideos([...staticVideos, ...dynamicIDs]);
 
-        // ⭐ Merge static + dynamic
-        setVideos((prev) => [...prev, ...dynamicIDs]);
+    } catch (err) {
+      console.error("Error fetching videos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      } catch (err) {
-        console.error("Error fetching videos:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  fetchData();
+}, []);
 
-    fetchData();
-  }, []);
 
   // Auto-play when index changes
   useEffect(() => {

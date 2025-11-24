@@ -3,7 +3,7 @@ export const regions = [
   { label: "Jhansi", value: "jhansi" },
   { label: "Orchha", value: "orchha" },
   { label: "Mauranipur", value: "mauranipur" },
-  { label: "Bnadha", value: "Banda" },
+  { label: "Banda", value: "Banda" },
   { label: "Chitrakoot", value: "Chitrakoot" },
 ];
 

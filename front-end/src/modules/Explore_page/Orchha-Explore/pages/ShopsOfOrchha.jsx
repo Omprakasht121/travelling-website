@@ -1,91 +1,181 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
+import { getContent } from "../../../../shared/services/contentService.js";
 
-const shops = [
+const backendURL =  import.meta.env.VITE_BASE_URL; // ✅ Change when deployed
+
+// ✅ Static Hard-Coded Shops
+const staticShops = [
   {
     name: "Sweet Dairy (Cafe)",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
-    speciality:"famous for sweet",
+    description: "famous for sweet",
     images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
   },
   {
     name: "Bharat Bakery",
     distance: "150 meter",
     location: "Bharat Bakery Mau Uttar Pradesh",
-    speciality:"famous for chinese",
+    description: "famous for chinese",
     images: ["bandha.jpg", "jhansi6.jpg", "panna.jpg"],
   },
   {
     name: "Tea Point",
     distance: "280 meter",
     location: "Tea Point Mau Uttar Pradesh",
-    speciality:"famous for milk",
+    description: "famous for milk",
     images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
   },
   {
     name: "Raj Sweets",
     distance: "500 meter",
     location: "Raj Sweets Mau Uttar Pradesh",
-    speciality:"famous for smaosha",
+    description: "famous for samosa",
     images: ["jhansi6.jpg", "panna.jpg", "bandha.jpg"],
   },
   {
     name: "Fruit Mart",
     distance: "200 meter",
     location: "Fruit Mart Mau Uttar Pradesh",
-    speciality:"famous for patoto",
-    images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
-  },
-  {
-    name: "Fruit Mart",
-    distance: "200 meter",
-    location: "Fruit Mart Mau Uttar Pradesh",
-    speciality:"famous for patoto",
+    description: "famous for patoto",
     images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
   },
 ];
 
+// ✅ Helper to get image path
+const getImagePath = (img, folder = "") => {
+  if (!img) return "/fallback.jpg";
+  // 🆕: detect if backend image from /uploads or /gallery
+  if (img.startsWith("/uploads") || img.startsWith("uploads"))
+    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+  if (img.startsWith("/gallery") || img.startsWith("gallery"))
+    return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
+
+  if (img.startsWith("http")) return img;
+  return `${import.meta.env.BASE_URL}${folder}${img}`;
+};
+
 const ShopsOfOrchha = () => {
   const [activeShop, setActiveShop] = useState(0);
-  const [activeImageIndex, setActiveImageIndex] = useState(
-    Array(shops.length).fill(0)
-  );
+  const [activeImageIndex, setActiveImageIndex] = useState([]);
+
   const [galleryShop, setGalleryShop] = useState(null);
   const containerRef = useRef(null);
 
-  // Auto change shop images every few seconds
-    useEffect(() => {
-    const intervals = shops.map((_, shopIndex) => {
-        const delay = 8000 + shopIndex * 1500; // card1:8s, card2:6.5s, etc.
-        return setInterval(() => {
-        setActiveImageIndex((prev) => {
-            const newArr = [...prev];
-            const total = shops[shopIndex].images.length;
-            newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
-            return newArr;
-        });
-        }, delay);
-    });
+  const [shopsData, setShopsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    return () => intervals.forEach(clearInterval);
-    }, []);
-
-  // Track horizontal scroll for outer dots
+  // 🧩 Fetch data from backend
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const handleScroll = () => {
-      const newIndex = Math.round(
-        container.scrollLeft / container.offsetWidth
-      );
-      setActiveShop(newIndex);
+    const fetchData = async () => {
+      try {
+        const data = await getContent("orchha", "shops"); // region & category
+
+        // 🆕 Map backend data into frontend-friendly format
+        const mappedData = data.map((item) => ({
+          name: item.title,
+          distance: item.distance || "N/A",
+          location: item.region || "orchha",
+          description: item.description,
+          // 🆕 main + gallery handling
+          images: [
+            ...(item.mainImage ? [item.mainImage] : []),
+            ...(item.gallery && Array.isArray(item.gallery)
+              ? item.gallery
+              : []),
+          ],
+        }));
+
+        setShopsData(mappedData);
+        setActiveImageIndex(Array(staticShops.length + mappedData.length).fill(0));
+      } catch (err) {
+        console.error("Error fetching shops:", err);
+      } finally {
+        setLoading(false);
+      }
     };
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+
+    fetchData();
   }, []);
 
+  // 🧩 Combine static + dynamic shops
+  const displayShops = [...staticShops, ...shopsData];
+    useEffect(() => {
+      if (displayShops.length > 0) {
+        setActiveImageIndex(Array(displayShops.length).fill(0));
+      }
+    }, [displayShops.length]);
+  
+  
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+  
+    const scrollLeft = () => {
+      containerRef.current.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+    };
+  
+    const scrollRight = () => {
+      containerRef.current.scrollTo({
+        left: containerRef.current.scrollWidth,
+        behavior: "smooth",
+      });
+    };
+  
+   
+    useEffect(() => {
+      const container = containerRef.current;
+      if (!container || loading) return; 
+  
+      const checkScroll = () => {
+        if (!container) return;
+
+        setCanScrollLeft(container.scrollLeft > 0);
+
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
+      };
+      checkScroll();
+      container.addEventListener("scroll", checkScroll, { passive: true });
+      const resizeObserver = new ResizeObserver(checkScroll);
+      resizeObserver.observe(container);
+  
+
+      return () => {
+        container.removeEventListener("scroll", checkScroll);
+        resizeObserver.unobserve(container);
+      };
+  
+    }, [loading, displayShops.length]); // Re-run when loading or data changes
+    // --
+
+
+      // ✅ Auto-slide images for each food card
+      useEffect(() => {
+        if (displayShops.length === 0 || activeImageIndex.length === 0) return;
+        const intervals = displayShops.map((_, shopIndex) => {
+          const delay = 6000 + shopIndex * 1200;
+          return setInterval(() => {
+            setActiveImageIndex((prev) => {
+              const newArr = [...prev];
+              const total = displayShops[shopIndex].images.length;
+              if (total > 0) { 
+                newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
+              }
+              return newArr;
+            });
+          }, delay);
+        });
+    
+        return () => intervals.forEach(clearInterval);
+      }, [displayShops.length, activeImageIndex.length]); 
+
+
+  // 🧩 Open Google Maps
   const handleGo = (location) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
       location
@@ -93,45 +183,75 @@ const ShopsOfOrchha = () => {
     window.open(url, "_blank");
   };
 
+  if (loading)
+    return (
+      <div className="text-center text-white bg-black py-24 text-xl">Loading Shops...</div>
+    );
+
   return (
-    <main className="relative max-h-screen w-full bg-gradient-to-b from-sky-950 to-slate-900 text-white py-4 overflow-hidden">
+    <main className="relative max-h-screen w-full  text-gray-900 py-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
-        {/* header */}
+        {/* Header */}
         <motion.header
           className="md:px-16"
           initial={{ opacity: 0, y: -30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.2 }}
         >
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Famous Shops
+            Mauranipur Bazaar Tales
           </h1>
-          <p className="mt-2 text-sm md:text-base text-slate-300">
-            Reach out and let’s bring you closer to the heart of Bundelkhand..
+          <p className="mt-2 text-sm md:text-base text-slate-800">
+            Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty.
           </p>
         </motion.header>
 
-        {/* main content */}
+        {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
+
+          <div className=" flex justify-end items-center gap-4 px-4">
+            <button
+                onClick={scrollLeft}
+                disabled={!canScrollLeft}
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
+                  canScrollLeft
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <ChevronLeft className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
+              </button>
+                  {/* Right Button */}
+              <button
+                onClick={scrollRight}
+                disabled={!canScrollRight}
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
+                  canScrollRight
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <ChevronRight className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
+              </button>
+          </div>
           {/* Horizontal slider */}
           <div
             ref={containerRef}
             className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-8 p-4 no-scrollbar"
           >
-            {shops.map((shop, shopIndex) => (
+            {displayShops.map((shop, shopIndex) => (
               <div
                 key={shopIndex}
-                className="snap-center flex-shrink-0 w-[80%] sm:w-[45%] md:w-[23%] flex flex-col gap-2"
+                className="snap-center min-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
                 <div className="relative h-[250px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
                       key={activeImageIndex[shopIndex]}
-                      src={`${import.meta.env.BASE_URL}${
+                      src={getImagePath(
                         shop.images[activeImageIndex[shopIndex]]
-                      }`}
+                      )}
                       alt={shop.name}
                       className="object-cover h-full w-full rounded-xl"
                       initial={{ opacity: 0, x: 80 }}
@@ -144,13 +264,13 @@ const ShopsOfOrchha = () => {
                   {/* Image icon */}
                   <button
                     onClick={() => setGalleryShop(shop)}
-                    className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border hover:scale-110 transition"
+                    className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                   >
-                    <Image className="h-4 w-4" />
+                    <Image className="h-4 w-4 text-white" />
                   </button>
                 </div>
 
-                {/* Inner dots (images) */}
+                {/* Inner dots */}
                 <div className="flex gap-2 justify-center">
                   {shop.images.map((_, i) => (
                     <motion.div
@@ -158,9 +278,11 @@ const ShopsOfOrchha = () => {
                       className={`h-2 w-2 rounded-full ${
                         i === activeImageIndex[shopIndex]
                           ? "bg-orange-500"
-                          : "bg-white/40"
+                          : "bg-gray-600/40"
                       }`}
-                      animate={{ scale: i === activeImageIndex[shopIndex] ? 1.3 : 1 }}
+                      animate={{
+                        scale: i === activeImageIndex[shopIndex] ? 1.3 : 1,
+                      }}
                     />
                   ))}
                 </div>
@@ -169,39 +291,27 @@ const ShopsOfOrchha = () => {
                 <h1 className="font-semibold text-xl text-center md:text-left">
                   {shop.name}
                 </h1>
-                <div className="flex gap-2 justify-start items-center">
-                    <MapPin className="h-4 w-4" />
-                    <h4>{shop.distance}</h4>
+                <div className="hidden flex gap-2 items-center">
+                  <MapPin className="h-4 w-4" />
+                  <h4>{shop.distance}</h4>
                 </div>
-                <div className="flex gap-2 justify-start items-center">
-                    <GoalIcon className="h-4 w-4" />
-                    <h4>{shop.location}</h4>
+                <div className="flex gap-2 items-center">
+                  <MapPin className="h-4 w-4" />
+                  <h4>{shop.location}</h4>
                 </div>
-                <div className="flex gap-2 justify-start items-center">
-                    <FlameIcon className="h-4 w-4" />
-                    <h4>{shop.speciality}</h4>
+                <div className="hidden flex gap-2 items-center">
+                  <FlameIcon className="h-4 w-4" />
+                  <h4>{shop.description}</h4>
                 </div>
-                <button
-                    onClick={() => handleGo(shop.location)}
-                    className="border bg-orange-700 hover:bg-orange-600 transition w-full md:w-auto md:px-6 py-1 rounded-xl "
-                  >
-                    Go
-                  </button>
+                <div>
+                  <button
+                  onClick={() => handleGo(shop.location)}
+                  className="bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                >
+                  Direction
+                </button>
+                </div>
               </div>
-            ))}
-          </div>
-
-          {/* Outer Dots */}
-          <div className="flex gap-2 justify-center py-6">
-            {shops.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeShop ? "bg-blue-500" : "bg-white/40"
-                }`}
-                animate={{ scale: i === activeShop ? 1 : .7 }}
-                transition={{ duration: 0.3 }}
-              />
             ))}
           </div>
         </section>
@@ -222,13 +332,15 @@ const ShopsOfOrchha = () => {
             >
               <X size={28} />
             </button>
+
             <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
+              {/* 🆕 map through all images (main + gallery) */}
               {galleryShop.images.map((img, i) => (
                 <motion.img
                   key={i}
-                  src={`${import.meta.env.BASE_URL}${img}`}
+                  src={getImagePath(img)}
                   alt=""
-                  className="snap-center object-cover rounded-xl w-[85vw] sm:w-[60vw] md:w-[30vw] max-h-[80vh] "
+                  className="snap-center object-cover rounded-xl w-[85vw] sm:w-[60vw] md:w-[30vw] max-h-[80vh]"
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}

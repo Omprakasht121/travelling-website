@@ -12,6 +12,8 @@ import WishlistPage from "../../modules/dashboard/WishlistPage";
 import RegionRouter from "./RegionRouter";
 import Creators from "../../modules/Creators_page/Creators";
 import Events from "../../modules/events/Events";
+import LoginModal from "../../user/pages/LoginModal";
+import ExploringBanda from "../../modules/Explore_page/Banda-Explore/pages/ExploringBanda";
 
 export const  AppRoutes = () => {
     return(
@@ -20,12 +22,13 @@ export const  AppRoutes = () => {
             <Route path="/mauranipur" element={<ExploringMau/>}/>
             <Route path="/jhansi" element={<ExploringJhansi/>}/>
             <Route path="/orchha" element={<ExploringOrchha/>}/>
+            <Route path="/banda" element={<ExploringBanda/>}/>
             <Route path="/admin" element={<AdminLayout />} />
             <Route path="/register" element={<RegisterModal/>}/>
             <Route path="/creators" element={<Creators/>}/>
             <Route path="/events" element={<Events/>}/>
-{/* 
-            <Route path="/login" element={<Login/>}/> */}
+
+            <Route path="/login" element={<LoginModal/>}/>
             <Route path="/maucreators" element={<CreatorProfileModal/>}/>
             <Route path="/wishlist" element={<WishlistPage/>}/>
             <Route path="/:region/:category" element={<RegionRouter />} />

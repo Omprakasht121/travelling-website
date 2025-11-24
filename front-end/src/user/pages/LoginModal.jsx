@@ -12,10 +12,10 @@ const LoginModal = ({ onClose, openRegister, onLoginSuccess }) => {
 };
 
 return (
-  <div className="fixed inset-0 bg-black/80 z-50 flex justify-center items-center">
-    <div className="relative bg-white/10 backdrop-blur-lg p-6 rounded-xl">
+  <div className="fixed inset-0 bg-black/90 z-50 flex justify-center items-center">
+    <div className="relative rounded-xl shadow-xl">
 
-      <button onClick={handleClose} className="absolute top-2 right-2 text-white">
+      <button onClick={handleClose} className="absolute top-2 right-12 text-white">
         ✕
       </button>
 

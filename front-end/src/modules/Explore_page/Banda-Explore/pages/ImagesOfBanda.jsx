@@ -1,11 +1,11 @@
-// ImagesOfMau.jsx
+// ImagesOfBanda.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion"; // ✅ Import motion
 import { getContent } from "../../../../shared/services/contentService.js";
 
 const backendURL =  import.meta.env.VITE_BASE_URL;
 
-const ImagesOfMau = () => {
+const ImagesOfBanda = () => {
   const staticImages = [
     "jhansi.jpg",
     "datia.jpg",
@@ -36,7 +36,7 @@ const ImagesOfMau = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("mauranipur", "images");
+        const data = await getContent("jhansi", "images");
         const mapped = data.map((item) => ({
           mainImage: item.mainImage || "",
           gallery:
@@ -79,7 +79,7 @@ const ImagesOfMau = () => {
     ]),
   ].filter(Boolean);
 
-  // ✅ Randomly fade-change small images
+
   useEffect(() => {
   if (!smallImages.length) return;
 
@@ -89,7 +89,8 @@ const ImagesOfMau = () => {
     const pool = allImages.filter((img) => img !== current);
     return pool[Math.floor(Math.random() * pool.length)];
   };
-  
+
+  // each small image slot updates at random intervals (4–7 seconds)
   smallImages.forEach((_, index) => {
     const randomTime = Math.floor(Math.random() * 4000) ; 
     const id = setInterval(() => {
@@ -144,14 +145,14 @@ const ImagesOfMau = () => {
                 <div key={col} className="flex flex-col gap-4  w-1/2">
                   {smallImages.slice(col * 2, col * 2 + 2).map((img, i) => (
                     <motion.img
-                      key={col * 2 + i} // 🔑 stable key to stop stacking
+                      key={col * 2 + i} 
                       src={getImagePath(img)}
                       alt=""
                       className="object-cover rounded-xl h-[14vh] md:h-[28vh] w-full border border-black/10"
                       initial={{ opacity: 1, scale:1}}
-                      animate={{ opacity: 1, scale:1 }} // simple fade flash
+                      animate={{ opacity: 1, scale:1 }} 
                       transition={{
-                        duration: 1, // 0.5–2 sec fade
+                        duration: 1, 
                         repeat: Infinity,
                         repeatType: "mirror",
                       }}
@@ -197,4 +198,4 @@ const ImagesOfMau = () => {
   );
 };
 
-export default ImagesOfMau;
+export default ImagesOfBanda;

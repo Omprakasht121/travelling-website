@@ -6,7 +6,7 @@ import { staticDestinations } from "../staticdata/StaticDestinations.jsx";
 
 const backendURL = import.meta.env.VITE_BASE_URL;
 
-const DestinationsOfOrchha = () => {
+const DestinationsOfBanda = () => {
   const getImagePath = (img) => {
     if (!img) return "/fallback.jpg";
     if (img.startsWith("http")) return img;
@@ -34,7 +34,7 @@ const DestinationsOfOrchha = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("orchha", "destinations");
+        const data = await getContent("Banda", "destinations");
 
         const mappedData = data.map((item) => ({
           name: item.title,
@@ -61,7 +61,7 @@ const DestinationsOfOrchha = () => {
   const destinations = [
     ...staticDestinations.map((s) => ({
       ...s,
-      images: [s.img, ...(s.images || [])], // ⭐ ensure array
+      images: [s.img, ...(s.images || [])], 
     })),
     ...destinationData,
   ];
@@ -408,4 +408,4 @@ const DestinationsOfOrchha = () => {
   );
 };
 
-export default DestinationsOfOrchha;
+export default DestinationsOfBanda;

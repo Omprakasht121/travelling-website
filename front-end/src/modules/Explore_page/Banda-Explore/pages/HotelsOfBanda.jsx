@@ -1,59 +1,45 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Image,
-  MapPin,
-  FlameIcon,
-  GoalIcon,
-  X,
-  ChevronRight,
-  ChevronLeft,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = import.meta.env.VITE_BASE_URL;
+const backendURL =  import.meta.env.VITE_BASE_URL 
 
-const staticFood = [
+// ✅ Static Hard-Coded Shops
+const staticHotels = [
   {
     name: "Sweet Dairy (Cafe)",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
-    description: "Famous for sweets",
+    price: "_,999",
     images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
   },
   {
     name: "Bharat Bakery",
     distance: "150 meter",
     location: "Bharat Bakery Mau Uttar Pradesh",
-    description: "Famous for Chinese",
+    price: "famous for chinese",
     images: ["bandha.jpg", "jhansi6.jpg", "panna.jpg"],
   },
   {
     name: "Tea Point",
     distance: "280 meter",
     location: "Tea Point Mau Uttar Pradesh",
-    description: "Famous for milk",
+    price: "famous for milk",
     images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
   },
   {
     name: "Raj Sweets",
     distance: "500 meter",
     location: "Raj Sweets Mau Uttar Pradesh",
-    description: "Famous for samosa",
+    price: "famous for samosa",
     images: ["jhansi6.jpg", "panna.jpg", "bandha.jpg"],
   },
   {
     name: "Fruit Mart",
     distance: "200 meter",
     location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
-    images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
-  },
-  {
-    name: "Fruit Mart",
-    distance: "200 meter",
-    location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
+    price: "famous for patoto",
     images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
   },
 ];
@@ -62,50 +48,42 @@ const staticFood = [
 const getImagePath = (img, folder = "") => {
   if (!img) return "/fallback.jpg";
 
-  // 🆕: detect if backend image from /uploads or /gallery
   if (img.startsWith("/uploads") || img.startsWith("uploads"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
   if (img.startsWith("/gallery") || img.startsWith("gallery"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
-
   if (img.startsWith("http")) return img;
   return `${import.meta.env.BASE_URL}${folder}${img}`;
 };
 
-const FoodsOfJhansi = () => {
-  // const [activeFood, setActiveFood] = useState(0);
+const HotelsOfBanda = () => {
   const [activeImageIndex, setActiveImageIndex] = useState([]);
-  const [galleryFood, setGalleryFood] = useState(null);
+  const [galleryHotel, setGalleryHotel] = useState(null);
   const containerRef = useRef(null);
-  
-  const [foodsData, setFoodsData] = useState([]);
+  const [hotelsData, setHotelsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data from backend
+  // 🧩 Fetch data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("jhansi", "food");
+        const data = await getContent("banda", "hotels"); 
 
         const mappedData = data.map((item) => ({
           name: item.title,
           distance: item.distance || "N/A",
-          location: item.location || "Jhansi",
-          description: item.description || "Famous local cuisine",
+          location: item.location || "Banda",
+          price: item.price || "N/A",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
-            ...(item.gallery && Array.isArray(item.gallery)
-              ? item.gallery
-              : []),
+            ...(item.gallery && Array.isArray(item.gallery) ? item.gallery : []),
           ],
         }));
 
-        setFoodsData(mappedData);
-        setActiveImageIndex(
-          Array(staticFood.length + mappedData.length).fill(0)
-        );
+        setHotelsData(mappedData);
+        setActiveImageIndex(Array(staticHotels.length + mappedData.length).fill(0));
       } catch (err) {
-        console.error("Error fetching foods:", err);
+        console.error("Error fetching hotels:", err);
       } finally {
         setLoading(false);
       }
@@ -114,97 +92,81 @@ const FoodsOfJhansi = () => {
     fetchData();
   }, []);
 
-  // ✅ Combine static + dynamic foods
-  const displayFoods = [...staticFood, ...foodsData];
+  // 🧩 Combine static + dynamic hotels
+  const displayHotels = [...staticHotels, ...hotelsData];
 
-  // ✅ Initialize activeImageIndex state *after* displayFoods is populated
-    useEffect(() => {
-      if (displayFoods.length > 0) {
-        setActiveImageIndex(Array(displayFoods.length).fill(0));
-      }
-    }, [displayFoods.length]);
-  
-  
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(true);
-  
-    // Scroll left/right functions
-    const scrollLeft = () => {
-      containerRef.current.scrollTo({
-        left: 0,
-        behavior: "smooth",
-      });
+  // ✅ Initialize activeImageIndex state *after* displayHotels is populated
+  useEffect(() => {
+    if (displayHotels.length > 0) {
+      setActiveImageIndex(Array(displayHotels.length).fill(0));
+    }
+  }, [displayHotels.length]);
+
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Scroll left/right functions
+  const scrollLeft = () => {
+    containerRef.current.scrollTo({
+      left: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollRight = () => {
+    containerRef.current.scrollTo({
+      left: containerRef.current.scrollWidth,
+      behavior: "smooth",
+    });
+  };
+
+  // ✅ FIXED: Button state logic
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || loading) return;
+
+    const checkScroll = () => {
+      if (!container) return;
+
+      setCanScrollLeft(container.scrollLeft > 0);
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
     };
-  
-    const scrollRight = () => {
-      containerRef.current.scrollTo({
-        left: containerRef.current.scrollWidth,
-        behavior: "smooth",
-      });
+
+    checkScroll();
+    container.addEventListener("scroll", checkScroll, { passive: true });
+
+    const resizeObserver = new ResizeObserver(checkScroll);
+    resizeObserver.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", checkScroll);
+      if (resizeObserver && container) resizeObserver.unobserve(container);
     };
-  
-    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
-    // This useEffect now correctly handles button states and re-runs on data load
-    useEffect(() => {
-      const container = containerRef.current;
-      if (!container || loading) return; // Wait for container and data
-  
-      const checkScroll = () => {
-        if (!container) return;
-        
-        // Check if we can scroll left
-        setCanScrollLeft(container.scrollLeft > 0);
-  
-        // Check if we can scroll right (using a 1px threshold is more robust)
-        const maxScrollLeft = container.scrollWidth - container.clientWidth;
-        setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
-      };
-  
-      // Run the check once data is loaded and container is ready
-      checkScroll();
-  
-      // Add event listeners
-      container.addEventListener("scroll", checkScroll, { passive: true });
-      
-      // Also re-check on resize, since clientWidth will change
-      const resizeObserver = new ResizeObserver(checkScroll);
-      resizeObserver.observe(container);
-  
-      // Cleanup
-      return () => {
-        container.removeEventListener("scroll", checkScroll);
-        resizeObserver.unobserve(container);
-      };
-  
-    }, [loading, displayFoods.length]); // Re-run when loading or data changes
-    // --
+  }, [loading, displayHotels.length]);
 
+  // ✅ FIXED: Auto-slide images for each card
+  useEffect(() => {
+    if (displayHotels.length === 0 || activeImageIndex.length === 0) return;
 
-      // ✅ Auto-slide images for each food card
-      useEffect(() => {
-        // Wait for data and index initialization
-        if (displayFoods.length === 0 || activeImageIndex.length === 0) return;
-    
-        const intervals = displayFoods.map((_, foodIndex) => {
-          const delay = 6000 + foodIndex * 1200;
-          return setInterval(() => {
-            setActiveImageIndex((prev) => {
-              const newArr = [...prev];
-              const total = displayFoods[foodIndex].images.length;
-              if (total > 0) { // Only advance if there are images
-                newArr[foodIndex] = (newArr[foodIndex] + 1) % total;
-              }
-              return newArr;
-            });
-          }, delay);
+    const intervals = displayHotels.map((_, hotelIndex) => {
+      const delay = 6000 + hotelIndex * 1200;
+      return setInterval(() => {
+        setActiveImageIndex((prev) => {
+          const newArr = [...prev];
+          const total = displayHotels[hotelIndex].images.length;
+          if (total > 0) {
+            newArr[hotelIndex] = (newArr[hotelIndex] + 1) % total;
+          }
+          return newArr;
         });
-    
-        return () => intervals.forEach(clearInterval);
-      }, [displayFoods.length, activeImageIndex.length]); // Depend on lengths
+      }, delay);
+    });
 
-    
+    return () => intervals.forEach(clearInterval);
+  }, [displayHotels.length, activeImageIndex.length]); // ✅ fixed dependency
 
-
+  // 🧩 Open Google Maps
   const handleGo = (location) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
       location
@@ -214,11 +176,11 @@ const FoodsOfJhansi = () => {
 
   if (loading)
     return (
-      <div className="text-center text-white bg-black py-24 text-xl">Loading Foods...</div>
+      <div className="text-center text-white bg-black py-24 text-xl">Loading Hotels...</div>
     );
 
   return (
-    <main className="relative max-h-screen w-full  text-gray-900 py-4 overflow-hidden">
+    <main className="relative max-h-screen w-full text-gray-900 py-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
         <motion.header
@@ -228,15 +190,14 @@ const FoodsOfJhansi = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Famous FOOD & Restaurant
+            Hotels & Banquet
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
-            Discover cafés, dhabas, and restaurants that serve more than food —
-            they serve stories.
+            Rest, relax, and rejoice — where every stay feels like home and every event feels royal.
           </p>
         </motion.header>
 
-        {/* Cards Section */}
+        {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
           <div className=" flex justify-end items-center gap-4 px-4">
                       <button
@@ -263,25 +224,27 @@ const FoodsOfJhansi = () => {
                           <ChevronRight className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
                         </button>
                     </div>
+
+          {/* Horizontal slider */}
           <div
             ref={containerRef}
             className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-8 p-4 no-scrollbar"
           >
-            {displayFoods.map((food, foodIndex) => (
+            {displayHotels.map((hotel, hotelIndex) => (
               <div
-                key={foodIndex}
+                key={hotelIndex}
                 className="snap-center min-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
-                <div className="relative h-[250px]  rounded-xl overflow-hidden">
+                <div className="relative h-[250px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={activeImageIndex[foodIndex]}
+                      key={activeImageIndex[hotelIndex]}
                       src={getImagePath(
-                        food.images[activeImageIndex[foodIndex]]
+                        hotel.images[activeImageIndex[hotelIndex]]
                       )}
-                      alt={food.name}
-                      className="object-cover h-full w-full rounded-xl border border-black/40"
+                      alt={hotel.name}
+                      className="object-cover h-full w-full rounded-xl"
                       initial={{ opacity: 0, x: 80 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -80 }}
@@ -289,80 +252,64 @@ const FoodsOfJhansi = () => {
                     />
                   </AnimatePresence>
 
-                  {/* Image icon */}
                   <button
-                    onClick={() => setGalleryFood(food)}
+                    onClick={() => setGalleryHotel(hotel)}
                     className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                   >
                     <Image className="h-4 w-4 text-white" />
                   </button>
                 </div>
 
-                {/* Dots (inner images) */}
+                {/* Inner dots */}
                 <div className="flex gap-2 justify-center">
-                  {food.images.map((_, i) => (
+                  {hotel.images.map((_, i) => (
                     <motion.div
                       key={i}
                       className={`h-2 w-2 rounded-full ${
-                        i === activeImageIndex[foodIndex]
+                        i === activeImageIndex[hotelIndex]
                           ? "bg-orange-500"
                           : "bg-gray-600/40"
                       }`}
                       animate={{
-                        scale: i === activeImageIndex[foodIndex] ? 1.3 : 1,
+                        scale: i === activeImageIndex[hotelIndex] ? 1.3 : 1,
                       }}
                     />
                   ))}
                 </div>
 
-                {/* Info */}
+                {/* Text info */}
                 <h1 className="font-semibold text-xl text-center md:text-left">
-                  {food.name}
+                  {hotel.name}
                 </h1>
-                <div className="flex gap-2 items-center">
+                <div className="hidden flex gap-2 items-center">
                   <MapPin className="h-4 w-4" />
-                  <h4>{food.distance}</h4>
+                  <h4>{hotel.distance}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
                   <GoalIcon className="h-4 w-4" />
-                  <h4>{food.location}</h4>
+                  <h4>{hotel.location}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
-                  <h4>{food.description}</h4>
+                  <h4 className="text-lg font-semibold">₹ {hotel.price}</h4>
                 </div>
-
                 <div>
                   <button
-                  onClick={() => handleGo(food.location)}
-                  className=" bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
-                >
-                  Direction
-                </button>
+                    onClick={() => handleGo(hotel.location)}
+                    className="bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                  >
+                    Direction
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Outer dots */}
-          {/* <div className="hidden flex gap-2 justify-center py-6">
-            {displayFoods.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeFood ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === activeFood ? 1 : 0.7 }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div> */}
         </section>
       </div>
 
       {/* Fullscreen Gallery */}
       <AnimatePresence>
-        {galleryFood && (
+        {galleryHotel && (
           <motion.div
             className="fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50"
             initial={{ opacity: 0 }}
@@ -370,14 +317,14 @@ const FoodsOfJhansi = () => {
             exit={{ opacity: 0 }}
           >
             <button
-              onClick={() => setGalleryFood(null)}
+              onClick={() => setGalleryHotel(null)}
               className="absolute top-6 right-6 text-white hover:scale-110 transition"
             >
               <X size={28} />
             </button>
 
             <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
-              {galleryFood.images.map((img, i) => (
+              {galleryHotel.images.map((img, i) => (
                 <motion.img
                   key={i}
                   src={getImagePath(img)}
@@ -396,4 +343,4 @@ const FoodsOfJhansi = () => {
   );
 };
 
-export default FoodsOfJhansi;
+export default HotelsOfBanda;

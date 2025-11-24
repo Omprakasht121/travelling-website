@@ -35,11 +35,10 @@ const VideoOfMau2 = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Fetch from the “videos” category instead of destinations
         const data = await getContent("mauranipur", "videos");
         const mappedData = data.map((item) => ({
           title: item.title || "Untitled Video",
-          url: item.reel_url, // directly use URL stored in backend
+          url: item.reel_url, 
           desc: item.description || "",
         }));
         setVideoData(mappedData);
@@ -52,10 +51,7 @@ const VideoOfMau2 = () => {
     fetchData();
   }, []);
 
-  // ✅ Merge static + backend videos
   const reels = [...staticReels, ...videoData];
-
-  // ✅ Navigation logic (same as before)
   const nextSlide = () => {
     setDirection(1);
     setIndex((prev) => (prev + 1) % reels.length);
@@ -66,7 +62,6 @@ const VideoOfMau2 = () => {
     setIndex((prev) => (prev - 1 + reels.length) % reels.length);
   };
 
-  // Compute visible indices
   const leftIndex = (index - 1 + reels.length) % reels.length;
   const rightIndex = (index + 1) % reels.length;
   const farRightIndex = (index + 2) % reels.length;
@@ -90,33 +85,26 @@ const VideoOfMau2 = () => {
     }),
   };
 
-  // For mobile horizontal scroll
-  // ✅ ADD THIS NEW CODE
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
-  const observerRef = useRef(null); // To hold the observer instance
+  const observerRef = useRef(null); 
 
   useEffect(() => {
     const container = containerRef.current;
-    // Only run if the container exists and destinations are loaded
     if (!container || reels.length === 0) return;
-
-    // Disconnect any previous observer before creating a new one
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
 
     const options = {
-      root: container, // The scroll container itself is the viewport
+      root: container, 
       rootMargin: "0px",
-      threshold: 0.51, // Trigger when 51% of the card is visible
+      threshold: 0.51, 
     };
 
     const callback = (entries) => {
       entries.forEach((entry) => {
-        // When a card becomes more than 51% visible
         if (entry.isIntersecting) {
-          // Get the index we stored on the element
           const index = parseInt(entry.target.dataset.index, 10);
           if (!isNaN(index)) {
             setActiveIndex(index);
@@ -125,22 +113,21 @@ const VideoOfMau2 = () => {
       });
     };
 
-    // Create and store the new observer
     const observer = new IntersectionObserver(callback, options);
     observerRef.current = observer;
 
-    // Observe all the card elements (children of the container)
+  
     Array.from(container.children).forEach((child) => {
       observer.observe(child);
     });
 
-    // Cleanup function to disconnect observer when component unmounts
+   
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, [reels, loading]); // Re-run this effect when data is loaded
+  }, [reels, loading]); 
   if (loading)
     return (
       <div className="text-center text-white py-24 text-xl">
@@ -149,7 +136,7 @@ const VideoOfMau2 = () => {
     );
 
   return (
-    // ✅ CHANGED: min-h-screen -> min-h-auto (Lets content define height)
+  
     <main className="relative min-h-auto w-full text-gray-900 py-8 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header */}
@@ -179,11 +166,7 @@ const VideoOfMau2 = () => {
               <ChevronLeft className="w-6 h-6 text-black" />
             </button>
 
-            {/* Desktop Animation */}
-            {/* ✅ CHANGED: 
-                - h-[100vh] -> h-auto (Lets mobile content define height)
-                - md:min-h-[110vh] -> md:min-h-[95vh] (Reduces min-height to prevent overflow on short laptops)
-            */}
+            
             <div className="relative w-[100%] flex justify-center items-center h-auto md:min-h-[103vh]">
               <AnimatePresence initial={false} custom={direction}>
                 {/* Left small card */}
@@ -192,14 +175,14 @@ const VideoOfMau2 = () => {
                   custom={direction}
                   variants={variants}
                   initial="enter"
-                  // ✅ CHANGED: x: "-110%" -> x: "-100%" (Pulls card in slightly)
+                  
                   animate={{ x: "-100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
                   exit="exit"
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer blur-sm"
                   onClick={prevSlide}
                 >
-                  {/* ✅ CHANGED: h-[70vh] -> h-auto (Lets embed define its own height) */}
+                 
                   <div className="rounded-xl overflow-hidden h-auto">
                     <InstagramEmbed
                       permalink={reels[leftIndex].url}
@@ -222,7 +205,7 @@ const VideoOfMau2 = () => {
                   }}
                   className="absolute hidden md:flex flex-col gap-2 w-[100%] md:w-[40%] text-center md:px-2"
                 >
-                  {/* ✅ CHANGED: h-full -> h-auto (Lets embed define its own height) */}
+                  
                   <div className="rounded-2xl overflow-fit h-auto">
                     <InstagramEmbed
                       permalink={reels[index].url}
@@ -258,14 +241,14 @@ const VideoOfMau2 = () => {
                   custom={direction}
                   variants={variants}
                   initial="enter"
-                  // ✅ CHANGED: x: "110%" -> x: "100%" (Pulls card in slightly)
+                
                   animate={{ x: "100%", scale: 0.8, opacity: 0.5, zIndex: 5 }}
                   exit="exit"
                   transition={{ duration: 0.6 }}
                   className="absolute hidden md:flex flex-col gap-3 w-1/3 cursor-pointer blur-sm"
                   onClick={nextSlide}
                 >
-                  {/* ✅ CHANGED: h-[70vh] -> h-auto (Lets embed define its own height) */}
+                  
                   <div className="rounded-xl overflow-hidden h-auto">
                     <InstagramEmbed
                       permalink={reels[rightIndex].url}

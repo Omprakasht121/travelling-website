@@ -129,8 +129,7 @@ const ShopsOfMau = () => {
       });
     };
   
-    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
-    // This useEffect now correctly handles button states and re-runs on data load
+   
     useEffect(() => {
       const container = containerRef.current;
       if (!container || loading) return; // Wait for container and data

@@ -183,7 +183,7 @@ const Hero = () => {
             >
               <User2 className="w-6 h-6 text-black" />
             </button>
-            <div className="hidden md:flex border border-black rounded-full hover:scale-105 transition-transform duration-1000 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.6)] ">
+            <div className="hidden  border border-black rounded-full hover:scale-105 transition-transform duration-1000 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.6)] ">
               <button onClick={() => protectedClick("/login")}
               className="px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] text-white">
                 SIGNUP

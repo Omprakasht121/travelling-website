@@ -98,7 +98,7 @@ const EventCard = ({
 };
 
 // MAIN COMPONENT
-export default function EventsOfMau() {
+export default function EventsOfOrchha() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -116,7 +116,7 @@ export default function EventsOfMau() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await getContent("mauranipur", "events");
+        const data = await getContent("orchha", "events");
 
         const mapped = (Array.isArray(data) ? data : []).map((it) => ({
           id: it._id,
@@ -168,24 +168,18 @@ export default function EventsOfMau() {
     delete hoverIntervalsRef.current[i];
   };
 
-  // CLICK CARD → HERO CHANGE
   const handleCardClick = (i) => {
     if (i === current) return;
     setDirection(i > current ? 1 : -1);
     setCurrent(i);
   };
 
-
-
-// ✅ Initialize activeImageIndex state *after* displayShops is populated
     useEffect(() => {
       if (events.length > 0) {
         setActiveImageIndex(Array(events.length).fill(0));
       }
     }, [events.length]);
   
-  
-    // Scroll left/right functions
     const scrollLeft = () => {
       containerRef.current.scrollTo({
         left: 0,
@@ -199,40 +193,30 @@ export default function EventsOfMau() {
         behavior: "smooth",
       });
     };
-  
-    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
-    // This useEffect now correctly handles button states and re-runs on data load
+
     useEffect(() => {
       const container = containerRef.current;
-      if (!container || loading) return; // Wait for container and data
+      if (!container || loading) return; 
   
       const checkScroll = () => {
         if (!container) return;
-        
-        // Check if we can scroll left
         setCanScrollLeft(container.scrollLeft > 0);
-  
-        // Check if we can scroll right (using a 1px threshold is more robust)
         const maxScrollLeft = container.scrollWidth - container.clientWidth;
         setCanScrollRight(container.scrollLeft < maxScrollLeft - 1);
       };
-  
-      // Run the check once data is loaded and container is ready
+
       checkScroll();
-  
-      // Add event listeners
+
       container.addEventListener("scroll", checkScroll, { passive: true });
       const resizeObserver = new ResizeObserver(checkScroll);
       resizeObserver.observe(container);
-  
-      // Cleanup
+
       return () => {
         container.removeEventListener("scroll", checkScroll);
         resizeObserver.unobserve(container);
       };
   
-    }, [loading, events.length]); // Re-run when loading or data changes
-    // --
+    }, [loading, events.length]); 
 
 
   // HERO ANIMATION

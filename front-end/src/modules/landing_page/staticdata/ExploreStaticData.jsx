@@ -39,9 +39,9 @@ export const Destinations = [
     {
       id: 4,
       category:"Explore",
-      name: "Bandha",
-      location: "Bandha",
-      slug: "Bandha",
+      name: "Banda",
+      location: "Banda",
+      slug: "Banda",
       img: `${import.meta.env.BASE_URL}bandha.jpg`,
       description: "Situated in Uttar Pradesh’s Bundelkhand region, the district of Banda is known for its strategic hills and historic forts like Kalinjar, as well as its distinctive culture and connection to the wider Bundelkhand plateau.",
     },

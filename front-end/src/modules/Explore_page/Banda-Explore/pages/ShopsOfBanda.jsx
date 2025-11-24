@@ -1,59 +1,45 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Image,
-  MapPin,
-  FlameIcon,
-  GoalIcon,
-  X,
-  ChevronRight,
-  ChevronLeft,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
-const backendURL = import.meta.env.VITE_BASE_URL;
+const backendURL =  import.meta.env.VITE_BASE_URL; // ✅ Change when deployed
 
-const staticFood = [
+// ✅ Static Hard-Coded Shops
+const staticShops = [
   {
     name: "Sweet Dairy (Cafe)",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
-    description: "Famous for sweets",
+    description: "famous for sweet",
     images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
   },
   {
     name: "Bharat Bakery",
     distance: "150 meter",
     location: "Bharat Bakery Mau Uttar Pradesh",
-    description: "Famous for Chinese",
+    description: "famous for chinese",
     images: ["bandha.jpg", "jhansi6.jpg", "panna.jpg"],
   },
   {
     name: "Tea Point",
     distance: "280 meter",
     location: "Tea Point Mau Uttar Pradesh",
-    description: "Famous for milk",
+    description: "famous for milk",
     images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
   },
   {
     name: "Raj Sweets",
     distance: "500 meter",
     location: "Raj Sweets Mau Uttar Pradesh",
-    description: "Famous for samosa",
+    description: "famous for samosa",
     images: ["jhansi6.jpg", "panna.jpg", "bandha.jpg"],
   },
   {
     name: "Fruit Mart",
     distance: "200 meter",
     location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
-    images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
-  },
-  {
-    name: "Fruit Mart",
-    distance: "200 meter",
-    location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
+    description: "famous for patoto",
     images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
   },
 ];
@@ -61,7 +47,6 @@ const staticFood = [
 // ✅ Helper to get image path
 const getImagePath = (img, folder = "") => {
   if (!img) return "/fallback.jpg";
-
   // 🆕: detect if backend image from /uploads or /gallery
   if (img.startsWith("/uploads") || img.startsWith("uploads"))
     return `${backendURL}${img.startsWith("/") ? img : `/${img}`}`;
@@ -72,26 +57,29 @@ const getImagePath = (img, folder = "") => {
   return `${import.meta.env.BASE_URL}${folder}${img}`;
 };
 
-const FoodsOfJhansi = () => {
-  // const [activeFood, setActiveFood] = useState(0);
+const ShopsOfBanda = () => {
+  const [activeShop, setActiveShop] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState([]);
-  const [galleryFood, setGalleryFood] = useState(null);
+
+  const [galleryShop, setGalleryShop] = useState(null);
   const containerRef = useRef(null);
-  
-  const [foodsData, setFoodsData] = useState([]);
+
+  const [shopsData, setShopsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data from backend
+  // 🧩 Fetch data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getContent("jhansi", "food");
+        const data = await getContent("Banda", "shops"); // region & category
 
+        // 🆕 Map backend data into frontend-friendly format
         const mappedData = data.map((item) => ({
           name: item.title,
           distance: item.distance || "N/A",
-          location: item.location || "Jhansi",
-          description: item.description || "Famous local cuisine",
+          location: item.region || "Banda",
+          description: item.description,
+          // 🆕 main + gallery handling
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery)
@@ -100,12 +88,10 @@ const FoodsOfJhansi = () => {
           ],
         }));
 
-        setFoodsData(mappedData);
-        setActiveImageIndex(
-          Array(staticFood.length + mappedData.length).fill(0)
-        );
+        setShopsData(mappedData);
+        setActiveImageIndex(Array(staticShops.length + mappedData.length).fill(0));
       } catch (err) {
-        console.error("Error fetching foods:", err);
+        console.error("Error fetching shops:", err);
       } finally {
         setLoading(false);
       }
@@ -114,15 +100,15 @@ const FoodsOfJhansi = () => {
     fetchData();
   }, []);
 
-  // ✅ Combine static + dynamic foods
-  const displayFoods = [...staticFood, ...foodsData];
+  // 🧩 Combine static + dynamic shops
+  const displayShops = [...staticShops, ...shopsData];
 
-  // ✅ Initialize activeImageIndex state *after* displayFoods is populated
+ // ✅ Initialize activeImageIndex state *after* displayShops is populated
     useEffect(() => {
-      if (displayFoods.length > 0) {
-        setActiveImageIndex(Array(displayFoods.length).fill(0));
+      if (displayShops.length > 0) {
+        setActiveImageIndex(Array(displayShops.length).fill(0));
       }
-    }, [displayFoods.length]);
+    }, [displayShops.length]);
   
   
     const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -143,8 +129,7 @@ const FoodsOfJhansi = () => {
       });
     };
   
-    // 1. --- ⚡️ FIX 1: BUTTON LOGIC ---
-    // This useEffect now correctly handles button states and re-runs on data load
+   
     useEffect(() => {
       const container = containerRef.current;
       if (!container || loading) return; // Wait for container and data
@@ -165,8 +150,6 @@ const FoodsOfJhansi = () => {
   
       // Add event listeners
       container.addEventListener("scroll", checkScroll, { passive: true });
-      
-      // Also re-check on resize, since clientWidth will change
       const resizeObserver = new ResizeObserver(checkScroll);
       resizeObserver.observe(container);
   
@@ -176,23 +159,23 @@ const FoodsOfJhansi = () => {
         resizeObserver.unobserve(container);
       };
   
-    }, [loading, displayFoods.length]); // Re-run when loading or data changes
+    }, [loading, displayShops.length]); // Re-run when loading or data changes
     // --
 
 
       // ✅ Auto-slide images for each food card
       useEffect(() => {
         // Wait for data and index initialization
-        if (displayFoods.length === 0 || activeImageIndex.length === 0) return;
+        if (displayShops.length === 0 || activeImageIndex.length === 0) return;
     
-        const intervals = displayFoods.map((_, foodIndex) => {
-          const delay = 6000 + foodIndex * 1200;
+        const intervals = displayShops.map((_, shopIndex) => {
+          const delay = 6000 + shopIndex * 1200;
           return setInterval(() => {
             setActiveImageIndex((prev) => {
               const newArr = [...prev];
-              const total = displayFoods[foodIndex].images.length;
+              const total = displayShops[shopIndex].images.length;
               if (total > 0) { // Only advance if there are images
-                newArr[foodIndex] = (newArr[foodIndex] + 1) % total;
+                newArr[shopIndex] = (newArr[shopIndex] + 1) % total;
               }
               return newArr;
             });
@@ -200,11 +183,10 @@ const FoodsOfJhansi = () => {
         });
     
         return () => intervals.forEach(clearInterval);
-      }, [displayFoods.length, activeImageIndex.length]); // Depend on lengths
-
-    
+      }, [displayShops.length, activeImageIndex.length]); // Depend on lengths
 
 
+  // 🧩 Open Google Maps
   const handleGo = (location) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
       location
@@ -214,7 +196,7 @@ const FoodsOfJhansi = () => {
 
   if (loading)
     return (
-      <div className="text-center text-white bg-black py-24 text-xl">Loading Foods...</div>
+      <div className="text-center text-white bg-black py-24 text-xl">Loading Shops...</div>
     );
 
   return (
@@ -228,60 +210,61 @@ const FoodsOfJhansi = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Famous FOOD & Restaurant
+            Mauranipur Bazaar Tales
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
-            Discover cafés, dhabas, and restaurants that serve more than food —
-            they serve stories.
+            Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty.
           </p>
         </motion.header>
 
-        {/* Cards Section */}
+        {/* Main Content */}
         <section className="relative justify-center items-center lg:px-24 py-8">
+
           <div className=" flex justify-end items-center gap-4 px-4">
-                      <button
-                          onClick={scrollLeft}
-                          disabled={!canScrollLeft}
-                          className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
-                            canScrollLeft
-                              ? "opacity-100 hover:scale-105  "
-                              : "opacity-50 cursor-not-allowed"
-                          }`}
-                        >
-                          <ChevronLeft className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
-                        </button>
-                            {/* Right Button */}
-                        <button
-                          onClick={scrollRight}
-                          disabled={!canScrollRight}
-                          className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
-                            canScrollRight
-                              ? "opacity-100 hover:scale-105  "
-                              : "opacity-50 cursor-not-allowed"
-                          }`}
-                        >
-                          <ChevronRight className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
-                        </button>
-                    </div>
+            <button
+                onClick={scrollLeft}
+                disabled={!canScrollLeft}
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
+                  canScrollLeft
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <ChevronLeft className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
+              </button>
+                  {/* Right Button */}
+              <button
+                onClick={scrollRight}
+                disabled={!canScrollRight}
+                className={` h-8 w-8 p-1 flex justify-center items-center rounded-full transition-transform duration-300 easeInOut md:shadow-[inset_2px_4px_6px_rgba(0,0,20,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_6px_rgba(0,0,0,0.2)]  ${
+                  canScrollRight
+                    ? "opacity-100 hover:scale-105  "
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <ChevronRight className=" text-black hover:scale-110 font-bold transition-transform duration-300 easeInOut" />
+              </button>
+          </div>
+          {/* Horizontal slider */}
           <div
             ref={containerRef}
             className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-8 p-4 no-scrollbar"
           >
-            {displayFoods.map((food, foodIndex) => (
+            {displayShops.map((shop, shopIndex) => (
               <div
-                key={foodIndex}
+                key={shopIndex}
                 className="snap-center min-w-[250px] md:min-w-[300px] flex flex-col gap-2"
               >
                 {/* Image slideshow */}
-                <div className="relative h-[250px]  rounded-xl overflow-hidden">
+                <div className="relative h-[250px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={activeImageIndex[foodIndex]}
+                      key={activeImageIndex[shopIndex]}
                       src={getImagePath(
-                        food.images[activeImageIndex[foodIndex]]
+                        shop.images[activeImageIndex[shopIndex]]
                       )}
-                      alt={food.name}
-                      className="object-cover h-full w-full rounded-xl border border-black/40"
+                      alt={shop.name}
+                      className="object-cover h-full w-full rounded-xl"
                       initial={{ opacity: 0, x: 80 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -80 }}
@@ -291,51 +274,50 @@ const FoodsOfJhansi = () => {
 
                   {/* Image icon */}
                   <button
-                    onClick={() => setGalleryFood(food)}
+                    onClick={() => setGalleryShop(shop)}
                     className="absolute bottom-0 right-0 p-2 m-2 bg-gray-700/60 rounded-full border border-black/20 hover:scale-110 transition shadow-[inset_4px_4px_6px_rgba(20,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]"
                   >
                     <Image className="h-4 w-4 text-white" />
                   </button>
                 </div>
 
-                {/* Dots (inner images) */}
+                {/* Inner dots */}
                 <div className="flex gap-2 justify-center">
-                  {food.images.map((_, i) => (
+                  {shop.images.map((_, i) => (
                     <motion.div
                       key={i}
                       className={`h-2 w-2 rounded-full ${
-                        i === activeImageIndex[foodIndex]
+                        i === activeImageIndex[shopIndex]
                           ? "bg-orange-500"
                           : "bg-gray-600/40"
                       }`}
                       animate={{
-                        scale: i === activeImageIndex[foodIndex] ? 1.3 : 1,
+                        scale: i === activeImageIndex[shopIndex] ? 1.3 : 1,
                       }}
                     />
                   ))}
                 </div>
 
-                {/* Info */}
+                {/* Text info */}
                 <h1 className="font-semibold text-xl text-center md:text-left">
-                  {food.name}
+                  {shop.name}
                 </h1>
+                <div className="hidden flex gap-2 items-center">
+                  <MapPin className="h-4 w-4" />
+                  <h4>{shop.distance}</h4>
+                </div>
                 <div className="flex gap-2 items-center">
                   <MapPin className="h-4 w-4" />
-                  <h4>{food.distance}</h4>
+                  <h4>{shop.location}</h4>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <GoalIcon className="h-4 w-4" />
-                  <h4>{food.location}</h4>
-                </div>
-                <div className="flex gap-2 items-center">
+                <div className="hidden flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
-                  <h4>{food.description}</h4>
+                  <h4>{shop.description}</h4>
                 </div>
-
                 <div>
                   <button
-                  onClick={() => handleGo(food.location)}
-                  className=" bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
+                  onClick={() => handleGo(shop.location)}
+                  className="bg-orange-600 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
                 >
                   Direction
                 </button>
@@ -343,26 +325,12 @@ const FoodsOfJhansi = () => {
               </div>
             ))}
           </div>
-
-          {/* Outer dots */}
-          {/* <div className="hidden flex gap-2 justify-center py-6">
-            {displayFoods.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`h-3 w-3 rounded-full ${
-                  i === activeFood ? "bg-blue-500" : "bg-gray-700/40"
-                }`}
-                animate={{ scale: i === activeFood ? 1 : 0.7 }}
-                transition={{ duration: 0.3 }}
-              />
-            ))}
-          </div> */}
         </section>
       </div>
 
       {/* Fullscreen Gallery */}
       <AnimatePresence>
-        {galleryFood && (
+        {galleryShop && (
           <motion.div
             className="fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50"
             initial={{ opacity: 0 }}
@@ -370,14 +338,15 @@ const FoodsOfJhansi = () => {
             exit={{ opacity: 0 }}
           >
             <button
-              onClick={() => setGalleryFood(null)}
+              onClick={() => setGalleryShop(null)}
               className="absolute top-6 right-6 text-white hover:scale-110 transition"
             >
               <X size={28} />
             </button>
 
             <div className="flex overflow-x-auto gap-6 px-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
-              {galleryFood.images.map((img, i) => (
+              {/* 🆕 map through all images (main + gallery) */}
+              {galleryShop.images.map((img, i) => (
                 <motion.img
                   key={i}
                   src={getImagePath(img)}
@@ -396,4 +365,4 @@ const FoodsOfJhansi = () => {
   );
 };
 
-export default FoodsOfJhansi;
+export default ShopsOfBanda;

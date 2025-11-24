@@ -193,9 +193,9 @@ const ContactUs = () => {
                                 className="bg-[#11224d] p-4 rounded-xl flex items-center gap-3"
                             >
                                 <MessageCircle size={20} />
-                                <div>
+                                <div onClick={() => openWhatsApp("9297863623", "Hello! OMM")}  className="cursor-pointer">
                                 <p className="text-sm">SMS / WhatsApp:</p>
-                                <a onClick={() => openWhatsApp("918888888888", "Hello! OMM")} ><p className="font-semibold">+91 9297863623</p></a>
+                                <a ><p className="font-semibold">+91 9297863623</p></a>
                                 </div>
                             </motion.div>
 

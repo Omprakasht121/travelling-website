@@ -1,28 +1,30 @@
 import React from "react";
 import ExploreOrchha from "./ExploreOrchha";
 import ImagesOfOrchha from "./ImagesOfOrchha";
-import DestinationsOfOrchha from "./DestinationsOfOrchha";
 import FoodsOfOrchha from "./FoodsOfOrchha";
 import HotelsOfOrchha from "./HotelsOfOrchha";
 import ShopsOfOrchha from "./ShopsOfOrchha";
-import FestivalsOfOrchha from "./FestivalsOfOrchha.jsx";
 import VideoOfOrchha from "./VideoOfOrchha";
-import EnquiryOfOrchha from "./EnquiryOfOrchha.jsx";
+import EventsOfOrchha from "./EventsOfOrchha.jsx";
+import DestinationsOfOrchha from "./DestinationsOfOrchha.jsx";
+import Creators from "./CreatorOfOrchha.jsx";
 
 
 function ExploringOrchha(){
     return(
-        <>
+        <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10">
+            <>
         <ExploreOrchha/>
         <ImagesOfOrchha/>
         <DestinationsOfOrchha/>
         <FoodsOfOrchha/>
         <HotelsOfOrchha/>
         <ShopsOfOrchha/>
-        <FestivalsOfOrchha/>
+        <EventsOfOrchha/>
+        <Creators/>
         <VideoOfOrchha/>
-        <EnquiryOfOrchha/>
         </>
+        </div>
     )
 }
 export default ExploringOrchha;

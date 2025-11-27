@@ -22,9 +22,9 @@ app.use("/uploads/gallery", express.static("uploads/gallery"));
 
 // ✅ Routes
 
-
-app.use('/',userRoutes);
 app.use("/admin", adminRoutes);
+app.use('/',userRoutes);
+
 app.use("/api/content", contentRoutes);
 app.use("/api/search", searchRoutes);
 

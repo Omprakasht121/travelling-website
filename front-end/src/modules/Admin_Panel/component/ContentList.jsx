@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import EditContentModal from "./EditContentModal";
 import { deleteContent } from "../service/adminAPI";
 
-const backendURL = "http://localhost:5000";
+const backendURL = import.meta.env.VITE_BASE_URL;
 
 const ContentList = ({ contents = [] }) => {
   const [selectedItem, setSelectedItem] = useState(null);

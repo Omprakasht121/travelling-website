@@ -7,6 +7,7 @@ import HotelsOfJhansi from "./HotelsOfJhansi";
 import ShopsOfJhansi from "./ShopsOfJhansi";
 import VideoOfJhansi from "./VideoOfJhansi";
 import EventsOfJhansi from "./EventsOfJhansi";
+import Creators from "./CreatorOfJhansi";
 
 
 
@@ -21,7 +22,7 @@ function ExploringJhansi(){
         <HotelsOfJhansi/>
         <ShopsOfJhansi/>
         <EventsOfJhansi/>
-
+        <Creators/>
         <VideoOfJhansi/>
         </>
         </div>

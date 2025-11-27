@@ -136,9 +136,10 @@ const RegionMap = () => {
                     click: () => window.open(place.url, "_blank"),
                   }}
                 >
-                  <Tooltip direction="top" offset={[0, -30]} opacity={1}>
+                  <Tooltip direction="bottom" offset={[0, -30]} opacity={1}>
                     {place.name}
                   </Tooltip>
+                  
                 </Marker>
               ))}
 

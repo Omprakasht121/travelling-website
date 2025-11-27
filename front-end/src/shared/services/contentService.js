@@ -1,6 +1,7 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/content"; // same as backend
+const backendURL = import.meta.env.VITE_BASE_URL;
+ // same as backend
+const API_URL = `${backendURL}/api/Content`; // same as backend
 
 // 📌 Fetch content for a specific region & category
 export const getContent = async (region, category) => {

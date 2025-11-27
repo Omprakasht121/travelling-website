@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+const backendURL = import.meta.env.VITE_BASE_URL;
 
 const AdminLogin = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState("");
@@ -7,7 +8,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/admin/login", {
+    const res = await fetch(`${backendURL}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

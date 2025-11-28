@@ -57,7 +57,6 @@ const fieldConfig = {
     { name: "month", label: "month", type: "text" },
     { name: "date", label: "date", type: "text" },
     { name: "description", label: "Description", type: "textarea" },
-
   ],
   Images:[
     { name: "title", label: "title", type: "text" },

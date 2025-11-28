@@ -1,5 +1,7 @@
 import axios from "axios";
-const API_URL = import.meta.env.VITE_BASE_URL;
+
+const backendURL = import.meta.env.VITE_BASE_URL;
+const API_URL = `${backendURL}/api/content`;  ;
 
 // Add new
 export const addContent = async (data) => {

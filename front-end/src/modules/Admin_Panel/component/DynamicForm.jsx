@@ -53,7 +53,7 @@ const fieldConfig = {
     { name: "title", label: "title", type: "text" },
     { name: "segment", label: "event name", type: "text" },
     { name: "location", label: "Location", type: "text" },
-    { name: "day", label: "date", type: "text" },
+    { name: "day", label: "day", type: "text" },
     { name: "month", label: "month", type: "text" },
     { name: "date", label: "date", type: "text" },
     { name: "description", label: "Description", type: "textarea" },

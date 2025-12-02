@@ -15,46 +15,32 @@ const backendURL = import.meta.env.VITE_BASE_URL;
 
 const staticFood = [
   {
-    name: "Sweet Dairy (Cafe)",
+    name: "Burger-Station",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
     description: "Famous for sweets",
-    images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
+    images: ["burger.jpg","burger1.jpg", "burger2.jpg", "burger3.jpg"],
   },
   {
     name: "Bharat Bakery",
     distance: "150 meter",
-    location: "Bharat Bakery Mau Uttar Pradesh",
-    description: "Famous for Chinese",
-    images: ["bandha.jpg", "jhansi6.jpg", "panna.jpg"],
+    location: "Bharat Bakery Mauranipur",
+    description: "Famous for Cakes",
+    images: ["bakery.webp","cake1.jpg", "cake2.jpg", "cake3.jpg"],
   },
   {
-    name: "Tea Point",
+    name: "Coffee Adda",
     distance: "280 meter",
     location: "Tea Point Mau Uttar Pradesh",
-    description: "Famous for milk",
-    images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
+    description: "Famous for Coffee",
+    images: ["coffee.jpeg", "coffee1.jpg", "coffee3.jpg"],
   },
   {
     name: "Raj Sweets",
     distance: "500 meter",
     location: "Raj Sweets Mau Uttar Pradesh",
     description: "Famous for samosa",
-    images: ["jhansi6.jpg", "panna.jpg", "bandha.jpg"],
-  },
-  {
-    name: "Fruit Mart",
-    distance: "200 meter",
-    location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
-    images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
-  },
-  {
-    name: "Fruit Mart",
-    distance: "200 meter",
-    location: "Fruit Mart Mau Uttar Pradesh",
-    description: "Famous for fruits",
-    images: ["bandha.jpg", "panna.jpg", "orchha3.jpg"],
+    images: ["sweet.jpeg","rasgulla.jpg", "klakand.jpg", "boondi.jpg"],
   },
 ];
 

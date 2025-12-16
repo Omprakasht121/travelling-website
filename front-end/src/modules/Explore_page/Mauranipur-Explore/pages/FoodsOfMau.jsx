@@ -8,6 +8,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  Phone,
 } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
@@ -18,6 +19,7 @@ const staticFood = [
     name: "Burger-Station",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
+    phone: "9569932695",
     description: "Famous for sweets",
     images: ["burger.jpg","burger1.jpg", "burger2.jpg", "burger3.jpg"],
   },
@@ -78,6 +80,7 @@ const FoodsOfMau = () => {
           distance: item.distance || "N/A",
           location: item.location || "Mauranipur",
           description: item.description || "Famous local cuisine",
+          phone:item.phone || "96******48",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery)
@@ -298,6 +301,10 @@ const FoodsOfMau = () => {
                 <div className="flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
                   <h4>{food.description}</h4>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Phone className="h-4 w-4"/>
+                  <a  className="font-semibold" href={`tel:${food.phone}`}> +91 {food.phone}</a>
                 </div>
 
                 <div>

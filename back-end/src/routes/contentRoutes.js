@@ -1,32 +1,47 @@
-// src/routes/contentRoutes.js
 import express from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+
 import Content from "../models/Content.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const router = express.Router();
 
-const UPLOADS_ROOT = path.join(process.cwd(), "uploads");
-const GALLERY_DIR = path.join(UPLOADS_ROOT, "gallery");
-if (!fs.existsSync(UPLOADS_ROOT)) fs.mkdirSync(UPLOADS_ROOT);
-if (!fs.existsSync(GALLERY_DIR)) fs.mkdirSync(GALLERY_DIR);
+/* =========================================================
+   MULTER CONFIG — MEMORY STORAGE (NO DISK, NO ERRORS)
+========================================================= */
 
-// Multer: store gallery in uploads/gallery, main images in uploads root
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    if (file.fieldname === "gallery") cb(null, GALLERY_DIR);
-    else cb(null, UPLOADS_ROOT);
-  },
-  filename(req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const name = Date.now() + "-" + Math.round(Math.random() * 1e9) + ext;
-    cb(null, name);
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB per file
   },
 });
-const upload = multer({ storage });
 
-// POST (create) — you already have this; keep it
+/* =========================================================
+   HELPER: UPLOAD BUFFER TO CLOUDINARY
+========================================================= */
+
+const uploadToCloudinary = (buffer, folder) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        {
+          folder,
+          resource_type: "auto",
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      )
+      .end(buffer);
+  });
+};
+
+/* =========================================================
+   CREATE CONTENT (POST)
+========================================================= */
+
 router.post(
   "/",
   upload.fields([
@@ -35,216 +50,122 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      const {
-        region,
-        category,
-        title,
-        description,
-        distance,
-        location,
-        price,
-        special_dish,
-        rating,
-        reel_url,ytvideo_link,instagram_url, facebook_url, youtube_url, phone, whatsapp, email, segment,posts, followers, following,
-        month, day, date,
-      } = req.body;
+      const body = req.body;
 
-      const mainFile = req.files?.mainImage?.[0];
-      const galleryFiles = req.files?.gallery || [];
+      const titleSlug =
+        body.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "unknown";
 
-      const mainImagePath = mainFile
-        ? `/uploads/${mainFile.filename}`
-        : null;
+      let mainImage = null;
+      let gallery = [];
 
-      const galleryPaths = galleryFiles.map(
-        (f) => `/uploads/gallery/${f.filename}`
-      );
+      /* ---------- MAIN IMAGE ---------- */
+      if (req.files?.mainImage?.[0]) {
+        const result = await uploadToCloudinary(
+          req.files.mainImage[0].buffer,
+          `unseen-bundelkhand/destinations/${titleSlug}/cover`
+        );
+        mainImage = result.secure_url;
+      }
+
+      /* ---------- GALLERY IMAGES ---------- */
+      if (req.files?.gallery?.length) {
+        for (const file of req.files.gallery) {
+          const result = await uploadToCloudinary(
+            file.buffer,
+            `unseen-bundelkhand/destinations/${titleSlug}/gallery`
+          );
+          gallery.push(result.secure_url);
+        }
+      }
 
       const doc = new Content({
-        region: region?.toLowerCase(),
-        category: category?.toLowerCase(),
-        title,
-        description,
-        special_dish,
-        rating,
-        distance,
-        location,
-        price,
-        reel_url,
-        ytvideo_link,
-        instagram_url,
-        facebook_url,
-        youtube_url,
-        phone,
-        whatsapp,
-        email,
-        segment,
-        posts,
-        followers,
-        following,
-        day,
-        month,
-        date,
-        mainImage: mainImagePath,
-        gallery: galleryPaths,
-        
+        region: body.region?.toLowerCase(),
+        category: body.category?.toLowerCase(),
+        title: body.title,
+        description: body.description,
+        distance: body.distance,
+        location: body.location,
+        price: body.price,
+        special_dish: body.special_dish,
+        rating: body.rating,
+
+        reel_url: body.reel_url,
+        ytvideo_link: body.ytvideo_link,
+        instagram_url: body.instagram_url,
+        facebook_url: body.facebook_url,
+        youtube_url: body.youtube_url,
+
+        phone: body.phone,
+        whatsapp: body.whatsapp,
+        email: body.email,
+
+        segment: body.segment,
+        posts: body.posts,
+        followers: body.followers,
+        following: body.following,
+
+        month: body.month,
+        day: body.day,
+        date: body.date,
+
+        mainImage,
+        gallery,
       });
 
       const saved = await doc.save();
       res.status(201).json(saved);
     } catch (err) {
-      console.error("Error adding content:", err);
+      console.error("CREATE ERROR:", err);
       res.status(500).json({
-        message: "Failed to add content",
+        message: "Failed to create content",
         error: err.message,
       });
     }
   }
 );
 
+/* =========================================================
+   GET ALL CONTENT (ADMIN)
+========================================================= */
 
-// GET all content (admin list)
 router.get("/all", async (req, res) => {
   try {
-    const items = await Content.find({}).sort({ createdAt: -1 });
+    const items = await Content.find().sort({ createdAt: -1 });
     res.json(items);
   } catch (err) {
-    console.error("Error fetching all content:", err);
-    res.status(500).json({ message: "Failed to fetch content" });
+    res.status(500).json({ message: "Fetch failed" });
   }
 });
 
-// GET by region/category (you have this already)
+/* =========================================================
+   GET BY REGION & CATEGORY (USER)
+========================================================= */
+
 router.get("/:region/:category", async (req, res) => {
   try {
     const { region, category } = req.params;
-    const contents = await Content.find({
+
+    const items = await Content.find({
       region: region.toLowerCase(),
       category: category.toLowerCase(),
     });
-    res.json(contents);
+
+    res.json(items);
   } catch (err) {
-    console.error("Error fetching content:", err);
-    res.status(500).json({ message: "Failed to fetch content" });
+    res.status(500).json({ message: "Fetch failed" });
   }
 });
 
-// PUT update content (supports replacing files)
-// ✅ PUT update content (supports replacing files cleanly)
-router.put(
-  "/:id",
-  upload.fields([
-    { name: "mainImage", maxCount: 1 },
-    { name: "gallery", maxCount: 12 },
-  ]),
-  async (req, res) => {
-    try {
-      const id = req.params.id;
-      const existing = await Content.findById(id);
-      if (!existing)
-        return res.status(404).json({ message: "Content not found" });
+/* =========================================================
+   DELETE CONTENT (DB ONLY — CLOUDINARY SAFE)
+========================================================= */
 
-      // 🧩 Extract body data safely
-      const data =
-        typeof req.body.data === "string"
-          ? JSON.parse(req.body.data)
-          : req.body;
-
-      // ✅ 1️⃣ Replace main image if uploaded
-      if (req.files?.mainImage?.[0]) {
-        const newMain = req.files.mainImage[0];
-        const newPath = `/uploads/${newMain.filename}`;
-
-        // delete old main image if exists
-        if (
-          existing.mainImage &&
-          existing.mainImage.startsWith("/uploads") &&
-          fs.existsSync(path.join(process.cwd(), existing.mainImage))
-        ) {
-          fs.unlinkSync(path.join(process.cwd(), existing.mainImage));
-        }
-
-        data.mainImage = newPath;
-      } else {
-        // keep old main image if none uploaded
-        data.mainImage = existing.mainImage;
-      }
-
-      // ✅ 2️⃣ Replace gallery if new files uploaded
-      if (req.files?.gallery?.length) {
-        const galleryPaths = req.files.gallery.map(
-          (f) => `/uploads/gallery/${f.filename}`
-        );
-
-        // 🧠 Replace (not append) gallery images
-        // If you prefer to append, uncomment next line and remove the one after
-        // data.gallery = [...existing.gallery, ...galleryPaths];
-        data.gallery = galleryPaths;
-      } else {
-        // keep old gallery if no new files uploaded
-        data.gallery = existing.gallery;
-      }
-
-      // ✅ 3️⃣ Remove specific gallery items (optional)
-      if (data.removeGallery) {
-        const toRemove = Array.isArray(data.removeGallery)
-          ? data.removeGallery
-          : JSON.parse(data.removeGallery || "[]");
-
-        data.gallery = (data.gallery || []).filter(
-          (g) => !toRemove.includes(g)
-        );
-
-        toRemove.forEach((p) => {
-          if (p && p.startsWith("/uploads")) {
-            const fp = path.join(process.cwd(), p);
-            if (fs.existsSync(fp)) fs.unlinkSync(fp);
-          }
-        });
-      }
-
-      // ✅ 4️⃣ Update document in DB
-      const updated = await Content.findByIdAndUpdate(id, data, { new: true });
-
-      console.log("✅ Updated Content:", updated);
-      res.json(updated);
-    } catch (err) {
-      console.error("Error updating content:", err);
-      res
-        .status(500)
-        .json({ message: "Failed to update content", error: err.message });
-    }
-  }
-);
-
-
-// DELETE content (remove DB doc + files)
 router.delete("/:id", async (req, res) => {
   try {
-    const id = req.params.id;
-    const item = await Content.findById(id);
-    if (!item) return res.status(404).json({ message: "Not found" });
-
-    // delete mainImage file
-    if (item.mainImage && typeof item.mainImage === "string" && item.mainImage.startsWith("/uploads")) {
-      const fp = path.join(process.cwd(), item.mainImage);
-      if (fs.existsSync(fp)) fs.unlinkSync(fp);
-    }
-    // delete gallery files
-    if (Array.isArray(item.gallery)) {
-      item.gallery.forEach(p => {
-        if (p && p.startsWith("/uploads")) {
-          const fp = path.join(process.cwd(), p);
-          if (fs.existsSync(fp)) fs.unlinkSync(fp);
-        }
-      });
-    }
-
-    await Content.findByIdAndDelete(id);
-    res.json({ message: "Deleted" });
+    await Content.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted successfully" });
   } catch (err) {
-    console.error("Error deleting content:", err);
-    res.status(500).json({ message: "Failed to delete", error: err.message });
+    res.status(500).json({ message: "Delete failed" });
   }
 });
 

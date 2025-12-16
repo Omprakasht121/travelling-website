@@ -19,9 +19,9 @@ const contentSchema = new mongoose.Schema(
     rating: { type: Number},
     phone: { type: Number},
     whatsapp: { type: Number},
-    email: { type: String },              // ✅ single image path
-    mainImage: { type: String },              // ✅ single image path
-    gallery: { type: [String], default: [] }, // ✅ multiple gallery image paths
+    email: { type: String },            
+    mainImage: { type: String },             
+    gallery: { type: [String], default: [] }, 
     distance: { type: String },
     rating: { type: Number },
     posts: { type: String},

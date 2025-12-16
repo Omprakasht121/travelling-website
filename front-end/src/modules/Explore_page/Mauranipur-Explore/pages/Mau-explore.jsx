@@ -108,7 +108,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
 
   // ✅ Typing animation text
   const text =
-    "To run the test, you'll be connected to Measurement Lab (M-Lab) and your IP address will be shared with them and processed by them in accordance with their privacy policy.";
+    "A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember,and the moments that were so perfect you forgot to take a picture.";
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {

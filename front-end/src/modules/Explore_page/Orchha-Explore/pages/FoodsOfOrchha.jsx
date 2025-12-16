@@ -89,6 +89,7 @@ const FoodOfOrchha = () => {
           distance: item.distance || "N/A",
           location: item.location || "orchha",
           description: item.description || "Famous local cuisine",
+          phone: item.phone || "96******48",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery)
@@ -309,6 +310,11 @@ const FoodOfOrchha = () => {
                   <FlameIcon className="h-4 w-4" />
                   <h4>{food.description}</h4>
                 </div>
+                <div className="flex gap-2 items-center">
+                  <Phone className="h-4 w-4"/>
+                  <a  className="font-semibold" href={`tel:${food.phone}`}> +91 {food.phone}</a>
+                </div>
+
 
                 <div>
                   <button

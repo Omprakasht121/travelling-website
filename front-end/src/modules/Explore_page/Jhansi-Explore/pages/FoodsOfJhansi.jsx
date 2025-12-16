@@ -8,6 +8,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  Phone,
 } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
@@ -15,11 +16,12 @@ const backendURL = import.meta.env.VITE_BASE_URL;
 
 const staticFood = [
   {
-    name: "Sweet Dairy (Cafe)",
+   name: "Burger-Station",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
+    phone: "9569932695",
     description: "Famous for sweets",
-    images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
+    images: ["burger.jpg","burger1.jpg", "burger2.jpg", "burger3.jpg"],
   },
   {
     name: "Bharat Bakery",
@@ -92,6 +94,7 @@ const FoodsOfJhansi = () => {
           distance: item.distance || "N/A",
           location: item.location || "Jhansi",
           description: item.description || "Famous local cuisine",
+          phone:item.phone || "76******12",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery)
@@ -330,6 +333,10 @@ const FoodsOfJhansi = () => {
                 <div className="flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
                   <h4>{food.description}</h4>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Phone className="h-4 w-4"/>
+                  <a  className="font-semibold" href={`tel:${food.phone}`}> +91 {food.phone}</a>
                 </div>
 
                 <div>

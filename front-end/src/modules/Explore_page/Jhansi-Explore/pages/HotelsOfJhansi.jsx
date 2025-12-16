@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, FlameIcon, GoalIcon, Image, MapPin, Phone, X } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
 const backendURL =  import.meta.env.VITE_BASE_URL // ✅ Change when deployed
@@ -9,9 +9,12 @@ const backendURL =  import.meta.env.VITE_BASE_URL // ✅ Change when deployed
 const staticHotels = [
   {
     name: "Sweet Dairy (Cafe)",
-    distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
+    rating : "4.5",
+    ratingLabel : "good",
+    beforePrice : "6,999",
     price: "_,999",
+    phone:"9616254248",
     images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
   },
   {
@@ -72,9 +75,12 @@ const HotelsOfJhansi = () => {
         // 🆕 Map backend data into frontend-friendly format
         const mappedData = data.map((item) => ({
           name: item.title,
-          distance: item.distance || "N/A",
-          location: item.location || "jhansi",
+          beforePrice: item.distance || "N/A",
+          location: item.location || "Jhansi",
+          rating: item.rating || "4.5",
+          ratingLabel: item.description || "good",
           price: item.price || "N/A",
+          phone: item.phone || "86******58",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery) ? item.gallery : []),
@@ -287,12 +293,20 @@ const HotelsOfJhansi = () => {
                   <h4>{hotel.distance}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <GoalIcon className="h-4 w-4" />
-                  <h4>{hotel.location}</h4>
+                  <h4 className="font-semibold text-xs">{hotel.location}</h4>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <button className="border bg-green-600 px-2 rounded-[4px]">{hotel.rating}/5</button>
+                  <h4 className="font-semibold ">{hotel.ratingLabel}</h4>
                 </div>
                 <div className="flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
                   <h4 className="text-lg font-semibold">₹ {hotel.price}</h4>
+                  <h4 className="text-xs  line-through pl-2">₹ {hotel.beforePrice}</h4>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Phone className="h-4 w-4" />
+                  <a className="font-semibold" href={`tel:${hotel.phone}`}>+91 {hotel.phone}</a>
                 </div>
                 <div>
                   <button

@@ -8,6 +8,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  Phone,
 } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js";
 
@@ -15,11 +16,12 @@ const backendURL = import.meta.env.VITE_BASE_URL;
 
 const staticFood = [
   {
-    name: "Sweet Dairy (Cafe)",
+    name: "Burger-Station",
     distance: "320 meter away",
     location: "Sweet Dairy Mau Uttar Pradesh",
+    phone: "9569932695",
     description: "Famous for sweets",
-    images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
+    images: ["burger.jpg","burger1.jpg", "burger2.jpg", "burger3.jpg"],
   },
   {
     name: "Bharat Bakery",
@@ -87,9 +89,9 @@ const FoodOfOrchha = () => {
         const mappedData = data.map((item) => ({
           name: item.title,
           distance: item.distance || "N/A",
-          location: item.location || "orchha",
+          location: item.location || "Orchha",
           description: item.description || "Famous local cuisine",
-          phone: item.phone || "96******48",
+          phone:item.phone || "73******12",
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(item.gallery && Array.isArray(item.gallery)

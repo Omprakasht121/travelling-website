@@ -108,7 +108,7 @@ const { userData, logout, requestAuth, requestRegisterAuth } = useAuthModal();
 
   // ✅ Typing animation text
   const text =
-    "To run the test, you'll be connected to Measurement Lab (M-Lab) and your IP address will be shared with them and processed by them in accordance with their privacy policy.";
+    `Jhansi is a historic city in Uttar Pradesh, India, famous as the courageous stronghold of Rani Lakshmi Bai, a key figure in the 1857 Indian Rebellion, earning it the title "City of Warriors" and "Gateway to Bundelkhand".` ;
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {

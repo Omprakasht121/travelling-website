@@ -9,25 +9,35 @@ const fieldConfig = {
     { name: "title", label: "Ad Name", type: "text" },
     { name: "distance", label: "Distance (in meter)", type: "number" },
     { name: "location", label: "Location", type: "text" },
+
     { name: "description", label: "Description", type: "textarea" },
   ],
   shops: [
     { name: "title", label: "Shop Name", type: "text" },
     { name: "distance", label: "Distance (in meter)", type: "number" },
     { name: "location", label: "Location", type: "text" },
+    {name: "mapLink", label:"Map-Link", type:"text"},
+    { name: "phone", label: "Phone-Number", type: "number" },
     { name: "description", label: "Description", type: "textarea" },
+    
   ],
   hotels: [
     { name: "title", label: "Hotel Name", type: "text" },
     { name: "price", label: "Price (₹/night)", type: "number" },
+    { name: "distance", label: "Initial Price", type: "number" },
     { name: "location", label: "Location", type: "text" },
+    {name: "mapLink", label:"Map-Link", type:"text"},
     { name: "rating", label: "Rating", type: "number" },
-    { name: "description", label: "Description", type: "textarea" },
+    { name: "description", label: "Rating label", type: "textarea" },
+    { name: "phone", label: "Phone-Number", type: "number" },
+    
   ],
   food: [
     { name: "title", label: "Dish/Restaurant Name", type: "text" },
     { name: "special-dish", label: "Special Dish", type: "text" },
     { name: "location", label: "Location", type: "text" },
+    {name: "mapLink", label:"Map-Link", type:"text"},
+    { name: "phone", label: "Phone-Number", type: "number" },
     { name: "rating", label: "Rating", type: "number" },
     { name: "description", label: "Description", type: "textarea" },
   ],
@@ -46,17 +56,28 @@ const fieldConfig = {
     { name: "phone", label: "Phone-Number", type: "number" },
     { name: "whatsapp", label: "WhatsApp-No.", type: "number" },
     { name: "email", label: "Email-id", type: "text" },
-    { name: "posts", label: "Posts", type: "number" },
-    { name: "followers", label: "Followers", type: "number" },
-    { name: "following", label: "Following", type: "number" },
+    { name: "posts", label: "Posts", type: "text" },
+    { name: "followers", label: "Followers", type: "text" },
+    { name: "following", label: "Following", type: "text" },
     { name: "description", label: "Description", type: "textarea" },
   ],
-  Images: [{ name: "title", label: "title", type: "text" }],
-  videos: [
+  events: [
+    { name: "title", label: "title", type: "text" },
+    { name: "segment", label: "event name", type: "text" },
+    { name: "location", label: "Location", type: "text" },
+    { name: "day", label: "day", type: "text" },
+    { name: "month", label: "month", type: "text" },
+    { name: "date", label: "date", type: "text" },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
+  Images:[
+    { name: "title", label: "title", type: "text" },
+  ],
+  videos:[
     { name: "title", label: "Title", type: "text" },
     { name: "reel_url", label: "Insta-Reel-URL", type: "text" },
     { name: "description", label: "description", type: "text" },
-  ],
+  ]
 };
 
 const EditContentModal = ({ content, onClose }) => {

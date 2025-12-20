@@ -94,6 +94,7 @@ router.post(
         instagram_url: body.instagram_url,
         facebook_url: body.facebook_url,
         youtube_url: body.youtube_url,
+        mapLink: body.mapLink,
 
         phone: body.phone,
         whatsapp: body.whatsapp,
@@ -155,6 +156,102 @@ router.get("/:region/:category", async (req, res) => {
     res.status(500).json({ message: "Fetch failed" });
   }
 });
+
+
+/* =========================================================
+   UPDATE CONTENT (PUT)
+========================================================= */
+
+router.put(
+  "/:id",
+  upload.fields([
+    { name: "mainImage", maxCount: 1 },
+    { name: "gallery", maxCount: 12 },
+  ]),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+      const existing = await Content.findById(id);
+
+      if (!existing) {
+        return res.status(404).json({ message: "Content not found" });
+      }
+
+      const body = req.body;
+      const updateData = {
+  title: body.title,
+  description: body.description,
+  distance: body.distance,
+  location: body.location,
+  price: body.price,
+  special_dish: body.special_dish,
+  rating: body.rating,
+
+  reel_url: body.reel_url,
+  ytvideo_link: body.ytvideo_link,
+  instagram_url: body.instagram_url,
+  facebook_url: body.facebook_url,
+  youtube_url: body.youtube_url,
+  mapLink: body.mapLink,
+
+  phone: body.phone,
+  whatsapp: body.whatsapp,
+  email: body.email,
+
+  segment: body.segment,
+  posts: body.posts,
+  followers: body.followers,
+  following: body.following,
+
+  month: body.month,
+  day: body.day,
+  date: body.date,
+      };
+
+
+      // MAIN IMAGE
+        if (req.files?.mainImage?.[0]) {
+          const result = await uploadToCloudinary(
+            req.files.mainImage[0].buffer,
+            `unseen-bundelkhand/${existing.category}/${id}/cover`
+          );
+          updateData.mainImage = result.secure_url;
+        } else {
+          updateData.mainImage = existing.mainImage;
+        }
+
+        // GALLERY
+        if (req.files?.gallery?.length) {
+          let newGallery = [];
+          for (const file of req.files.gallery) {
+            const result = await uploadToCloudinary(
+              file.buffer,
+              `unseen-bundelkhand/${existing.category}/${id}/gallery`
+            );
+            newGallery.push(result.secure_url);
+          }
+          updateData.gallery = newGallery;
+        } else {
+          updateData.gallery = existing.gallery;
+        }
+
+
+      const updated = await Content.findByIdAndUpdate(id, updateData, {
+        new: true,
+        runValidators: true, // VERY IMPORTANT
+      });
+
+
+      res.json(updated);
+    } catch (err) {
+      console.error("UPDATE ERROR:", err);
+      res.status(500).json({
+        message: "Failed to update content",
+        error: err.message,
+      });
+    }
+  }
+);
 
 /* =========================================================
    DELETE CONTENT (DB ONLY — CLOUDINARY SAFE)

@@ -7,13 +7,14 @@ import ExploringOrchha from "../../modules/Explore_page/Orchha-Explore/pages/Exp
 import AdminLayout from "../../modules/Admin_Panel/pages/AdminLayout";
 import { Login } from "../../user/pages/Login";
 import RegisterModal from "../../user/pages/RegisterModal";
-import CreatorProfileModal from "../../modules/modals/CreatorProfileModal";
+
 import WishlistPage from "../../modules/dashboard/WishlistPage";
 import RegionRouter from "./RegionRouter";
 import Creators from "../../modules/Creators_page/Creators";
 import Events from "../../modules/events/Events";
 import LoginModal from "../../user/pages/LoginModal";
 import ExploringBanda from "../../modules/Explore_page/Banda-Explore/pages/ExploringBanda";
+import CreatorProfileModal from "../../modules/Explore_page/services/Creators/CreatorProfileModal";
 
 export const  AppRoutes = () => {
     return(

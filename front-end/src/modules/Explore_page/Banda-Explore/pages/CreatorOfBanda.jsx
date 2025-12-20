@@ -17,9 +17,10 @@ import {
   FacebookIcon,
 } from "lucide-react";
 import { getContent } from "../../../../shared/services/contentService.js"; // keep your service path
-import CreatorProfileModal from "../../../modals/CreatorProfileModal.jsx";
+// import CreatorProfileModal from "../../../modals/CreatorProfileModal.jsx";
 import { useAuthModal } from "../../../../context/AuthModalContext.jsx";
 import { useNavigate } from "react-router-dom";
+import CreatorProfileModal from "../../services/Creators/CreatorProfileModal.jsx";
 
 const backendURL = import.meta.env.VITE_BASE_URL;
 const fallbackProfile = "/default-profile.jpg";

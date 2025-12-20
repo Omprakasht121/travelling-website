@@ -105,7 +105,7 @@ const Oneview = () => {
 
               <button
                 onClick={prevVideo}
-                className="md:flex items-center justify-center absolute left-0 top-1/2 z-30 -translate-y-1/2 bg-black/30 hover:bg-black/50 rounded-full md:p-3 transition-all"
+                className="md:flex items-center justify-center absolute left-0 top-1/2 z-30 -translate-y-1/2 bg-black/30 hover:bg-black/50 rounded-full md:p-3 transition-all "
               >
                 <ChevronLeft className="h-8 w-8 text-white" />
               </button>
@@ -150,14 +150,14 @@ const Oneview = () => {
           <div className="flex justify-center items-center gap-6 mt-4">
             <button
               onClick={() => setPlaying((p) => !p)}
-              className="text-white font-semibold text-lg px-4 py-4 bg-orange-700/90 rounded-full hover:bg-orange-800/90 hover:scale-110 hover:border hover:border-black/30 transition-all duration-300 easeInOut"
+              className="text-white font-semibold text-lg px-4 py-4 bg-orange-600 rounded-full hover:bg-orange-600/90 hover:scale-110 hover:border hover:border-black/30 transition-all duration-300 easeInOut shadow-[inset_4px_1px_4px_rgba(50,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_12px_rgba(0,0,0,0.6)]"
             >
               {playing ? <Pause className="w-4 h-4 md:w-6 md:h-6" /> : <Play className="w-4 h-4 md:w-6 md:h-6" />}
             </button>
 
             <button
               onClick={() => setMuted((m) => !m)}
-              className="text-white font-semibold text-lg px-4 py-4 bg-orange-700/90 rounded-full hover:bg-orange-800/90 hover:scale-110 hover:border hover:border-black/30 transition-all duration-300 easeInOut"
+              className="text-white font-semibold text-lg px-4 py-4 bg-orange-600 rounded-full hover:bg-orange-600/90 hover:scale-110 hover:border hover:border-black/30 transition-all duration-300 easeInOut shadow-[inset_4px_1px_4px_rgba(50,0,0,0.2),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_2px_12px_rgba(0,0,0,0.6)]"
             >
               {muted ? <VolumeX className="w-4 h-4 md:w-6 md:h-6" /> : <Volume2 className="w-4 h-4 md:w-6 md:h-6" />}
             </button>

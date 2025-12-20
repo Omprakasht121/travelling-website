@@ -1,106 +1,105 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Image,
-  MapPin,
-  FlameIcon,
-  GoalIcon,
   ChevronLeft,
   ChevronRight,
-  Phone,
+  FlameIcon,
+  Image,
+  MapPin,
 } from "lucide-react";
 
-import staticFood from "./staticFood";
-import useFoodData from "./useFoodData";
+import staticShops from "./staticShops";
+import useShopData from "./useShopData";
+
 import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll";
+
 import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopup";
 
+const ShopPage = ({ region, title, subtitle }) => {
 
-const FoodPage = ({ region, title, subtitle }) => {
-  /* ---------------- STATE ---------------- */
+      /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);
-  const [galleryFood, setGalleryFood] = useState(null);
+  const [galleryShop, setGalleryShop] = useState(null);
+
   const containerRef = useRef(null);
 
   /* ---------------- DATA ---------------- */
-  const { foodsData, loading } = useFoodData(region);
-  const displayFoods = [ ...foodsData, ...staticFood,];
+  const { shopsData, loading } = useShopData(region);
+  const displayShops = [...shopsData, ...staticShops ];
 
   /* ---------------- INIT SLIDER INDEX ---------------- */
   useEffect(() => {
-    if (displayFoods.length > 0) {
-      setActiveImageIndex(Array(displayFoods.length).fill(0));
+    if (displayShops.length > 0) {
+      setActiveImageIndex(Array(displayShops.length).fill(0));
     }
-  }, [displayFoods.length]);
+  }, [displayShops.length]);
+
 
   /* ---------------- SCROLL ---------------- */
   const { canScrollLeft, canScrollRight } = useHorizontalScroll(
     containerRef,
     loading,
-    [displayFoods.length]
+    [displayShops.length]
   );
 
   const scrollLeft = () => {
-    containerRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+    containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    containerRef.current?.scrollTo({
+    containerRef.current.scrollTo({
       left: containerRef.current.scrollWidth,
       behavior: "smooth",
     });
   };
 
-  /* ---------------- AUTO SLIDESHOW ---------------- */
+    /* ---------------- AUTO SLIDESHOW ---------------- */
+
   useEffect(() => {
- 
-         if (displayFoods.length === 0 || activeImageIndex.length === 0) return;
-     
-         const intervals = displayFoods.map((_, foodIndex) => {
-           const delay = 6000 + foodIndex * 1200;
-           return setInterval(() => {
-             setActiveImageIndex((prev) => {
-               const newArr = [...prev];
-               const total = displayFoods[foodIndex].images.length;
-               if (total > 0) { 
-                 newArr[foodIndex] = (newArr[foodIndex] + 1) % total;
-               }
-               return newArr;
-             });
-           }, delay);
-         });
-     
-         return () => intervals.forEach(clearInterval);
-       }, [displayFoods.length, activeImageIndex.length]);
+    if (!displayShops.length || !activeImageIndex.length) return;
+
+    const intervals = displayShops.map((_, index) =>
+      setInterval(() => {
+        setActiveImageIndex((prev) => {
+          const arr = [...prev];
+          arr[index] = (arr[index] + 1) % displayShops[index].images.length;
+          return arr;
+        });
+      }, 6000 + index * 1200)
+    );
+
+    return () => intervals.forEach(clearInterval);
+  }, [displayShops.length, activeImageIndex.length]);
 
   /* ---------------- MAP ---------------- */
   const handleGo = (mapLink) => {
     if (mapLink) window.open(mapLink, "_blank");
   };
 
+  
   /* ---------------- loading ---------------- */
   if (loading) {
     return (
-      <div className="text-center bg-black text-white py-24 text-xl">
-        Loading Foods...
+      <div className="text-center text-white bg-black py-24 text-xl">
+        Loading Shops...
       </div>
     );
   }
 
+  
   /* ---------------- UI ---------------- */
-  return (
-    <main className="relative w-full text-gray-900 py-4 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-24">
 
-        {/* HEADER */}
+  return (
+    <main className="relative max-h-screen w-full text-gray-900 py-4 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         <motion.header
           className="md:px-16"
           initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             {title}
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
@@ -108,9 +107,11 @@ const FoodPage = ({ region, title, subtitle }) => {
           </p>
         </motion.header>
 
+
         {/* SCROLL + CARDS */}
         <section className="relative py-8 lg:px-24">
           <div className="flex justify-end gap-4 px-4">
+            {/* left button  */}
             <button
               onClick={scrollLeft}
               disabled={!canScrollLeft}
@@ -140,17 +141,17 @@ const FoodPage = ({ region, title, subtitle }) => {
             ref={containerRef}
             className="flex gap-8 overflow-x-auto snap-x snap-mandatory p-4"
           >
-            {displayFoods.map((food, foodIndex) => (
-              <div key={foodIndex} 
+            {displayShops.map((shop, shopIndex) => (
+              <div key={shopIndex} 
               className="snap-center  flex flex-col gap-2">
                 <div className="relative h-[250px] w-[300px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={activeImageIndex[foodIndex]}
+                      key={activeImageIndex[shopIndex]}
                       src={getImagePath(
-                        food.images[activeImageIndex[foodIndex]]
+                        shop.images[activeImageIndex[shopIndex]]
                       )}
-                      alt={food.name}
+                      alt={shop.name}
                       className="object-cover h-full w-full rounded-xl border border-black/40"
                       initial={{ opacity: 0, x: 80 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -160,7 +161,7 @@ const FoodPage = ({ region, title, subtitle }) => {
                   </AnimatePresence>
 
                   <button
-                    onClick={() => setGalleryFood(food)}
+                    onClick={() => setGalleryShop(shop)}
                     className="absolute bottom-2 right-2 bg-black/60 p-2 rounded-full"
                   >
                     <Image className="text-white h-4 w-4" />
@@ -169,16 +170,16 @@ const FoodPage = ({ region, title, subtitle }) => {
 
                  {/* Dots (inner images) */}
                 <div className="flex gap-2 justify-center">
-                  {food.images.map((_, i) => (
+                  {shop.images.map((_, i) => (
                     <motion.div
                       key={i}
                       className={`h-2 w-2 rounded-full ${
-                        i === activeImageIndex[foodIndex]
+                        i === activeImageIndex[shopIndex]
                           ? "bg-orange-500"
                           : "bg-gray-600/40"
                       }`}
                       animate={{
-                        scale: i === activeImageIndex[foodIndex] ? 1.3 : 1,
+                        scale: i === activeImageIndex[shopIndex] ? 1.3 : 1,
                       }}
                     />
                   ))}
@@ -186,26 +187,20 @@ const FoodPage = ({ region, title, subtitle }) => {
                 
                 {/* info  */}
                 <h1 className="font-semibold text-xl text-center md:text-left">
-                  {food.name}
+                  {shop.name}
                 </h1>
+                <div className="hidden flex gap-2 items-center">
+                  <MapPin className="h-4 w-4" />
+                  <h4>{shop.distance}</h4>
+                </div>
                 <div className="flex gap-2 items-center">
                   <MapPin className="h-4 w-4" />
-                  <h4>{food.distance}</h4>
+                  <h4>{shop.location}</h4>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <GoalIcon className="h-4 w-4" />
-                  <h4>{food.location}</h4>
-                </div>
-                <div className="flex gap-2 items-center">
+                <div className="hidden flex gap-2 items-center">
                   <FlameIcon className="h-4 w-4" />
-                  <h4>{food.description}</h4>
+                  <h4>{shop.description}</h4>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <Phone className="h-4 w-4"/>
-                  <a  className="font-semibold" href={`tel:${food.phone}`}> +91 {food.phone}</a>
-                </div>
-                
-
                 <button
                   onClick={() => handleGo(food.mapLink)}
                   className=" bg-orange-600 border-b border-sky-900/60 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
@@ -219,12 +214,11 @@ const FoodPage = ({ region, title, subtitle }) => {
       </div>
 
         {/* pop-up galley  */}
-      <GalleryCardPopUp
-        card={galleryFood}
-        onClose={() => setGalleryFood(null)}
-      />
+      <GalleryCardPopUp 
+      card={galleryShop} 
+      onClose={() => setGalleryShop(null)} />
     </main>
   );
 };
 
-export default FoodPage;
+export default ShopPage;

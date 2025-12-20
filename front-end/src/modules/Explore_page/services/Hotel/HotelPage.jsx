@@ -1,44 +1,46 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Image,
-  MapPin,
-  FlameIcon,
-  GoalIcon,
   ChevronLeft,
   ChevronRight,
+  FlameIcon,
+  GoalIcon,
+  Image,
+  MapPin,
   Phone,
 } from "lucide-react";
 
-import staticFood from "./staticFood";
-import useFoodData from "./useFoodData";
-import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll";
+import staticHotels from "./staticHotels";
+import useHotelData from "./useHotelData";
+import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll"; 
+
 import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopup";
 
 
-const FoodPage = ({ region, title, subtitle }) => {
-  /* ---------------- STATE ---------------- */
+const HotelPage = ({ region, title, subtitle }) => {
+
+      /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);
-  const [galleryFood, setGalleryFood] = useState(null);
+  const [galleryHotel, setGalleryHotel] = useState(null);
   const containerRef = useRef(null);
 
   /* ---------------- DATA ---------------- */
-  const { foodsData, loading } = useFoodData(region);
-  const displayFoods = [ ...foodsData, ...staticFood,];
+  const { hotelsData, loading } = useHotelData(region);
+  const displayHotels = [ ...hotelsData, ...staticHotels];
 
   /* ---------------- INIT SLIDER INDEX ---------------- */
   useEffect(() => {
-    if (displayFoods.length > 0) {
-      setActiveImageIndex(Array(displayFoods.length).fill(0));
+    if (displayHotels.length > 0) {
+      setActiveImageIndex(Array(displayHotels.length).fill(0));
     }
-  }, [displayFoods.length]);
+  }, [displayHotels.length]);
 
   /* ---------------- SCROLL ---------------- */
   const { canScrollLeft, canScrollRight } = useHorizontalScroll(
     containerRef,
     loading,
-    [displayFoods.length]
+    [displayHotels.length]
   );
 
   const scrollLeft = () => {
@@ -54,53 +56,46 @@ const FoodPage = ({ region, title, subtitle }) => {
 
   /* ---------------- AUTO SLIDESHOW ---------------- */
   useEffect(() => {
- 
-         if (displayFoods.length === 0 || activeImageIndex.length === 0) return;
-     
-         const intervals = displayFoods.map((_, foodIndex) => {
-           const delay = 6000 + foodIndex * 1200;
-           return setInterval(() => {
-             setActiveImageIndex((prev) => {
-               const newArr = [...prev];
-               const total = displayFoods[foodIndex].images.length;
-               if (total > 0) { 
-                 newArr[foodIndex] = (newArr[foodIndex] + 1) % total;
-               }
-               return newArr;
-             });
-           }, delay);
-         });
-     
-         return () => intervals.forEach(clearInterval);
-       }, [displayFoods.length, activeImageIndex.length]);
+    if (!displayHotels.length || !activeImageIndex.length) return;
 
-  /* ---------------- MAP ---------------- */
+    const timers = displayHotels.map((hotel, index) =>
+      setInterval(() => {
+        setActiveImageIndex((prev) => {
+          const arr = [...prev];
+          arr[index] = (arr[index] + 1) % hotel.images.length;
+          return arr;
+        });
+      }, 6000 + index * 1200)
+    );
+
+    return () => timers.forEach(clearInterval);
+  }, [displayHotels.length, activeImageIndex.length]);
+
+  /* ---------------- MAP ---------------- */ 
   const handleGo = (mapLink) => {
     if (mapLink) window.open(mapLink, "_blank");
   };
 
-  /* ---------------- loading ---------------- */
+    /* ---------------- loading ---------------- */
   if (loading) {
     return (
-      <div className="text-center bg-black text-white py-24 text-xl">
-        Loading Foods...
+      <div className="text-center text-white bg-black py-24 text-xl">
+        Loading Hotels...
       </div>
     );
   }
 
   /* ---------------- UI ---------------- */
   return (
-    <main className="relative w-full text-gray-900 py-4 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-24">
-
-        {/* HEADER */}
+    <main className="relative max-h-screen w-full text-gray-900 py-4 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         <motion.header
           className="md:px-16"
           initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             {title}
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
@@ -111,6 +106,7 @@ const FoodPage = ({ region, title, subtitle }) => {
         {/* SCROLL + CARDS */}
         <section className="relative py-8 lg:px-24">
           <div className="flex justify-end gap-4 px-4">
+            {/* left button  */}
             <button
               onClick={scrollLeft}
               disabled={!canScrollLeft}
@@ -140,17 +136,17 @@ const FoodPage = ({ region, title, subtitle }) => {
             ref={containerRef}
             className="flex gap-8 overflow-x-auto snap-x snap-mandatory p-4"
           >
-            {displayFoods.map((food, foodIndex) => (
-              <div key={foodIndex} 
+            {displayHotels.map((hotel, hotelIndex) => (
+              <div key={hotelIndex} 
               className="snap-center  flex flex-col gap-2">
                 <div className="relative h-[250px] w-[300px] rounded-xl overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={activeImageIndex[foodIndex]}
+                      key={activeImageIndex[hotelIndex]}
                       src={getImagePath(
-                        food.images[activeImageIndex[foodIndex]]
+                        hotel.images[activeImageIndex[hotelIndex]]
                       )}
-                      alt={food.name}
+                      alt={hotel.name}
                       className="object-cover h-full w-full rounded-xl border border-black/40"
                       initial={{ opacity: 0, x: 80 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -160,7 +156,7 @@ const FoodPage = ({ region, title, subtitle }) => {
                   </AnimatePresence>
 
                   <button
-                    onClick={() => setGalleryFood(food)}
+                    onClick={() => setGalleryHotel(hotel)}
                     className="absolute bottom-2 right-2 bg-black/60 p-2 rounded-full"
                   >
                     <Image className="text-white h-4 w-4" />
@@ -169,45 +165,49 @@ const FoodPage = ({ region, title, subtitle }) => {
 
                  {/* Dots (inner images) */}
                 <div className="flex gap-2 justify-center">
-                  {food.images.map((_, i) => (
+                  {hotel.images.map((_, i) => (
                     <motion.div
                       key={i}
                       className={`h-2 w-2 rounded-full ${
-                        i === activeImageIndex[foodIndex]
+                        i === activeImageIndex[hotelIndex]
                           ? "bg-orange-500"
                           : "bg-gray-600/40"
                       }`}
                       animate={{
-                        scale: i === activeImageIndex[foodIndex] ? 1.3 : 1,
+                        scale: i === activeImageIndex[hotelIndex] ? 1.3 : 1,
                       }}
                     />
                   ))}
                 </div>
                 
                 {/* info  */}
-                <h1 className="font-semibold text-xl text-center md:text-left">
-                  {food.name}
-                </h1>
-                <div className="flex gap-2 items-center">
-                  <MapPin className="h-4 w-4" />
-                  <h4>{food.distance}</h4>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <GoalIcon className="h-4 w-4" />
-                  <h4>{food.location}</h4>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <FlameIcon className="h-4 w-4" />
-                  <h4>{food.description}</h4>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Phone className="h-4 w-4"/>
-                  <a  className="font-semibold" href={`tel:${food.phone}`}> +91 {food.phone}</a>
-                </div>
+               <h1 className="font-semibold text-xl text-center md:text-left">
+                   {hotel.name}
+                 </h1>
+                 <div className="hidden flex gap-2 items-center">
+                   <MapPin className="h-4 w-4" />
+                   <h4>{hotel.distance}</h4>
+                 </div>
+                 <div className="flex gap-2 items-center">
+                   <h4 className="font-semibold text-xs">{hotel.location}</h4>
+                 </div>
+                 <div className="flex gap-2 items-center">
+                   <button className="border bg-green-600 px-2 rounded-[4px] text-white">{hotel.rating}/5</button>
+                   <h4 className="font-semibold ">{hotel.ratingLabel}</h4>
+                 </div>
+                 <div className="flex gap-2 items-center">
+                   <FlameIcon className="h-4 w-4" />
+                   <h4 className="text-lg font-semibold">₹ {hotel.price}</h4>
+                   <h4 className="text-xs  line-through pl-2">₹ {hotel.beforePrice}</h4>
+                 </div>
+                 <div className="flex gap-2 items-center">
+                   <Phone className="h-4 w-4" />
+                   <a className="font-semibold" href={`tel:${hotel.phone}`}>+91 {hotel.phone}</a>
+                 </div>
                 
 
                 <button
-                  onClick={() => handleGo(food.mapLink)}
+                  onClick={() => handleGo(hotel.mapLink)}
                   className=" bg-orange-600 border-b border-sky-900/60 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
                 >
                   Direction
@@ -216,15 +216,16 @@ const FoodPage = ({ region, title, subtitle }) => {
             ))}
           </div>
         </section>
+
       </div>
 
-        {/* pop-up galley  */}
-      <GalleryCardPopUp
-        card={galleryFood}
-        onClose={() => setGalleryFood(null)}
-      />
+    {/* pop-up galley  */}
+      <GalleryCardPopUp 
+      card={galleryHotel} 
+      onClose={() => setGalleryHotel(null)} />
+      
     </main>
   );
 };
 
-export default FoodPage;
+export default HotelPage;

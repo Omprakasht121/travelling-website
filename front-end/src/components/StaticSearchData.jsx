@@ -1,8 +1,9 @@
-import { staticDestinations } from "../modules/Explore_page/Mauranipur-Explore/staticdata/StaticDestinations";
+
+import staticDestination from "../modules/Explore_page/services/Destinations/staticDestination";
 import { Destinations } from "../modules/landing_page/staticdata/ExploreStaticData";
 
 export const staticSearchData = [
-  ...staticDestinations.map((item) => ({
+  ...staticDestination.map((item) => ({
     title: item.name,
     category: item.type,
     slug: item.slug,

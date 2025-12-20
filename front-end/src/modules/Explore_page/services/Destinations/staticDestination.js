@@ -1,4 +1,4 @@
-export const staticDestinations = [
+const staticDestination = [
   {
     name: "Orchha",
     img: "jhansi.jpg",
@@ -45,3 +45,5 @@ export const staticDestinations = [
     images: ["orchha3.jpg", "bandha.jpg", "jhansi6.jpg"],
   },
 ];
+
+export default staticDestination;

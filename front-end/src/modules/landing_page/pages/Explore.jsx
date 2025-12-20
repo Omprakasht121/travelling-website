@@ -463,17 +463,19 @@ const exploreLinks = [
             ))}
           </div>
           {/* Dots */}
-          <div className="md:hidden py-6 flex justify-center items-center gap-2">
-            {allDestinations.map((_, i) => (
+          <div className="md:hidden py-4 flex justify-center items-center gap-2">
+            <div className="flex gap-[6px] bg-white/70 border border-black p-1  px-3 rounded-lg shadow-[inset_4px_2px_8px_rgba(20,0,50,0.4),_inset_-4px_-4px_8px_rgba(0,120,0,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] ">
+              {allDestinations.map((_, i) => (
               <motion.div
                 key={i}
                 className={`h-3 w-3 rounded-full ${
-                  i === activeIndex ? "bg-blue-500" : "bg-gray-600/90"
+                  i === activeIndex ? "bg-blue-600" : "bg-gray-600/90"
                 }`}
                 animate={{ scale: i === activeIndex ? 1.2 : 0.9 }}
                 transition={{ duration: 0.3 }}
               />
             ))}
+            </div>
           </div>
         </motion.section>
       </div>

@@ -149,7 +149,7 @@ router.get("/:region/:category", async (req, res) => {
     const items = await Content.find({
       region: region.toLowerCase(),
       category: category.toLowerCase(),
-    });
+    }).sort({ createdAt: -1 });
 
     res.json(items);
   } catch (err) {

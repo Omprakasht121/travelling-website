@@ -14,7 +14,9 @@ import staticFood from "./staticFood";
 import useFoodData from "./useFoodData";
 import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll";
 import getImagePath from "../../../shared/utils/getImagePath";
-import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopup";
+import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
+
+
 
 
 

@@ -4,6 +4,7 @@ import getImagePath from "./getImagePath";
 
 
 
+
 const GalleryCardPopUp = ({ card, onClose }) => {
   if (!card) return null;
 

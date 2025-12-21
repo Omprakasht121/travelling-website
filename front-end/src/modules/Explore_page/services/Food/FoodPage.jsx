@@ -20,6 +20,7 @@ import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
 
 
 
+
 const FoodPage = ({ region, title, subtitle }) => {
   /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);

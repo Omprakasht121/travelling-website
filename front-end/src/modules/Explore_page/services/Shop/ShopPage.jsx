@@ -17,10 +17,6 @@ import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
 
 
-
-
-
-
 const ShopPage = ({ region, title, subtitle }) => {
 
       /* ---------------- STATE ---------------- */

@@ -220,7 +220,7 @@ const HotelPage = ({ region, title, subtitle }) => {
       </div>
 
     {/* pop-up galley  */}
-      <GalleryCardPopUp 
+      <GalleryCardPopUp
       card={galleryHotel} 
       onClose={() => setGalleryHotel(null)} />
       

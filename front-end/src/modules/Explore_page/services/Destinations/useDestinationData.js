@@ -17,6 +17,7 @@ const useDestinationData = (region) => {
           name: item.title,
           desc: item.description,
           location: item.location,
+          mapLink: item.mapLink,
           img: item.mainImage || "",
           images: [item.mainImage, ...(item.gallery || [])],
         }));

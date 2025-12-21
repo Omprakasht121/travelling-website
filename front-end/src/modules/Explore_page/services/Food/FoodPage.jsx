@@ -192,7 +192,7 @@ const FoodPage = ({ region, title, subtitle }) => {
                 <h1 className="font-semibold text-xl text-center md:text-left">
                   {food.name}
                 </h1>
-                <div className="flex gap-2 items-center">
+                <div className="hidden flex gap-2 items-center">
                   <MapPin className="h-4 w-4" />
                   <h4>{food.distance}</h4>
                 </div>

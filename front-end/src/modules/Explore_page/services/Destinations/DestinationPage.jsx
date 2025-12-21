@@ -52,14 +52,11 @@ const DestinationPage = ({ region }) => {
   };
 
 
-  const handleGo = (location) => {
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-        location
-      )}`,
-      "_blank"
-    );
+    const handleGo = (mapLink) => {
+    if (mapLink) window.open(mapLink, "_blank");
   };
+
+
 
   if (loading)
     return <div className="text-center text-white py-24 text-xl">Loading...</div>;
@@ -244,7 +241,7 @@ const DestinationPage = ({ region }) => {
 
                     <p className="text-sm text-slate-800 mb-3">{place.desc}</p>
 
-                    <button onClick={() => handleGo(place.location)}
+                    <button onClick={() => handleGo(place.mapLink)}
 
                     className="text-white text-lg w-full py-2  bg-blue-700 hover:bg-blue-600 hover:scale-110 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                       Visit Now

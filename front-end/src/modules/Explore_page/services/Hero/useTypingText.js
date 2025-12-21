@@ -1,20 +1,19 @@
+// src/modules/exploreHero/hooks/useTypingText.js
 import { useEffect, useState } from "react";
 
-const useTypingText = (text, speed = 25) => {
-  const [displayedText, setDisplayedText] = useState("");
+export const useTypingText = (text, speed = 25) => {
+  const [value, setValue] = useState("");
 
   useEffect(() => {
     let i = 0;
     const id = setInterval(() => {
-      setDisplayedText(text.slice(0, i));
+      setValue(text.slice(0, i));
       i++;
       if (i > text.length) clearInterval(id);
     }, speed);
 
     return () => clearInterval(id);
-  }, [text, speed]);
+  }, [text]);
 
-  return displayedText;
+  return value;
 };
-
-export default useTypingText;

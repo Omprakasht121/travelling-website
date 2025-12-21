@@ -19,6 +19,7 @@ const useHotelData = (region) => {
           ratingLabel: item.description || "good",
           price: item.price || "N/A",
           phone: item.phone || "96******48",
+          mapLink: item.mapLink,
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(Array.isArray(item.gallery) ? item.gallery : []),

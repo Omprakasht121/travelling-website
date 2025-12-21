@@ -397,14 +397,14 @@ const Hero = () => {
           >
             <ChevronLeft className="w-5 h-5 text-gray-900" />
           </button>
-          <div className="flex gap-1 bg-white/75 border border-black p-1 md:p-[5px] px-3 md:px-6 rounded-full shadow-[inset_4px_2px_8px_rgba(0,0,50,0.4),_inset_-4px_-4px_8px_rgba(0,120,0,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+          <div className="flex gap-1 bg-white/75 border border-black p-1  px-3 md:px-6 rounded-full shadow-[inset_4px_2px_8px_rgba(0,0,50,0.4),_inset_-4px_-4px_8px_rgba(0,120,0,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
             {images.map((_, i) => (
             <motion.div
               key={i}
               className={`h-3 w-3 md:w-4 md:h-4 rounded-full ${
                 i === index ? "bg-blue-600" : "bg-gray-600/90"
               }`}
-              animate={{ scale: i === index ? 1.1 : 0.7 }}
+              animate={{ scale: i === index ? 1.0 : 0.7 }}
               transition={{ duration: 0.3 }}
             />
           ))}

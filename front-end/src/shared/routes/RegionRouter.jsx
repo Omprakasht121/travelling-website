@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
-import ExploringMau from "../../modules/Explore_page/Mauranipur-Explore/pages/ExploringMau";
-import ExploringJhansi from "../../modules/Explore_page/Jhansi-Explore/pages/ExploringJhansi";
-import ExploringOrchha from "../../modules/Explore_page/Orchha-Explore/pages/ExploringOrchha";
+
+import ExploringJhansi from "../../modules/Explore_page/Jhansi-Explore/ExploringJhansi";
+import ExploringOrchha from "../../modules/Explore_page/Orchha-Explore/ExploringOrchha";
+import ExploringMau from "../../modules/Explore_page/Mauranipur-Explore/ExploringMau";
 
 
 export default function RegionRouter() {

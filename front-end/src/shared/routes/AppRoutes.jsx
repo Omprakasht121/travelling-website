@@ -1,9 +1,10 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Landing from "../../modules/landing_page/pages/Landing";
-import ExploringMau from "../../modules/Explore_page/Mauranipur-Explore/pages/ExploringMau";
-import ExploringJhansi from "../../modules/Explore_page/Jhansi-Explore/pages/ExploringJhansi";
-import ExploringOrchha from "../../modules/Explore_page/Orchha-Explore/pages/ExploringOrchha";
+import ExploringMau from "../../modules/Explore_page/Mauranipur-Explore/ExploringMau";
+
+// import ExploringJhansi from "../modules/Explore_page/Jhansi-Explore/ExploringJhansi";
+import ExploringOrchha from "../../modules/Explore_page/Orchha-Explore/ExploringOrchha";
 import AdminLayout from "../../modules/Admin_Panel/pages/AdminLayout";
 import { Login } from "../../user/pages/Login";
 import RegisterModal from "../../user/pages/RegisterModal";
@@ -13,8 +14,9 @@ import RegionRouter from "./RegionRouter";
 import Creators from "../../modules/Creators_page/Creators";
 import Events from "../../modules/events/Events";
 import LoginModal from "../../user/pages/LoginModal";
-import ExploringBanda from "../../modules/Explore_page/Banda-Explore/pages/ExploringBanda";
+import ExploringBanda from "../../modules/Explore_page/Banda-Explore/ExploringBanda";
 import CreatorProfileModal from "../../modules/Explore_page/services/Creators/CreatorProfileModal";
+import ExploringJhansi from "../../modules/Explore_page/Jhansi-Explore/ExploringJhansi";
 
 export const  AppRoutes = () => {
     return(

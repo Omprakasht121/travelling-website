@@ -1,17 +1,14 @@
+// src/modules/exploreHero/hooks/useScrollHeader.js
 import { useEffect, useState } from "react";
 
-const useScrollHeader = () => {
+export const useScrollHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () =>
-      setIsScrolled(window.scrollY > 5);
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 5);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return isScrolled;
 };
-
-export default useScrollHeader;

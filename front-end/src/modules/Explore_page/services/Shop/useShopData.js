@@ -16,6 +16,7 @@ const useShopData = (region) => {
           distance: item.distance || "N/A",
           location: item.region || region,
           description: item.description,
+          mapLink: item.mapLink,
           images: [
             ...(item.mainImage ? [item.mainImage] : []),
             ...(Array.isArray(item.gallery) ? item.gallery : []),

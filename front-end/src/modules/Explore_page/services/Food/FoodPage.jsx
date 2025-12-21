@@ -17,6 +17,7 @@ import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopup";
 
 
+
 const FoodPage = ({ region, title, subtitle }) => {
   /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);

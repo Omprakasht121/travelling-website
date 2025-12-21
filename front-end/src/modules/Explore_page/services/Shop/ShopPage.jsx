@@ -16,6 +16,8 @@ import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll";
 import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopup";
 
+
+
 const ShopPage = ({ region, title, subtitle }) => {
 
       /* ---------------- STATE ---------------- */
@@ -214,7 +216,7 @@ const ShopPage = ({ region, title, subtitle }) => {
       </div>
 
         {/* pop-up galley  */}
-      <GalleryCardPopUp 
+      <GalleryCardPopUp
       card={galleryShop} 
       onClose={() => setGalleryShop(null)} />
     </main>

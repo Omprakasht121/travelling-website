@@ -37,7 +37,7 @@ const ContactUs = () => {
 
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center  text-gray-900 py-12 overflow-hidden">
+    <main className="min-h-screen w-full flex flex-col items-center  text-gray-900 pt-16 md:pt-20 pb-8 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
                 <motion.header
                   className="mb-8"
@@ -46,10 +46,13 @@ const ContactUs = () => {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                   viewport={{once:false, amount:.2}}
                 >
-                  <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-                    Connect with Us
+                  <div className="flex relative items-center cursor-pointer">
+                     <img src={`${import.meta.env.BASE_URL}contactman.png`} alt="hiking.png" className=" absolute -bottom-7 md:-bottom-14 h-28 md:h-44 w-auto" />
+                    <h1 className=" pl-10 md:pl-16 text-3xl md:text-5xl font-extrabold tracking-tight">
+                    Connect with <span className="border-b-4 border-red-600 ">Us</span>
                   </h1>
-                  <p className="mt-2 text-sm md:text-base text-slate-800  mx-auto md:mx-0">
+                  </div>
+                  <p className="mt-3 md:mt-6 text-sm md:text-base text-slate-800  mx-auto md:mx-0">
                    Reach out and let’s bring you closer to the heart of Bundelkhand — where travel becomes a connection, and memories turn into stories worth retelling.
                   </p>
                 </motion.header>

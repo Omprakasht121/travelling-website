@@ -80,15 +80,18 @@ const Oneview = () => {
   }&mute=${muted ? 1 : 0}&modestbranding=1&rel=0&showinfo=0`;
 
   return (
-    <main className="min-h-auto w-full flex flex-col items-center py-12 overflow-hidden">
+    <main className="min-h-auto w-full flex flex-col items-center pt-14 pb-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
 
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Bundelkhand In Motion
+          <div className="flex relative ">
+             <img src={`${import.meta.env.BASE_URL}camera.png`} alt="camera.png" className=" absolute -bottom-10 md:-bottom-12 -left-2 h-28 w-28 md:h-36 md:w-36" />
+            <h1 className="text-3xl pl-8 md:pl-12 md:text-5xl font-extrabold tracking-tight">
+            Bundelkhand In <span className="border-b-4 border-red-600">Motion</span>
           </h1>
-          <p className="mt-2 text-sm md:text-base text-gray-800 max-w-2xl mx-auto md:mx-0">
+          </div>
+          <p className="mt-4 text-sm md:text-base text-gray-800 max-w-2xl mx-auto md:mx-0">
             Witness Bundelkhand come alive — through sweeping drone views, temple
             bells, cascading rivers, and inviting you to see, feel, and fall in love
             with its soul.

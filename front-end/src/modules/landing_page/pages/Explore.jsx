@@ -188,7 +188,7 @@ const exploreLinks = [
   }, [allDestinations]); // Re-run when Destinations are loaded
 
   return (
-    <main id="explore" className="min-h-screen w-full flex flex-col items-center text-gray-900 py-12">
+    <main id="explore" className="min-h-screen w-full flex flex-col items-center text-gray-900 pt-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* header */}
         <motion.header
@@ -198,9 +198,12 @@ const exploreLinks = [
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: false, amount: 0.2 }}
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            Explore Bundelkhand
+          <div className="flex items-center">
+            <img src={`${import.meta.env.BASE_URL}hiking.png`} alt="hiking.png" className="h-20 w-20" />
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Explore Bundel<span className="border-b-4 border-red-600">khand</span>
           </h1>
+          </div>
           <p className="mt-2 text-sm md:text-base text-gray-800  mx-auto md:mx-0">
             Unveil the soul of Bundelkhand. Trace the footsteps of kings, saints,
             and artists as you explore its forts, forests, and festivals.

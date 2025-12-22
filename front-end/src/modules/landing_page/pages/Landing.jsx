@@ -14,7 +14,7 @@ function Landing(){
       <>
      <div >
         <Hero/>
-        <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10">
+        <div className="bg-gradient-to-br from-amber-800/20 to-blue-800/20">
         <Oneview/>
         <Explore/>
         <RegionMap/>

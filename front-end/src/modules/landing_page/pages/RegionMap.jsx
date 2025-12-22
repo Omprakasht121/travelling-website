@@ -82,7 +82,7 @@ const RegionMap = () => {
   };
 
   return (
-    <main className="min-h-auto w-full flex flex-col items-center  text-white py-12">
+    <main className="min-h-auto w-full flex flex-col items-center  text-white pt-12 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full text-gray-900 ">
         {/* Header */}
         <motion.header
@@ -92,7 +92,10 @@ const RegionMap = () => {
           className="mb-8"
         >
           {/* ✅ CHANGED: Fixed typo tracking-tigh -> tracking-tight */}
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Map And Region</h1>
+          <div className="flex items-center">
+              <img src={`${import.meta.env.BASE_URL}mapguide.png`} alt="hiking.png" className="h-16 md:h-28 pr-2 w-auto " />
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Map And <span className="border-b-4 border-red-600">Region</span></h1>
+          </div>
           <p className="mt-2 text-sm text-gray-800">
             Trace your journey through the heart of India — from the hilltop
             forts of Jhansi to the sacred rivers of Chitrakoot.

@@ -4,7 +4,7 @@ export const Destinations = [
       id: 0,
       category:"Explore",
       name: "Jhansi",
-      img: `${import.meta.env.BASE_URL}jhansi6.jpg`,
+      img: `${import.meta.env.BASE_URL}jhansi2.jpg`,
       location: "Jhansi",
       slug: "Jhansi",
       description: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history — from its majestic Jhansi Fort to the legacy of Rani Lakshmibai and the 1857 uprising. It serves as a gateway to Bundelkhand’s forts, rivers and cultural landscapes.",

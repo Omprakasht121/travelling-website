@@ -9,38 +9,38 @@ const aboutData = [
     id: 1,
     title: "Origin of the Name",
     description:
-      "The name Bundelkhand derives from the Bundela Rajput clan, who rose to prominence in the 11th century. The Bundelas ruled much of central India and gave the region its distinctive cultural and political identity.",
-    image: `${import.meta.env.BASE_URL}orchha.jpg`,
+      "A cinematic landscape of ancient Bundelkhand with rocky plateaus, winding rivers, and dense forests under a golden sunrise, early medieval India, subtle silhouettes of Rajput warriors in the distance, historical and atmospheric, warm earthy tones, ultra-detailed, realistic style",
+    image: `${import.meta.env.BASE_URL}originofbundelkhand.png`,
   },
   {
     id: 2,
     title: "Rise of the Bundela Kingdoms",
     description:
-      "The Bundelas established Orchha as their capital in the 16th century under Raja Rudra Pratap Singh. They built magnificent forts, palaces, and temples — blending Rajput valor with intricate Mughal-inspired architecture.",
-    image: `${import.meta.env.BASE_URL}gwalior.jpg`,
+      "Between the 14th and 18th centuries, Bundelkhand witnessed the rise of powerful Bundela kingdoms, most notably Orchha, Datia, and Panna. Leaders like Raja Rudra Pratap Singh laid the foundations of strong states that challenged larger empires. These kingdoms blended military strength with cultural ambition, building forts, palaces, and towns that still define the region’s historic identity.",
+    image: `${import.meta.env.BASE_URL}chapter2.png`,
   },
   {
     id: 3,
     title: "Centers of Art and Devotion",
     description:
-      "Bundelkhand flourished as a cradle of art, faith, and craftsmanship. From the erotic sculptures of Khajuraho (built by the Chandela dynasty) to the sacred ghats of Chitrakoot, it became a land where spirituality met artistry.",
-    image: `${import.meta.env.BASE_URL}jhansi3.jpg`,
+      "Bundelkhand flourished as a center of temple architecture, art, and devotion. From the magnificent Khajuraho temples to sacred towns like Orchha, the region celebrated spirituality through stone and sculpture. Intricate carvings, devotional music, and folk traditions reflected a deep connection between daily life and faith, making Bundelkhand a timeless cultural sanctuary.",
+    image: `${import.meta.env.BASE_URL}chapter3.png`,
   },
   {
     id: 4,
     title: "Struggle and Resistance",
     description:
-      "The region became a symbol of resistance and patriotism, especially during the 1857 First War of Independence, when Rani Laxmi Bai of Jhansi led her heroic defense against British rule — a story now etched in Indian history.",
+      "Bundelkhand has long been a land of resistance. From confronting Mughal authority to opposing British colonial rule, its people fiercely defended their autonomy. Legendary figures like Maharani Laxmibai of Jhansi emerged as symbols of courage and sacrifice. These struggles shaped a strong regional identity rooted in honor, bravery, and self-respect.",
     // Here we use the specific image you had
-    image: `${import.meta.env.BASE_URL}lakshmibai.jpg`,
+    image: `${import.meta.env.BASE_URL}chapter4.png`,
   },
   {
     id: 5,
     title: "Cultural Crossroads",
     description:
-      "Situated between northern and central India, Bundelkhand absorbed influences from Rajput, Mughal, and Maratha cultures — reflected in its language, cuisine, festivals, and fort architecture.",
+      "Bundelkhand stands at a cultural crossroads where Rajasthani, Mughal, and Deccan influences blend seamlessly with local traditions. Its folk songs, dances, cuisine, dialects, and festivals reflect centuries of cultural exchange. Even today, Bundelkhand’s villages preserve a living heritage—simple, proud, and deeply connected to the land.",
     // Re-using a great image for the final point
-    image: `${import.meta.env.BASE_URL}orchha.jpg`,
+    image: `${import.meta.env.BASE_URL}chapter5.png`,
   },
 ];
 
@@ -71,7 +71,7 @@ const About = () => {
           viewport={{ once: false, amount: 0.2 }}
         >
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-            Echoes of Bundelkhand
+            Echoes of Bundel<span className="border-b-4 border-red-600 " >khand</span>
           </h1>
           <p className="mt-3 text-lg text-gray-300 max-w-2xl">
             Bundelkhand isn’t just a chapter in history — it’s a living saga of
@@ -174,7 +174,7 @@ const About = () => {
                 <motion.img
                   src={selectedItem.image}
                   alt={selectedItem.title}
-                  className="w-full h-64 md:h-80 rounded-lg object-cover shadow-xl"
+                  className="w-full h-64 md:h-[50vh] rounded-lg object-cover shadow-xl"
                   // Add a subtle "parallax" style zoom on hover
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.3 }}

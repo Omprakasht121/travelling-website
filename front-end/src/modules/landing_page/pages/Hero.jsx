@@ -35,9 +35,12 @@ const Hero = () => {
   
   const images = [
     "/gwalior.jpg",
-    "/orchha2.jpg",
-    "/jhansi6.jpg",
-    "/jhansi.jpg",
+    "/tigerpanna.jpg",
+    "/betwa.jpg",
+    "/dataifort.jpg",
+    "/ramrajatemple.jpg",
+    "/temples.jpg",
+    "/fortraja.jpg",
   ];
  
 
@@ -133,9 +136,9 @@ const Hero = () => {
 
             {/* ⭐ PROTECTED LINKS */}
             <a href="#home"
-            className="hover:scale-110">Home</a>
+            className="hover:scale-125 hover:text-orange-700 transition">Home</a>
             <a href="#about"
-            className="hover:scale-110">About</a>
+            className="hover:scale-125 hover:text-orange-700 transition">About</a>
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               href="#explore"

@@ -86,7 +86,7 @@ const Oneview = () => {
         {/* Header */}
         <header className="mb-8">
           <div className="flex relative ">
-             <img src={`${import.meta.env.BASE_URL}camera.png`} alt="camera.png" className=" absolute -bottom-10 md:-bottom-12 -left-2 h-28 w-28 md:h-36 md:w-36" />
+             <img src={`${import.meta.env.BASE_URL}camera.png`} alt="camera.png" className=" absolute -bottom-9 md:-bottom-12 -left-2 h-28 w-28 md:h-36 md:w-36" />
             <h1 className="text-3xl pl-8 md:pl-12 md:text-5xl font-extrabold tracking-tight">
             Bundelkhand In <span className="border-b-4 border-red-600">Motion</span>
           </h1>

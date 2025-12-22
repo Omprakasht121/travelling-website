@@ -36,7 +36,6 @@ const Hero = () => {
   const images = [
     "/gwalior.jpg",
     "/tigerpanna.jpg",
-    "/betwa.jpg",
     "/dataifort.jpg",
     "/ramrajatemple.jpg",
     "/temples.jpg",
@@ -47,7 +46,7 @@ const Hero = () => {
 
   const [mobile, setMobile] = useState(false);
   const [account, setAccount] = useState(false);
-  const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Bandha"];
+  const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Banda"];
   const [index, setIndex] = useState(0);
   const { theme, toggleTheme } = useTheme();;
   const[search, setSearch] = useState(false);
@@ -348,7 +347,7 @@ const Hero = () => {
                     animate={{ y: "0%", opacity: 1 }} // slide to center
                     exit={{ y: "-50%", opacity: 0 }} // exit upward
                     transition={{ duration: 1, ease: easeInOut }}
-                    className="inline-block"
+                    className="inline-block font-extrabold"
                   >
                     {titles[index1]}
                   </motion.span>

@@ -204,7 +204,7 @@ const exploreLinks = [
             Explore Bundel<span className="border-b-4 border-red-600">khand</span>
           </h1>
           </div>
-          <p className="mt-2 text-sm md:text-base text-gray-800  mx-auto md:mx-0">
+          <p className="mt-0 text-sm md:text-base text-gray-800  mx-auto md:mx-0">
             Unveil the soul of Bundelkhand. Trace the footsteps of kings, saints,
             and artists as you explore its forts, forests, and festivals.
           </p>

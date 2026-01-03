@@ -32,11 +32,11 @@ function ExploringJhansi(){
         title="Hotels & Banquet"
         subtitle="Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
         />
-        <ShopPage
+        {/* <ShopPage
             region="jhansi"
             title="Jhansi Bazaar Tales"
             subtitle="Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
-            />
+            /> */}
         <EventsPage region="jhansi"/>
         <CreatorPage region="jhansi" />;
         <VideoPage region="jhansi" />;

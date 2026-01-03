@@ -61,7 +61,7 @@ const EventsPage = ({ region }) => {
 
   // HOVER START
   const handleCardMouseEnter = (i) => {
-    const speed = 800;
+    const speed = 900;
     if (hoverIntervalsRef.current[i])
       clearInterval(hoverIntervalsRef.current[i]);
 
@@ -298,7 +298,7 @@ const EventsPage = ({ region }) => {
                 event={ev}
                 idx={i}
                 onClick={handleCardClick}
-                activeIndexForCard={activeImageIndex[i] ?? 0}
+                activeImageIndex={activeImageIndex[i] ?? 0}
                 onMouseEnter={handleCardMouseEnter}
                 onMouseLeave={handleCardMouseLeave}
               />

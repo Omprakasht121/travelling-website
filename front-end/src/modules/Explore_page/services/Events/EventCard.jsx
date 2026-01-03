@@ -1,6 +1,6 @@
 // src/modules/events/components/EventCard.jsx
 import { motion } from "framer-motion";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, GlobeLock, MapPin } from "lucide-react";
 import getImagePath from "../../../shared/utils/getImagePath";
 
 
@@ -18,6 +18,10 @@ const EventCard = ({
       ? gallery[activeImageIndex % gallery.length]
       : event.img;
 
+
+      console.log(gallery)
+      console.log(activeImageIndex)
+      console.log(img)
   return (
     <motion.div
       className="relative flex-shrink-0 w-72 md:w-80 rounded-lg overflow-hidden shadow-2xl cursor-pointer"
@@ -46,7 +50,7 @@ const EventCard = ({
         <p className="text-gray-300 text-sm flex gap-2">
           <Calendar size={14} /> {event.date}
         </p>
-        <p className="text-gray-300 text-sm flex gap-2">
+        <p className="text-gray-300 text-sm flex gap-2  items-center">
           <MapPin size={14} /> {event.location}
         </p>
       </div>

@@ -27,7 +27,7 @@ const HotelPage = ({ region, title, subtitle }) => {
 
   /* ---------------- DATA ---------------- */
   const { hotelsData, loading } = useHotelData(region);
-  const displayHotels = [ ...hotelsData, ...staticHotels];
+  const displayHotels = hotelsData.length > 0 ? hotelsData : staticHotels;
 
   /* ---------------- INIT SLIDER INDEX ---------------- */
   useEffect(() => {

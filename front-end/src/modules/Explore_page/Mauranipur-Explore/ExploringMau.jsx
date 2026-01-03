@@ -14,7 +14,7 @@ import HeroPage from "../services/Hero/HeroPage";
 
 function ExploringMau(){
     return(
-        <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 
+        <div className="bg-gradient-to-br from-sky-300/30 to-orange-900/40"> 
         <>
         <HeroPage
             region="mauranipur" 

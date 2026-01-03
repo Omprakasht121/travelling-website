@@ -283,7 +283,7 @@ const HeroPage = ({ region, title, desc }) => {
                 </div>
               </div>
 
-              <div className="bg-blue-500 w-6xl  py-2 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+              <div className="bg-blue-500 w-6xl  py-4 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                 <h1 className="text-2xl md:text-5xl font-bold text-center text-white">
                   {title}
                 </h1>

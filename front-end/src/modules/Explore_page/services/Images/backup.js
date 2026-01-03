@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+
 import staticDestination from "./staticDestination";
 import { getContent } from "../../../../shared/services/contentService";
+
 
 const useDestinationData = (region) => {
   const [destinations, setDestinations] = useState([]);
@@ -11,30 +13,24 @@ const useDestinationData = (region) => {
       try {
         const data = await getContent(region, "destinations");
 
-        // ✅ Map uploaded data
-        const uploadedData = data.map((item) => ({
+        const mappedData = data.map((item) => ({
           name: item.title,
           desc: item.description,
           location: item.location,
           mapLink: item.mapLink,
           img: item.mainImage || "",
-          images: [
-            ...(item.mainImage ? [item.mainImage] : []),
-            ...(Array.isArray(item.gallery) ? item.gallery : []),
-          ],
+          images: [item.mainImage, ...(item.gallery || [])],
         }));
 
-        // ✅ RULE APPLIED HERE
-        if (uploadedData.length > 0) {
-          setDestinations(uploadedData); // ONLY uploaded
-        } else {
-          setDestinations(
-            staticDestination.map((s) => ({
-              ...s,
-              images: [s.img, ...(s.images || [])],
-            }))
-          ); // ONLY static
-        }
+        const merged = [
+          ...mappedData, ...staticDestination.map((s) => ({
+            ...s,
+            images: [s.img, ...(s.images || [])],
+          }))
+          
+        ];
+
+        setDestinations(merged);
       } catch (err) {
         console.error("Error fetching destinations:", err);
       } finally {

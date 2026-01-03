@@ -5,7 +5,7 @@ import EventsPage from "../services/Events/EventPage";
 import FoodPage from "../services/Food/FoodPage";
 import HotelPage from "../services/Hotel/HotelPage";
 import ImagesPage from "../services/Images/ImagesPage";
-import ShopPage from "../services/Shop/ShopPage";
+
 import VideoPage from "../services/Videos/VideoOfMau";
 import HeroPage from "../services/Hero/HeroPage";
 
@@ -14,7 +14,7 @@ import HeroPage from "../services/Hero/HeroPage";
 
 function ExploringMau(){
     return(
-        <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 
+        <div className="bg-gradient-to-br from-sky-300/30 to-orange-900/40"> 
         <>
         <HeroPage
             region="orchha" 
@@ -32,11 +32,11 @@ function ExploringMau(){
         title="Hotels & Banquet"
         subtitle="Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
         />
-        <ShopPage
+        {/* <ShopPage
             region="orchha"
             title="Orchha Bazaar Tales"
             subtitle="Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
-            />
+            /> */}
         <EventsPage region="orchha"/>
         <CreatorPage region="orchha" />;
         <VideoPage region="orchha" />;

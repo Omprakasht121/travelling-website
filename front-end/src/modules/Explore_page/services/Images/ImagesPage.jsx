@@ -4,14 +4,15 @@ import ImageGrid from "./ImageGrid";
 import useImagesData from "./useImagesData";
 
 
-const ImagesPage = () => {
+const ImagesPage = ({region}) => {
   const {
     loading,
     mainImage,
     smallImages,
     allImages,
     setSmallImages,
-  } = useImagesData("mauranipur");
+  } = useImagesData(region);
+  
 
   const [showAll, setShowAll] = useState(false);
 

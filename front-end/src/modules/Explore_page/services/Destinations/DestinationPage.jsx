@@ -84,8 +84,8 @@ const DestinationPage = ({ region }) => {
         </motion.header>
 
         {/* === MAIN SECTION === */}
-        <section className="relative lg:px-28 md:py-8">
-          <div className="relative flex justify-center items-center md:gap-6 overflow-hidden">
+        <section className="relative lg:px- md:py-2">
+          <div className="relative flex justify-center items-center md:gap-6 overflow-hidden ">
 
             {/* LEFT ARROW */}
             <button
@@ -96,7 +96,7 @@ const DestinationPage = ({ region }) => {
             </button>
 
             {/* CENTER SLIDER */}
-            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:min-h-[90vh]">
+            <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[75%] flex justify-center items-center md:min-h-[95vh] ">
               <AnimatePresence initial={false} custom={direction}>
 
                 {/* LEFT CARD */}
@@ -116,7 +116,7 @@ const DestinationPage = ({ region }) => {
                   </h1>
                   <img
                     src={getImagePath(destinations[leftIndex].img)}
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                    className="md:h-[45vh] lg:h-[55vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm text-center text-slate-800">
                     {destinations[leftIndex].desc}
@@ -140,7 +140,7 @@ const DestinationPage = ({ region }) => {
                   <div className="relative px-2">
                     <img
                       src={getImagePath(destinations[index].img)}
-                      className="md:h-[50vh] w-full rounded-xl object-cover border-2 border-black/20"
+                      className="md:h-[50vh] lg:h-[65vh] w-full rounded-xl object-cover border-2 border-black/20"
                     />
 
                     {/* LIKE BUTTON */}
@@ -170,7 +170,7 @@ const DestinationPage = ({ region }) => {
                   </p>
 
                   <button onClick={() => handleGo(destinations[index].location)}
-                  className="text-white text-lg px-6 py-2 rounded-xl bg-blue-700 hover:scale-110 transition">
+                  className="text-white text-lg px-6 py-2 rounded-xl bg-blue-700 hover:scale-110 transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                     Visit Now
                   </button>
                 </motion.div>
@@ -191,7 +191,7 @@ const DestinationPage = ({ region }) => {
                   </h1>
                   <img
                     src={getImagePath(destinations[rightIndex].img)}
-                    className="h-[40vh] rounded-xl object-cover border-2 border-black/20"
+                    className="md:h-[45vh] lg:h-[55vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm text-center text-slate-800">
                     {destinations[rightIndex].desc}
@@ -260,13 +260,15 @@ const DestinationPage = ({ region }) => {
           </div>
 
           {/* DOTS */}
-          <div className="hidden md:flex justify-center mt-4 gap-2">
+          <div className="hidden md:flex justify-center  gap-2">
             {destinations.map((_, i) => (
               <motion.div
                 key={i}
                 className={`h-3 w-3 rounded-full ${
-                  i === index ? "bg-blue-500" : "bg-gray-700/40"
+                  i === index ? "bg-blue-600" : "bg-gray-700/60"
                 }`}
+                animate={{ scale: i === index ? 1.1 : 0.7 }}
+                transition={{ duration: 0.4 }}
               />
             ))}
           </div>

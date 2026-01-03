@@ -13,7 +13,7 @@ export const useEventData = (region) => {
       try {
         const data = await getContent(region, "events");
 
-        const backendEvents = (Array.isArray(data) ? data : []).map((it) => ({
+        const uploadedEvents = (Array.isArray(data) ? data : []).map((it) => ({
           id: it._id,
           title: it.title || "Untitled Event",
           date: it.date || "No date",
@@ -27,7 +27,12 @@ export const useEventData = (region) => {
           description: it.description || "",
         }));
 
-        setEvents([...backendEvents, ...staticEvents]);
+        // ✅ STRICT RULE
+        if (uploadedEvents.length > 0) {
+          setEvents(uploadedEvents); 
+        } else {
+          setEvents(staticEvents); 
+        }
       } catch (e) {
         console.error("EVENT FETCH ERROR:", e);
         setEvents(staticEvents);

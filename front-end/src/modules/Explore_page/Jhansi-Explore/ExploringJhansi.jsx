@@ -14,12 +14,12 @@ import HeroPage from "../services/Hero/HeroPage";
 
 function ExploringJhansi(){
     return(
-        <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 
+        <div className="bg-gradient-to-br from-sky-300/30 to-orange-900/40"> 
         <>
         <HeroPage
             region="jhansi" 
             title="Jhansi (झाँसी)"
-            desc="A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember,and the moments that were so perfect you forgot to take a picture."/>;
+            desc="Jhansi is a historic city in Uttar Pradesh, India, famous as the brave center of resistance led by Rani Lakshmibai during the 1857 Rebellion against British rule.."/>;
         <ImagesPage region="jhansi" />;
         <DestinationPage region="jhansi" />;
         <FoodPage

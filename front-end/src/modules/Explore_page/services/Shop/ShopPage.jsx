@@ -27,7 +27,7 @@ const ShopPage = ({ region, title, subtitle }) => {
 
   /* ---------------- DATA ---------------- */
   const { shopsData, loading } = useShopData(region);
-  const displayShops = [...shopsData, ...staticShops ];
+  const displayShops = shopsData.length > 0 ? shopsData : staticShops;
 
   /* ---------------- INIT SLIDER INDEX ---------------- */
   useEffect(() => {

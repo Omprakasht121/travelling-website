@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
-
 import { getContent } from "../../../../shared/services/contentService";
 import { staticImages } from "./StaticImages";
 
-const useImagesData = (region = "mauranipur") => {
-  const [galleryData, setGalleryData] = useState([]);
+const useImagesData = (region) => {
   const [loading, setLoading] = useState(true);
+  const [galleryData, setGalleryData] = useState([]);
 
-  const [mainImage, setMainImage] = useState(staticImages[0]);
-  const [smallImages, setSmallImages] = useState(staticImages.slice(1, 5));
+  const [mainImage, setMainImage] = useState(null);
+  const [smallImages, setSmallImages] = useState([]);
+  const [allImages, setAllImages] = useState([]);
 
+  /* ----------------------------------
+     FETCH DATA
+  ----------------------------------- */
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getContent(region, "images");
 
         const mapped = data.map((item) => ({
-          mainImage: item.mainImage || "",
+          mainImage: item.mainImage || null,
           gallery: item.galleryImages || item.gallery || item.images || [],
         }));
 
@@ -31,28 +34,30 @@ const useImagesData = (region = "mauranipur") => {
     fetchData();
   }, [region]);
 
+  /* ----------------------------------
+     DECISION LOGIC
+  ----------------------------------- */
   useEffect(() => {
-    if (!galleryData.length) return;
+    const hasUploaded = galleryData.length > 0;
 
-    const uploadedMain = galleryData.find((g) => g.mainImage);
-    const chosenMain = uploadedMain
-      ? uploadedMain.mainImage
-      : staticImages[0];
+    if (!hasUploaded) {
+      // ✅ NO UPLOAD → STATIC ONLY
+      setMainImage(staticImages[0]);
+      setSmallImages(staticImages.slice(1, 5));
+      setAllImages(staticImages);
+      return;
+    }
 
-    const uploadedGallery = galleryData.flatMap((g) => g.gallery || []);
-    const smallPool = [
-      ...uploadedGallery.filter(Boolean),
-      ...staticImages.filter((s) => s !== chosenMain),
-    ].slice(0, 4);
+    // ✅ UPLOADED EXISTS → UPLOADED ONLY
+    const uploadedImages = galleryData.flatMap((g) => [
+      g.mainImage,
+      ...(g.gallery || []),
+    ]).filter(Boolean);
 
-    setMainImage(chosenMain);
-    setSmallImages(smallPool);
+    setMainImage(uploadedImages[0]);
+    setSmallImages(uploadedImages.slice(1, 5));
+    setAllImages(uploadedImages);
   }, [galleryData]);
-
-  const allImages = [
-    ...staticImages,
-    ...galleryData.flatMap((g) => [g.mainImage, ...(g.gallery || [])]),
-  ].filter(Boolean);
 
   return {
     loading,

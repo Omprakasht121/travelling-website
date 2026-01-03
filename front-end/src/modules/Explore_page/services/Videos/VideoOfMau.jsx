@@ -31,7 +31,7 @@ const VideoPage = ({region}) => {
     fetchData();
   }, []);
 
-  const reels = [...videoData, ...staticReels];
+  const reels = videoData.length > 0 ? videoData : staticReels;
 
   const {
     index,

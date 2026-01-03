@@ -29,7 +29,9 @@ const FoodPage = ({ region, title, subtitle }) => {
 
   /* ---------------- DATA ---------------- */
   const { foodsData, loading } = useFoodData(region);
-  const displayFoods = [ ...foodsData, ...staticFood,];
+ const displayFoods =
+  foodsData.length > 0 ? foodsData : staticFood;
+
 
   /* ---------------- INIT SLIDER INDEX ---------------- */
   useEffect(() => {

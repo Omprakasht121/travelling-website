@@ -241,7 +241,7 @@ const DestinationPage = ({ region }) => {
 
                     <p className="text-sm text-slate-800 mb-3">{place.desc}</p>
 
-                    <button onClick={() => handleGo(place.mapLink)}
+                    <button onClick={() => handleGo(destinations[index].location)}
 
                     className="text-white text-lg w-full py-2  bg-blue-700 hover:bg-blue-600 hover:scale-110 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                       Visit Now

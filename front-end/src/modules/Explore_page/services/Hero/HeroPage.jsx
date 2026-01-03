@@ -1,7 +1,7 @@
 // src/modules/exploreHero/HeroPage.jsx
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Search, Sun, User2, X } from "lucide-react";
+import { ArrowBigLeft, ArrowDown, ArrowRight, Menu, Search, Sun, User2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { staticHero } from "./staticHero";
 import { useTypingText } from "./useTypingText";
@@ -72,7 +72,7 @@ const HeroPage = ({ region, title, desc }) => {
     className="relative min-h-auto  w-full  text-gray-900 py-4 overflow-hidden">
       <div className="container flex flex-col mx-auto px-4 sm:px-6 lg:px-24 w-full">
         {/* Header/Navbar */}
-        <header className={`fixed left-0 right-0 z-40 h-12 md:h-16 w-full bg-white flex justify-between items-center rounded-full bg-black/10 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50  shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] md:shadow-sm
+        <header className={`fixed left-0 right-0 z-40 h-12 md:h-16 w-full bg-black/10 flex justify-between items-center rounded-full  bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50  shadow-[inset_4px_4px_6px_rgba(0,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(50,0,0,0.5)] 
           ${isScrolled ? "top-1" : "top-4"}
         `}>
           <motion.div
@@ -80,14 +80,14 @@ const HeroPage = ({ region, title, desc }) => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             viewport={{ once: false, amount: 0.2 }}
-            className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg  font-semibold flex justify-between md:justify-around items-center"
+            className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg  font-semibold flex justify-between md:justify-around items-center "
           >
             <div className=" ">
               <Link to="/" >
                 <img
                   src={`${import.meta.env.BASE_URL}logo.png`}
                   alt="logo"
-                  className="h-auto w-12 md:w-20  hover:scale-110 transition-transform duration-700 ease-in-out"
+                  className="h-auto w-12 md:w-16  hover:scale-110 transition-transform duration-700 ease-in-out"
                 />
               </Link>
             </div>
@@ -283,7 +283,7 @@ const HeroPage = ({ region, title, desc }) => {
                 </div>
               </div>
 
-              <div className="bg-blue-500 w-6xl  py-4 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
+              <div className="bg-gradient-to-br from-orange-400 to-rose-700 w-6xl  py-2 md:py-4 p-6 rounded-lg z-20  shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
                 <h1 className="text-2xl md:text-5xl font-bold text-center text-white">
                   {title}
                 </h1>
@@ -300,8 +300,10 @@ const HeroPage = ({ region, title, desc }) => {
 
           <div className=" text-white flex justify-center items-center mt-4">
             <button onClick={() => (window.location.hash = "explore")}
-            className=" bg-blue-700 px-8 py-2 rounded-full text-lg font-bold hover:scale-110 transition-transform duration-500  shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_0_16px_rgba(200,10,20,0.5)]">
-              Explore
+            className=" bg-blue-700 flex  justify-center items-center  gap-2 px-8 py-2 rounded-full text-lg font-bold hover:scale-110 transition-transform duration-500  shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_0_16px_rgba(200,10,20,0.5)]">
+              <p>Explore</p> 
+              <ArrowRight/>
+
             </button>
           </div>
         </section>

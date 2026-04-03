@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./shared/routes/AppRoutes";
 
 import { AuthModalProvider } from "./context/AuthModalContext";
-import AuthModals from "./components/AuthModals"; 
+import AuthModals from "./components/AuthModals";
+import ChatBot from "./shared/component/ChatBot";
 
 // Helper function to check if JWT expired
 const isTokenExpired = (token) => {
@@ -36,10 +37,11 @@ function App() {
   }, []); // runs once when app loads
   return (
     <AuthModalProvider>
-      <BrowserRouter>
-        <AppRoutes />
-        <AuthModals />   {/* Global Modal Renderer */}
-      </BrowserRouter>
+        <BrowserRouter>
+          <AppRoutes />
+          <AuthModals />   {/* Global Modal Renderer */}
+          <ChatBot />      {/* Global Chatbot Widget */}
+        </BrowserRouter>
     </AuthModalProvider>
   );
 }

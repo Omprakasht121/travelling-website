@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { AnimatePresence, motion, easeInOut } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "../../../context/AuthModalContext";
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import UserProfileModal from "../../../shared/modals/UserProfileModal";
 import GlobalSearch from "../../../components/GlobalSearch";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "../../../shared/component/LanguageToggle";
 
 
 const useTheme = () => {
@@ -31,7 +33,7 @@ const useTheme = () => {
 
 
 const Hero = () => {
-
+  const { t } = useTranslation();
   
   const images = [
     "/gwalior.jpg",
@@ -41,12 +43,13 @@ const Hero = () => {
     "/temples.jpg",
     "/fortraja.jpg",
   ];
- 
+  
+  const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Banda"];
 
 
   const [mobile, setMobile] = useState(false);
   const [account, setAccount] = useState(false);
-  const titles = ["Bundelkhand", "बुन्देलखण्ड", "Mauranipur", "Orchha", "Banda"];
+
   const [index, setIndex] = useState(0);
   const { theme, toggleTheme } = useTheme();;
   const[search, setSearch] = useState(false);
@@ -64,14 +67,14 @@ const Hero = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex1((prev) => (prev + 1) % titles.length);
-    }, 6000); // change speed here
+    }, 6000);
     return () => clearInterval(interval);
   }, [titles.length]);
 
   // ✅ Background animation variants
   const variants = {
     enter: (dir) => ({
-      x: dir > 0 ? "100%" : "-100%", // comes from side
+      x: dir > 0 ? "100%" : "-100%",
       opacity: 1,
     }),
     center: {
@@ -80,7 +83,7 @@ const Hero = () => {
       transition: { duration: 1, ease: "easeInOut" },
     },
     exit: (dir) => ({
-      x: dir < 0 ? "100%" : "-100%", // exits opposite
+      x: dir < 0 ? "100%" : "-100%",
       opacity: 1,
       transition: { duration: 1, ease: "easeInOut" },
     }),
@@ -96,19 +99,19 @@ const Hero = () => {
     setIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // ⭐ UNIVERSAL PROTECTED CLICK HANDLER
+  // UNIVERSAL PROTECTED CLICK HANDLER
   const protectedClick = (path) => {
     const token = localStorage.getItem("userToken");
 
     if (!token) {
-      requestAuth(path);   // open login popup & remember path
+      requestAuth(path);
     } else {
-      navigate(path);      // user already logged in
+      navigate(path);
     }
   };
 
   return (
-    // Added 'dark' class here to respect the theme
+
     <div id="home" className={`max-h-screen flex flex-col overflow-hidden ${theme}`}>
       {/* Navbar */}
       <header className="fixed z-50 h-12 top-4 md:h-16 w-full px-4 bg-white flex justify-between items-center transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 ">
@@ -119,9 +122,9 @@ const Hero = () => {
           viewport={{ once: false, amount: 0.2 }}
           className="container mx-auto px-4 sm:px-6 lg:px-16 md:text-sm lg:text-lg font-semibold flex justify-between items-center text-gray-900 "
         >
+          {/* logo  */}
           <div>
             <a href="#hero">
-              {/* ✅ FIX: Removed `import.meta.env.BASE_URL` */}
               <img
                 src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="logo"
@@ -133,36 +136,44 @@ const Hero = () => {
           {/* NAV LINKS */}
           <nav className="hidden md:flex gap-8 font-semibold text-blue-800 ">
 
-            {/* ⭐ PROTECTED LINKS */}
+            
             <a href="#home"
-            className="hover:scale-125 hover:text-orange-700 transition">Home</a>
+            className="hover:scale-125 hover:text-orange-700 transition">{t("nav.home")}</a>
             <a href="#about"
-            className="hover:scale-125 hover:text-orange-700 transition">About</a>
+            className="hover:scale-125 hover:text-orange-700 transition">{t("nav.about")}</a>
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               href="#explore"
             >
-              Explore
+              {t("nav.explore")}
+            </a>
+
+            <a
+              className="hover:scale-110 flex items-center gap-1 font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition cursor-pointer"
+              onClick={() => navigate("/ai-planner")}
+            >
+              ✨ AI Planner
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               onClick={() => protectedClick("/creators")}
             >
-              Creators
+              {t("nav.creators")}
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               onClick={() => protectedClick("/events")}
             >
-              Events
+              {t("nav.events")}
             </a>
           </nav>
 
 
           {/* Theme & Menu */}
           <div className="flex gap-4 justify-center items-center">
+            <LanguageToggle />
             <button
               onClick={toggleTheme}
               className="hidden p-1 md:p-2 rounded-full border-[1px] border-black/40 bg-gray-200 dark:bg-gray-700 hover:scale-110 transition-transform duration-900 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]"
@@ -174,7 +185,7 @@ const Hero = () => {
               )}
             </button>
             <button
-              onClick={() => setSearch(prev => !prev)} // 👈 toggles true/false
+              onClick={() => setSearch(prev => !prev)} 
               className="p-1 md:p-2 hover:scale-110 transition-transform duration-900 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]"
             >
               <Search className="w-6 h-6 text-black" />
@@ -188,7 +199,7 @@ const Hero = () => {
             <div className="hidden  border border-black rounded-full hover:scale-105 transition-transform duration-1000 ease-in-out hover:shadow-[0_0_15px_rgba(0,99,241,0.6)] ">
               <button onClick={() => protectedClick("/login")}
               className="px-6 py-1 rounded-full bg-orange-600 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)] text-white">
-                SIGNUP
+                {t("nav.signup")}
               </button>
             </div>
 
@@ -220,28 +231,28 @@ const Hero = () => {
         isOpen={account}
         onClose={() => setAccount(false)}
         
-        user={userData} // <-- Pass userData from context
+        user={userData} 
 
         onLoginClick={() => {
           setAccount(false);
-          requestAuth(() => setAccount(true)); // Re-open profile after login
+          requestAuth(() => setAccount(true)); 
         }}
         
         onRegisterClick={() => {
           setAccount(false);
-          requestRegisterAuth(() => setAccount(true)); // Re-open profile after register
+          requestRegisterAuth(() => setAccount(true)); 
         }}
         
         onLogoutClick={() => {
-          // --- UPDATED ---
-          logout(); // Call context logout function
+          
+          logout(); 
           setAccount(false);
         }}
         
         onEditProfileClick={() => console.log("Edit profile")}
         onWishlistClick={() => {
-          setAccount(false); // Close the modal
-          navigate('/wishlist'); // Go to the wishlist page
+          setAccount(false); 
+          navigate('/wishlist');
         }}
         wishlistCount={wishlist.length}
       />
@@ -266,28 +277,38 @@ const Hero = () => {
           </button>
           <nav className="flex flex-col gap-4 font-semibold text-white">
              <a href="#home"
-            className="hover:scale-110">Home</a>
+            className="hover:scale-110">{t("nav.home")}</a>
             <a href="#about"
-            className="hover:scale-110">About</a>
+            className="hover:scale-110">{t("nav.about")}</a>
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               href="#explore"
             >
-              Explore
+              {t("nav.explore")}
+            </a>
+
+            <a
+              className="hover:scale-110 flex items-center gap-1 font-bold text-yellow-300 transition cursor-pointer"
+              onClick={() => {
+                setMobile(false);
+                navigate("/ai-planner");
+              }}
+            >
+              ✨ AI Planner
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               onClick={() => protectedClick("/creators")}
             >
-              Creators
+              {t("nav.creators")}
             </a>
 
             <a
               className="hover:scale-125 hover:text-orange-700 transition"
               onClick={() => protectedClick("/events")}
             >
-              Events
+              {t("nav.events")}
             </a>
 
           </nav>
@@ -336,16 +357,16 @@ const Hero = () => {
           <div className="relative w-full flex justify-center items-center h-[80vh] md:h-[90vh]">
             <motion.div className="absolute flex flex-col gap-4 md:w-full text-center p-4 md:p-2 justify-center items-center md:gap-6">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold">
-                The Unseen
+                {t("hero.theUnseen")}
               </h1>
               <h1 className="text-orange-500 text-5xl md:text-7xl lg:text-8xl drop-shadow-lg font-extrabold overflow-hidden p-2 md:p-6 ">
                 {/* overflow-hidden ensures smooth upward sliding */}
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={titles[index1]}
-                    initial={{ y: "50%", opacity: 0 }} // enter from bottom
-                    animate={{ y: "0%", opacity: 1 }} // slide to center
-                    exit={{ y: "-50%", opacity: 0 }} // exit upward
+                    initial={{ y: "50%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }} 
+                    exit={{ y: "-50%", opacity: 0 }}
                     transition={{ duration: 1, ease: easeInOut }}
                     className="inline-block font-extrabold"
                   >
@@ -355,10 +376,7 @@ const Hero = () => {
               </h1>
 
               <p className="max-w-xl text-sm md:text-lg text-gray-100 drop-shadow-lg">
-                Traveling is the act of moving from one place to another, often
-                to experience new cultures, see new sights, and gain a break
-                from daily routines.
-              {/* ✅ FIX: Corrected closing tag from </f> to </p> */}
+                {t("hero.description")}
               </p>
 
               <div className="flex flex-col md:flex-row p-4 md:p-8 rounded-lg items-center g ">
@@ -366,7 +384,7 @@ const Hero = () => {
                   <motion.input
                     whileFocus={{ scale: 1.03 }}
                     type="text"
-                    placeholder="Enter Place to Visit"
+                    placeholder={t("hero.searchPlaceholder")}
                     className="w-full rounded-l-full px-12 py-3 focus:outline-none focus:scale-110 focus:bg-sky-50 text-gray-900"
                   />
                   <Search className="w-8 h-8 text-black mx-4" />
@@ -374,7 +392,7 @@ const Hero = () => {
 
                 <a href="#explore">
                   <button className=" bg-indigo-700 flex justify-center items-center gap-2 rounded-full z-20 font-semibold px-10 md:px-10 py-3 text-xl text-white hover:scale-110 hover:bg-indigo-600 transition-all duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]">
-                    Explore
+                    {t("hero.explore")}
                     <ArrowRight className="text-orange-500"/>
                   </button>
                 </a>

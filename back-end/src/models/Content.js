@@ -23,8 +23,6 @@ const contentSchema = new mongoose.Schema(
     email: { type: String },
     mainImage: { type: String },
     gallery: { type: [String], default: [] },
-    distance: { type: String },
-    rating: { type: Number },
     posts: { type: String},
     followers: { type: String},
     following: { type: String },

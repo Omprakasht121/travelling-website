@@ -11,7 +11,9 @@ router.get("/", async (req, res) => {
 
   if (!query || query.trim() === "") return res.json([]);
 
-  const regex = new RegExp(query, "i");
+  // Escape special regex characters to prevent ReDoS attacks
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(escaped, "i");
 
   let filter = {
     $or: [

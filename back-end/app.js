@@ -5,7 +5,8 @@ import contentRoutes from "./src/routes/contentRoutes.js";
 import { userRoutes } from "./src/routes/userRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
 import searchRoutes from "./src/routes/searchRoutes.js";
-
+import aiPlannerRoutes from "./src/routes/aiPlannerRoutes.js";
+import chatRoutes from "./src/routes/chatRoutes.js";
 
 
 
@@ -23,10 +24,12 @@ app.use("/uploads/gallery", express.static("uploads/gallery"));
 // ✅ Routes
 
 app.use("/admin", adminRoutes);
-app.use('/',userRoutes);
+app.use('/api/user', userRoutes);
 
 app.use("/api/content", contentRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/ai", aiPlannerRoutes);
+app.use("/api/chat", chatRoutes);
 
 
 

@@ -37,7 +37,7 @@
 
 // const RegionMap = () => {
 //   const { isLoaded } = useLoadScript({
-//     googleMapsApiKey: "AIzaSyCQEToJKXV3KwKBh0s7Z5_jOuETpPMQzjU", // ⚠️ Replace this
+//     googleMapsApiKey: "", // ⚠️ MOVED TO .env (VITE_GOOGLE_MAPS_API_KEY)
 //   });
 
 //   const mapRef = useRef();

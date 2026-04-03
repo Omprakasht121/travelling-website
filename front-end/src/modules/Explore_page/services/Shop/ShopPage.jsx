@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -18,6 +19,7 @@ import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
 
 
 const ShopPage = ({ region, title, subtitle }) => {
+  const { t } = useTranslation();
 
       /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);
@@ -83,7 +85,7 @@ const ShopPage = ({ region, title, subtitle }) => {
   if (loading) {
     return (
       <div className="text-center text-white bg-black py-24 text-xl">
-        Loading Shops...
+        {t("common.loading") || "Loading..."}
       </div>
     );
   }
@@ -206,7 +208,7 @@ const ShopPage = ({ region, title, subtitle }) => {
                   onClick={() => handleGo(food.mapLink)}
                   className=" bg-orange-600 border-b border-sky-900/60 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
                 >
-                  Direction
+                  {t("services.direction")}
                 </button>
               </div>
             ))}

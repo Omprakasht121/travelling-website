@@ -8,38 +8,47 @@ import ImagesPage from "../services/Images/ImagesPage";
 import ShopPage from "../services/Shop/ShopPage";
 import VideoPage from "../services/Videos/VideoOfMau";
 import HeroPage from "../services/Hero/HeroPage";
+import ErrorBoundary from "../../../shared/component/ErrorBoundary";
+import ScrollToTop from "../../../shared/component/ScrollToTop";
+import Breadcrumb from "../../../shared/component/Breadcrumb";
 
 
 
+
+import { useTranslation } from "react-i18next";
 
 function ExploringJhansi(){
+    const { t } = useTranslation();
+
     return(
         <div className="bg-gradient-to-br from-sky-300/30 to-orange-900/40"> 
         <>
         <HeroPage
             region="jhansi" 
-            title="Jhansi (झाँसी)"
-            desc="Jhansi is a historic city in Uttar Pradesh, India, famous as the brave center of resistance led by Rani Lakshmibai during the 1857 Rebellion against British rule.."/>;
-        <ImagesPage region="jhansi" />;
-        <DestinationPage region="jhansi" />;
-        <FoodPage
+            title={t("explore.jhansi.title")}
+            desc={t("explore.jhansi.description")}/>;
+        <Breadcrumb items={[{ label: t("explore.jhansi.title") }]} />
+        <ErrorBoundary><ImagesPage region="jhansi" /></ErrorBoundary>;
+        <ErrorBoundary><DestinationPage region="jhansi" /></ErrorBoundary>;
+        <ErrorBoundary><FoodPage
          region="jhansi"
-        title="Famous FOOD & Restaurants"
-        subtitle="Discover cafés, dhabas, and restaurants that serve more than food — they serve stories."
-        />
-        <HotelPage
+        title={t("services.food.title")}
+        subtitle={t("services.food.subtitle")}
+        /></ErrorBoundary>
+        <ErrorBoundary><HotelPage
         region="jhansi"
-        title="Hotels & Banquet"
-        subtitle="Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
-        />
+        title={t("services.hotels.title")}
+        subtitle={t("services.hotels.subtitle")}
+        /></ErrorBoundary>
         {/* <ShopPage
             region="jhansi"
-            title="Jhansi Bazaar Tales"
-            subtitle="Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
+            title={`Jhansi ${t("services.shop.titleSuffix")}`}
+            subtitle={t("services.shop.subtitle")}
             /> */}
-        <EventsPage region="jhansi"/>
-        <CreatorPage region="jhansi" />;
-        <VideoPage region="jhansi" />;
+        <ErrorBoundary><EventsPage region="jhansi"/></ErrorBoundary>
+        <ErrorBoundary><CreatorPage region="jhansi" /></ErrorBoundary>;
+        <ErrorBoundary><VideoPage region="jhansi" /></ErrorBoundary>;
+        <ScrollToTop />
         </>
         </div>
     )

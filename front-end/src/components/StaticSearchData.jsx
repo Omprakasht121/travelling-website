@@ -5,6 +5,7 @@ import { Destinations } from "../modules/landing_page/staticdata/ExploreStaticDa
 export const staticSearchData = [
   ...staticDestination.map((item) => ({
     title: item.name,
+    title_hi: item.name_hi || "", // Optional Hindi title
     category: item.type,
     slug: item.slug,
     image: item.img,
@@ -13,11 +14,11 @@ export const staticSearchData = [
   })),
   ...Destinations.map((item) => ({
     title: item.name,
+    title_hi: item.name_hi || "",
     category: item.type,
     slug: item.slug,
     image: item.img,
     description: item.desc,
     source: "static",
   })),
-
-]
+];

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Star, Clock, Zap, Heart, Plus, X, ChefHat, Frown } from 'lucide-react';
+import { useAuthModal } from '../../../context/AuthModalContext';
+import WishlistButton from '../../../shared/component/WishlistButton';
 
 // --- API Simulation ---
 // Simulating a recipe database
@@ -200,10 +201,7 @@ const fetchRecipesFromAPI = (query) => {
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recipes, setRecipes] = useState([]);
-  const [favorites, setFavorites] = useState(() => {
-    // In a real app, this would be loaded from localStorage or Firestore
-    return new Set();
-  });
+  const { wishlist } = useAuthModal();
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -242,17 +240,7 @@ export default function App() {
   }, [searchQuery]);
 
   // Toggle favorite
-  const toggleFavorite = (recipeId) => {
-    setFavorites(prevFavs => {
-      const newFavs = new Set(prevFavs);
-      if (newFavs.has(recipeId)) {
-        newFavs.delete(recipeId);
-      } else {
-        newFavs.add(recipeId);
-      }
-      return newFavs;
-    });
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter text-gray-800">
@@ -269,7 +257,7 @@ export default function App() {
             <Heart className="w-5 h-5" />
             <span className="hidden sm:inline">Favorites</span>
             <span className="bg-white text-indigo-600 text-xs font-bold rounded-full px-2 py-0.5">
-              {favorites.size}
+              {wishlist.length}
             </span>
           </button>
         </div>
@@ -307,8 +295,6 @@ export default function App() {
                 <RecipeCard 
                   key={recipe.id} 
                   recipe={recipe} 
-                  isFavorite={favorites.has(recipe.id)}
-                  onToggleFavorite={() => toggleFavorite(recipe.id)}
                   onSelectRecipe={() => setSelectedRecipe(recipe)}
                 />
               ))}
@@ -322,8 +308,6 @@ export default function App() {
         <RecipeModal 
           recipe={selectedRecipe} 
           onClose={() => setSelectedRecipe(null)}
-          isFavorite={favorites.has(selectedRecipe.id)}
-          onToggleFavorite={() => toggleFavorite(selectedRecipe.id)}
         />
       )}
     </div>
@@ -332,7 +316,7 @@ export default function App() {
 
 // --- Sub-Components ---
 
-function RecipeCard({ recipe, isFavorite, onToggleFavorite, onSelectRecipe }) {
+function RecipeCard({ recipe, onSelectRecipe }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
       <div className="relative">
@@ -342,16 +326,17 @@ function RecipeCard({ recipe, isFavorite, onToggleFavorite, onSelectRecipe }) {
           className="w-full h-56 object-cover"
           onError={(e) => e.target.src = `https://placehold.co/600x400/e2e8f0/94a3b8?text=${encodeURIComponent(recipe.title)}`}
         />
-        <button
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click
-            onToggleFavorite();
-          }}
-          className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-gray-800 hover:text-red-500 transition-colors"
-          aria-label="Toggle favorite"
-        >
-          <Heart className={`w-6 h-6 ${isFavorite ? 'text-red-500 fill-current' : ''}`} />
-        </button>
+        <div className="absolute top-4 right-4">
+          <WishlistButton 
+            itemData={{
+              id: `recipe-${recipe.id}`,
+              name: recipe.title,
+              image: recipe.imageUrl,
+              link: window.location.pathname,
+              category: "Recipe"
+            }} 
+          />
+        </div>
       </div>
       
       <div className="p-5 flex-grow flex flex-col">
@@ -395,7 +380,7 @@ function RecipeCard({ recipe, isFavorite, onToggleFavorite, onSelectRecipe }) {
   );
 }
 
-function RecipeModal({ recipe, onClose, isFavorite, onToggleFavorite }) {
+function RecipeModal({ recipe, onClose }) {
   // Effect to lock scrolling when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -428,13 +413,17 @@ function RecipeModal({ recipe, onClose, isFavorite, onToggleFavorite }) {
           >
             <X className="w-6 h-6" />
           </button>
-          <button
-            onClick={onToggleFavorite}
-            className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-gray-800 hover:text-red-500 transition-colors"
-            aria-label="Toggle favorite"
-          >
-            <Heart className={`w-6 h-6 ${isFavorite ? 'text-red-500 fill-current' : ''}`} />
-          </button>
+          <div className="absolute top-4 right-4">
+            <WishlistButton 
+              itemData={{
+                id: `recipe-${recipe.id}`,
+                name: recipe.title,
+                image: recipe.imageUrl,
+                link: window.location.pathname,
+                category: "Recipe"
+              }} 
+            />
+          </div>
         </div>
 
         {/* Modal Content */}

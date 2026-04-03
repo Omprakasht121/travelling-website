@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Image,
@@ -15,6 +16,8 @@ import useFoodData from "./useFoodData";
 import useHorizontalScroll from "../../../shared/utils/useHorizontalScroll";
 import getImagePath from "../../../shared/utils/getImagePath";
 import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
+import { SkeletonGrid } from "../../../../shared/component/SkeletonCard";
+import WishlistButton from "../../../../shared/component/WishlistButton";
 
 
 
@@ -22,10 +25,12 @@ import GalleryCardPopUp from "../../../shared/utils/GalleryCardPopUp";
 
 
 const FoodPage = ({ region, title, subtitle }) => {
+  const { t } = useTranslation();
   /* ---------------- STATE ---------------- */
   const [activeImageIndex, setActiveImageIndex] = useState([]);
   const [galleryFood, setGalleryFood] = useState(null);
   const containerRef = useRef(null);
+
 
   /* ---------------- DATA ---------------- */
   const { foodsData, loading } = useFoodData(region);
@@ -87,11 +92,7 @@ const FoodPage = ({ region, title, subtitle }) => {
 
   /* ---------------- loading ---------------- */
   if (loading) {
-    return (
-      <div className="text-center bg-black text-white py-24 text-xl">
-        Loading Foods...
-      </div>
-    );
+    return <SkeletonGrid count={3} />;
   }
 
   /* ---------------- UI ---------------- */
@@ -164,10 +165,25 @@ const FoodPage = ({ region, title, subtitle }) => {
                       transition={{ duration: 0.8 }}
                     />
                   </AnimatePresence>
+                  
+                  {/* WISHLIST BUTTON */}
+                  <div className="absolute top-2 left-2 z-10">
+                    <WishlistButton 
+                      itemData={{
+                        id: `food-${region}-${food.name?.toLowerCase().replace(/\s+/g, '-')}`,
+                        name: food.name,
+                        image: getImagePath(food.images[0]), // Store the first image
+                        link: window.location.pathname,
+                        category: "Food"
+                      }}
+                    />
+                  </div>
+
+
 
                   <button
                     onClick={() => setGalleryFood(food)}
-                    className="absolute bottom-2 right-2 bg-black/60 p-2 rounded-full"
+                    className="absolute bottom-2 right-2 bg-black/60 p-2 rounded-full z-10 hover:scale-110 transition"
                   >
                     <Image className="text-white h-4 w-4" />
                   </button>
@@ -216,7 +232,7 @@ const FoodPage = ({ region, title, subtitle }) => {
                   onClick={() => handleGo(food.mapLink)}
                   className=" bg-orange-600 border-b border-sky-900/60 hover:bg-orange-600/90 hover:scale-110 w-full font-semibold md:px-6 py-1 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]"
                 >
-                  Direction
+                  {t("services.direction")}
                 </button>
               </div>
             ))}
@@ -224,7 +240,9 @@ const FoodPage = ({ region, title, subtitle }) => {
         </section>
       </div>
 
-        {/* pop-up galley  */}
+
+
+      {/* pop-up galley  */}
       <GalleryCardPopUp
         card={galleryFood}
         onClose={() => setGalleryFood(null)}

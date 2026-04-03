@@ -74,7 +74,8 @@ const RegionMap = () => {
         <button onClick={zoomOut} className="p-2 bg-red-600 rounded-full hover:bg-red-700 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]" title="Zoom Out">
           <Minus className="w-6 h-6 text-white" />
         </button>
-        <button onClick={openGoogleMap} className="p-2 bg-yellow-600 rounded-full hover:bg-yellow-700 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]" title="Open in Google Maps">
+        <button onClick={openGoogleMap} className="p-2 bg-yellow-600 rounded-full hover:bg-yellow-700 shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_8px_12px_rgba(0,0,0,0.6)]" 
+        title="Open in Google Maps">
           <MapPin className="w-6 h-6 text-white" />
         </button>
       </div>
@@ -118,10 +119,10 @@ const RegionMap = () => {
               className="w-full h-full rounded-xl"
               zoomControl={false}
               scrollWheelZoom={false}
-              dragging={!L.Browser.mobile} // ✅ Disable drag on mobile
-              tap={false} // ✅ Prevent stuck touch events
-              touchZoom={true} // ✅ Allow only two-finger zoom
-              doubleClickZoom={false} // ✅ Prevent accidental zoom
+              dragging={!L.Browser.mobile} 
+              tap={false} 
+              touchZoom={true}
+              doubleClickZoom={false} 
             >
               {/* Map Tiles */}
               <TileLayer

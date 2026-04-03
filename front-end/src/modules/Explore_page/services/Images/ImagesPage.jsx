@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ImagesGalleryModal from "./ImagesGalleryModal";
 import ImageGrid from "./ImageGrid";
 import useImagesData from "./useImagesData";
+import { SkeletonGrid } from "../../../../shared/component/SkeletonCard";
 
 
 const ImagesPage = ({region}) => {
+  const { t } = useTranslation();
   const {
     loading,
     mainImage,
@@ -44,16 +47,16 @@ const ImagesPage = ({region}) => {
 }, [allImages.length]);
 
   if (loading)
-    return <div className="text-center py-24 text-xl">Loading...</div>;
+    return <SkeletonGrid count={4} />;
 
   return (
     <main id="images" className="relative max-h-screen w-full py-4 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-24 w-full">
 
         <header className="md:px-16 mb-4">
-          <h1 className="text-3xl md:text-5xl font-extrabold">Images</h1>
+          <h1 className="text-3xl md:text-5xl font-extrabold">{t("services.images.title")}</h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
-            Reach out and let’s bring you closer to the heart of Bundelkhand..
+            {t("services.images.subtitle")}
           </p>
         </header>
 
@@ -65,7 +68,7 @@ const ImagesPage = ({region}) => {
               onClick={() => setShowAll(true)}
               className="underline text-sm md:text-base"
             >
-              Show all photos
+              {t("services.images.showAll")}
             </button>
           </div>
         </section>

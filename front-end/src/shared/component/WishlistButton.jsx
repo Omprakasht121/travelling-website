@@ -14,23 +14,25 @@ import { useAuthModal } from '../../context/AuthModalContext';
  */
 const WishlistButton = ({ itemData }) => {
   const {
-    // userData,      // <-- We should check userId instead
-    userId,         // <-- Get the userId
-    isAuthReady,    // <-- Get auth readiness
-    requestAuth,    // To ask for login
-    wishlist,       // The array of wishlist items
+    userId,
+    userData, // Check site login status
+    isAuthReady,
+    requestAuth,
+    wishlist,
     addToWishlist,
     removeFromWishlist
   } = useAuthModal();
 
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
   // Check if the item is in the wishlist
   const isLiked = React.useMemo(() => {
-    if (!itemData?.id) return false;
+    if (!itemData?.id || !wishlist) return false;
     return wishlist.some(item => item.id === itemData.id);
   }, [wishlist, itemData]);
 
-  const handleLike = (e) => {
-    e.preventDefault(); // Prevent parent link navigation
+  const handleLike = async (e) => {
+    e.preventDefault();
     e.stopPropagation();
 
     if (!itemData?.id) {
@@ -38,19 +40,39 @@ const WishlistButton = ({ itemData }) => {
         return;
     }
 
-    // 1. Check if auth is ready and we have a userId
-    //    We check !userId instead of !userData to allow anonymous likes
-    if (!isAuthReady || !userId) {
-      console.log("WishlistButton: No userId, requesting auth.");
-      requestAuth(null); // Open login modal
+    if (isProcessing) return; // Prevent double clicks
+
+    // --- LOGIC: Distinguish between 'Site Login' and 'Firebase Ready' ---
+    
+    // Case 1: User is not logged into the website account.
+    if (!userData) {
+      requestAuth(() => handleLike(e)); // Show login modal
       return;
     }
 
-    // 2. Add or remove from wishlist
-    if (isLiked) {
-      removeFromWishlist(itemData.id);
-    } else {
-      addToWishlist(itemData);
+    // Case 2: User IS logged in, but Firebase is still connecting.
+    if (!isAuthReady || !userId) {
+      console.log("Wishlist: Database still initializing, retrying...");
+      setIsProcessing(true);
+      // Wait a moment and retry silently (don't show modal!)
+      setTimeout(() => {
+        setIsProcessing(false);
+        handleLike(e);
+      }, 800);
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      if (isLiked) {
+        await removeFromWishlist(itemData.id);
+      } else {
+        await addToWishlist(itemData);
+      }
+    } catch (error) {
+      console.error("WishlistButton Error:", error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -58,14 +80,17 @@ const WishlistButton = ({ itemData }) => {
     <motion.button
       whileTap={{ scale: 0.9 }}
       onClick={handleLike}
-      className="relative p-2 rounded-full transition-colors"
+      disabled={isProcessing}
+      className={`relative p-2 rounded-full transition-all duration-300 ${
+        isProcessing ? "opacity-40 animate-pulse pointer-events-none" : "hover:scale-110"
+      }`}
       aria-label={isLiked ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart
-        className={`h-6 w-6 transition-colors duration-300 ${
+        className={`h-6 w-6 transition-all duration-300 ${
           isLiked
             ? "fill-red-500 text-red-500"
-            : "text-slate-300"
+            : "text-slate-300 group-hover:text-red-400"
         }`}
       />
     </motion.button>

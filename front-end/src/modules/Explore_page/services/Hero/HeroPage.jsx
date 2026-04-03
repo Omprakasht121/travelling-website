@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowBigLeft, ArrowDown, ArrowRight, Menu, Search, Sun, User2, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { staticHero } from "./staticHero";
 import { useTypingText } from "./useTypingText";
 import { useHeroAds } from "./useHeroAds";
@@ -10,6 +10,11 @@ import { useScrollHeader } from "./useScrollHeader";
 import { useAuthModal } from "../../../../context/AuthModalContext";
 import GlobalSearch from "../../../../components/GlobalSearch";
 import UserProfileModal from "../../../../shared/modals/UserProfileModal";
+import { SkeletonBanner } from "../../../../shared/component/SkeletonCard";
+import ErrorBoundary from "../../../../shared/component/ErrorBoundary";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "../../../../shared/component/LanguageToggle";
+import WeatherWidget from "../../../../shared/component/WeatherWidget";
 
 
 
@@ -37,6 +42,8 @@ import UserProfileModal from "../../../../shared/modals/UserProfileModal";
   };
 
 const HeroPage = ({ region, title, desc }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const ads = staticHero[region];
 
   const { images, loading, getImagePath } =
@@ -51,7 +58,7 @@ const HeroPage = ({ region, title, desc }) => {
   const [search, setSearch] = useState(false);
   const [account, setAccount] = useState(false);
 
-  const { userData, logout, requestAuth, requestRegisterAuth } =
+  const { userData, logout, requestAuth, wishlist, requestRegisterAuth } =
     useAuthModal();
 
   useEffect(() => {
@@ -63,7 +70,7 @@ const HeroPage = ({ region, title, desc }) => {
   }, [images.length]);
 
   if (loading)
-    return <div className="text-center py-24">Loading...</div>;
+    return <SkeletonBanner />;
 
   return (
     /* ⬇️ SAME JSX YOU ALREADY HAVE ⬇️ */
@@ -97,36 +104,45 @@ const HeroPage = ({ region, title, desc }) => {
                 href="#home"
                 className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Home
+                {t("nav.home")}
               </a>
               <a
                 href="#images"
                 className=" hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Images
+                {t("nav.images") || "Images"}
               </a>
               <a
                 href="#explore"
                 className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Explore
+                {t("nav.explore")}
               </a>
               <a
                 href="#events"
                 className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Events
+                {t("nav.events")}
               </a>
                <a
                 href="#creators"
                 className="hidden md:flex hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Creators
+                {t("nav.creators")}
+              </a>
+
+              <a
+                className="hidden md:flex hover:scale-110 items-center gap-1 font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition cursor-pointer"
+                onClick={() => navigate("/ai-planner")}
+              >
+                ✨ AI Planner
               </a>
               
             </nav>
 
-            <div className="flex gap-4 justify-center items-center">
+            <div className="flex gap-2 md:gap-4 justify-center items-center">
+              <WeatherWidget region={region} />
+              <LanguageToggle />
               <button className="hidden p-1 md:p-2 rounded-full border-[1px] border-black/40 bg-gray-200 hover:scale-110 transition-transform duration-700 hover:shadow-[0_0_15px_rgba(0,99,241,0.4)]">
                 <Sun />
               </button>
@@ -158,7 +174,7 @@ const HeroPage = ({ region, title, desc }) => {
           </motion.div>
         </header>
         {/* search slider  */}
-        <GlobalSearch open={search} onClose={() => setSearch(false)} />
+        <ErrorBoundary><GlobalSearch open={search} onClose={() => setSearch(false)} /></ErrorBoundary>
         
         {/* screen Overlay */}
         <div
@@ -193,8 +209,11 @@ const HeroPage = ({ region, title, desc }) => {
         }}
         
         onEditProfileClick={() => console.log("Edit profile")}
-        onWishlistClick={() => console.log("Wishlist")}
-        wishlistCount={4}
+        onWishlistClick={() => {
+          setAccount(false);
+          navigate("/wishlist");
+        }}
+        wishlistCount={wishlist.length}
       />
         {/* Mobile Overlay */}
         <div
@@ -219,7 +238,7 @@ const HeroPage = ({ region, title, desc }) => {
                 href="#home"
                 className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Home
+                {t("nav.home")}
               </a>
               <a
                 href="#images"
@@ -231,19 +250,29 @@ const HeroPage = ({ region, title, desc }) => {
                 href="#explore"
                 className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Explore
+                {t("nav.explore")}
               </a>
               <a
                 href="#events"
                 className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Events
+                {t("nav.events")}
               </a>
                <a
                 href="#creators"
                 className=" hover:scale-125 hover:text-orange-700 hover:underline transition-transform duration-500"
               >
-                Creators
+                {t("nav.creators")}
+              </a>
+
+              <a
+                className="hover:scale-110 flex items-center gap-1 font-bold text-yellow-300 transition cursor-pointer"
+                onClick={() => {
+                  setMobile(false);
+                  navigate("/ai-planner");
+                }}
+              >
+                ✨ AI Planner
               </a>
             </nav>
           </div>
@@ -301,7 +330,7 @@ const HeroPage = ({ region, title, desc }) => {
           <div className=" text-white flex justify-center items-center mt-4">
             <button onClick={() => (window.location.hash = "explore")}
             className=" bg-blue-700 flex  justify-center items-center  gap-2 px-8 py-2 rounded-full text-lg font-bold hover:scale-110 transition-transform duration-500  shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)] hover:shadow-[inset_4px_4px_6px_rgba(0,0,60,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_0_0_16px_rgba(200,10,20,0.5)]">
-              <p>Explore</p> 
+              <p>{t("hero.explore")}</p> 
               <ArrowRight/>
 
             </button>

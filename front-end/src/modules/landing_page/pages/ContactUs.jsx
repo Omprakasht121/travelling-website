@@ -11,6 +11,7 @@ import {
   Globe,
 } from "lucide-react";
 import { useContact } from "../hooks/contacthook.js";
+import { useTranslation } from "react-i18next";
 
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const mailTo = import.meta.env.VITE_GMAIL_URL;
@@ -22,6 +23,7 @@ const websiteUrl = import.meta.env.VITE_WEBSITE_URL;
 
 
 const ContactUs = () => {
+    const { t } = useTranslation();
     const { register, handleSubmit, doSubmit, errors, loading } = useContact();
     const openWhatsApp = (phone, message = "") => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -49,11 +51,11 @@ const ContactUs = () => {
                   <div className="flex relative items-center cursor-pointer">
                      <img src={`${import.meta.env.BASE_URL}contactman.png`} alt="hiking.png" className=" absolute -bottom-7 md:-bottom-14 h-28 md:h-44 w-auto" />
                     <h1 className=" pl-10 md:pl-16 text-3xl md:text-5xl font-extrabold tracking-tight">
-                    Connect with <span className="border-b-4 border-red-600 ">Us</span>
+                    {t("contact.title")} <span className="border-b-4 border-red-600 ">{t("contact.titleHighlight")}</span>
                   </h1>
                   </div>
                   <p className="mt-3 md:mt-6 text-sm md:text-base text-slate-800  mx-auto md:mx-0">
-                   Reach out and let’s bring you closer to the heart of Bundelkhand — where travel becomes a connection, and memories turn into stories worth retelling.
+                   {t("contact.description")}
                   </p>
                 </motion.header>
                 {/* main content  */}
@@ -76,8 +78,7 @@ const ContactUs = () => {
                            
                         </h2>
                         <p className="text-gray-600 mb-6 text-center md:text-left font-semibold">
-                            Do you have a question? A complaint? Or need help choosing the right
-                            product? Feel free to contact us below.
+                            {t("contact.formSubtitle")}
                         </p>
 
                         <form  onSubmit={handleSubmit(doSubmit)}
@@ -87,7 +88,7 @@ const ContactUs = () => {
                                 whileFocus={{ scale: 1.03 }}
                                 {...register("name")}
                                 type="text"
-                                placeholder="Enter your first name"
+                                placeholder={t("contact.namePlaceholder")}
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                             />
                              {errors.name && (
@@ -97,7 +98,7 @@ const ContactUs = () => {
                                 whileFocus={{ scale: 1.03 }}
                                 {...register("address")}
                                 type="text"
-                                placeholder="Enter Address"
+                                placeholder={t("contact.addressPlaceholder")}
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                             />
                             {errors.address && (
@@ -110,7 +111,7 @@ const ContactUs = () => {
                                 whileFocus={{ scale: 1.03 }}
                                 {...register("email")}
                                 type="email"
-                                placeholder="Enter your email"
+                                placeholder={t("contact.emailPlaceholder")}
                                 className="w-full border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.email && (
@@ -127,7 +128,7 @@ const ContactUs = () => {
                                 whileFocus={{ scale: 1.03 }}
                                 {...register("phone")}
                                 type="tel"
-                                placeholder="Enter your contact number"
+                                placeholder={t("contact.phonePlaceholder")}
                                 className="flex-1 px-4 py-3 outline-none text-black"
                                 />
                                 {errors.phone && (
@@ -140,7 +141,7 @@ const ContactUs = () => {
                             whileFocus={{ scale: 1.02 }}
                             {...register("message")}
                             rows="4"
-                            placeholder="Enter your message"
+                            placeholder={t("contact.messagePlaceholder")}
                             className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                             ></motion.textarea>
                             {errors.message && (
@@ -160,7 +161,7 @@ const ContactUs = () => {
                                 }`}
                                 
                             >
-                             {loading ? "Sending..." : "Send"}
+                             {loading ? t("contact.sending") : t("contact.send")}
                             </motion.button>
                             </div>
                         </form>
@@ -176,7 +177,7 @@ const ContactUs = () => {
                         >
                         <div>
                             <h3 className="text-xl font-semibold mb-6">
-                            Hi! Connect with us through.
+                            {t("contact.connectThrough")}
                             </h3>
 
                             <div className="space-y-4">
@@ -216,7 +217,7 @@ const ContactUs = () => {
                         </div>
 
                         <div className="mt-8">
-                            <p className="text-sm mb-3 text-gray-300">Connect with us</p>
+                            <p className="text-sm mb-3 text-gray-300">{t("contact.connectWithUs")}</p>
                             <div className="flex gap-4">
                             {[Facebook, Instagram, Twitter, Linkedin, Globe].map((Icon, i) => (
                             <motion.a

@@ -4,7 +4,7 @@ import { apiClient } from "../../shared/services/api-client.js";
 
 export const registerApiCall = async(formData) => {
     try{
-        const response = await apiClient.post('/register',formData);
+        const response = await apiClient.post('/api/user/register',formData);
         return response;
     }
     catch(err){
@@ -15,7 +15,7 @@ export const registerApiCall = async(formData) => {
 
 export const loginApiCall = async (formData) => {
     try{
-    const response = await apiClient.post('/login',formData);
+    const response = await apiClient.post('/api/user/login',formData);
     return response;
     }
     catch(err){

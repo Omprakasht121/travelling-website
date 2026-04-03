@@ -1,0 +1,206 @@
+{
+  "common": {
+    "loading": "Loading..."
+  },
+  "chatbot": {
+    "welcome": "Namaste! 🙏 I'm **Bundeli Bot**, your local guide to the Unseen Bundelkhand.\n\nAsk me anything about places, food, hotels, culture, travel tips, or the best time to visit! 🏯🌿",
+    "errorResponse": "Sorry, I couldn't understand that. Please try again.",
+    "networkError": "⚠️ Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+    "headerTitle": "Bundeli Bot 🪔",
+    "headerSubtitle": "Your Bundelkhand Travel Guide",
+    "placeholder": "Ask about Bundelkhand..."
+  },
+  "search": {
+    "placeholder": "Search places, foods, creators...",
+    "searching": "Searching...",
+    "noResults": "No results found 🥲",
+    "categories": {
+      "all": "ALL",
+      "travel": "TRAVEL",
+      "food": "FOOD",
+      "creator": "CREATOR"
+    }
+  },
+  "user": {
+    "myProfile": "My Profile",
+    "welcome": "Welcome",
+    "status": "Account Status",
+    "active": "Active",
+    "myWishlist": "My Wishlist",
+    "services": "SERVICES",
+    "personalize": "PERSONALIZE",
+    "personalDetails": "Personal Details",
+    "settings": "Settings",
+    "changePassword": "Change Password",
+    "logout": "Log Out",
+    "update": "Update",
+    "back": "Back",
+    "name": "Name",
+    "email": "Email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordMismatch": "Passwords do not match",
+    "updateSuccess": "Updated successfully",
+    "updateError": "Update failed"
+  },
+  "wishlist": {
+    "title": "My Wishlist",
+    "emptyMessage": "You haven't added any items to your wishlist yet.",
+    "startExploring": "Start Exploring",
+    "remove": "Remove from Wishlist",
+    "item": "Item"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "explore": "Explore",
+    "creators": "Creators",
+    "events": "Events",
+    "signup": "SIGNUP"
+  },
+  "hero": {
+    "theUnseen": "The Unseen",
+    "description": "Traveling is the act of moving from one place to another, often to experience new cultures, see new sights, and gain a break from daily routines.",
+    "explore": "Explore",
+    "searchPlaceholder": "Enter Place to Visit"
+  },
+  "oneview": {
+    "title": "Bundelkhand In",
+    "titleHighlight": "Motion",
+    "description": "Witness Bundelkhand come alive — through sweeping drone views, temple bells, cascading rivers, and inviting you to see, feel, and fall in love with its soul."
+  },
+  "exploreSection": {
+    "title": "Explore Bundel",
+    "titleHighlight": "khand",
+    "description": "Unveil the soul of Bundelkhand. Trace the footsteps of kings, saints, and artists as you explore its forts, forests, and festivals.",
+    "discoverMore": "Discover more",
+    "letsGo": "Let's Go"
+  },
+  "about": {
+    "title": "Echoes of Bundel",
+    "titleHighlight": "khand",
+    "subtitle": "Bundelkhand isn't just a chapter in history — it's a living saga of courage, art, and timeless pride.",
+    "chapter": "Chapter",
+    "chapters": [
+      {
+        "title": "Origin of the Name",
+        "description": "A cinematic landscape of ancient Bundelkhand with rocky plateaus, winding rivers, and dense forests under a golden sunrise, early medieval India, subtle silhouettes of Rajput warriors in the distance, historical and atmospheric, warm earthy tones, ultra-detailed, realistic style"
+      },
+      {
+        "title": "Rise of the Bundela Kingdoms",
+        "description": "Between the 14th and 18th centuries, Bundelkhand witnessed the rise of powerful Bundela kingdoms, most notably Orchha, Datia, and Panna. Leaders like Raja Rudra Pratap Singh laid the foundations of strong states that challenged larger empires. These kingdoms blended military strength with cultural ambition, building forts, palaces, and towns that still define the region's historic identity."
+      },
+      {
+        "title": "Centers of Art and Devotion",
+        "description": "Bundelkhand flourished as a center of temple architecture, art, and devotion. From the magnificent Khajuraho temples to sacred towns like Orchha, the region celebrated spirituality through stone and sculpture. Intricate carvings, devotional music, and folk traditions reflected a deep connection between daily life and faith, making Bundelkhand a timeless cultural sanctuary."
+      },
+      {
+        "title": "Struggle and Resistance",
+        "description": "Bundelkhand has long been a land of resistance. From confronting Mughal authority to opposing British colonial rule, its people fiercely defended their autonomy. Legendary figures like Maharani Laxmibai of Jhansi emerged as symbols of courage and sacrifice. These struggles shaped a strong regional identity rooted in honor, bravery, and self-respect."
+      },
+      {
+        "title": "Cultural Crossroads",
+        "description": "Bundelkhand stands at a cultural crossroads where Rajasthani, Mughal, and Deccan influences blend seamlessly with local traditions. Its folk songs, dances, cuisine, dialects, and festivals reflect centuries of cultural exchange. Even today, Bundelkhand's villages preserve a living heritage—simple, proud, and deeply connected to the land."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Connect with",
+    "titleHighlight": "Us",
+    "description": "Reach out and let's bring you closer to the heart of Bundelkhand — where travel becomes a connection, and memories turn into stories worth retelling.",
+    "formSubtitle": "Do you have a question? A complaint? Or need help choosing the right product? Feel free to contact us below.",
+    "namePlaceholder": "Enter your first name",
+    "addressPlaceholder": "Enter Address",
+    "emailPlaceholder": "Enter your email",
+    "phonePlaceholder": "Enter your contact number",
+    "messagePlaceholder": "Enter your message",
+    "send": "Send",
+    "sending": "Sending...",
+    "connectThrough": "Hi! Connect with us through.",
+    "connectWithUs": "Connect with us"
+  },
+  "footer": {
+    "brand": "Bundeli",
+    "brandDesc": "Empower your Brand & Captivate your Audience with MultiGency right away and Boost your Business.",
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "caseStudies": "Case Studies",
+    "reviews": "Reviews",
+    "updates": "Updates",
+    "company": "Company",
+    "aboutUs": "About",
+    "contactUs": "Contact Us",
+    "careers": "Careers",
+    "culture": "Culture",
+    "blog": "Blog",
+    "support": "Support",
+    "gettingStarted": "Getting Started",
+    "helpCenter": "Help Center",
+    "serverStatus": "Server Status",
+    "reportBug": "Report a Bug",
+    "chatSupport": "Chat Support",
+    "copyright": "© Copyright by"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home"
+  },
+  "breadcrumb": {
+    "home": "Home"
+  },
+  "explore": {
+    "jhansi": {
+      "title": "Jhansi (झाँसी)",
+      "description": "Jhansi is a historic city in Uttar Pradesh, India, famous as the brave center of resistance led by Rani Lakshmibai during the 1857 Rebellion against British rule."
+    },
+    "orchha": {
+      "title": "Orchha (ओरछा)",
+      "description": "A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember, and the moments that were so perfect you forgot to take a picture."
+    },
+    "mauranipur": {
+      "title": "Mauranipur",
+      "description": "A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember, and the moments that were so perfect you forgot to take a picture."
+    },
+    "banda": {
+      "title": "Banda (बाँदा)",
+      "description": "A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember, and the moments that were so perfect you forgot to take a picture."
+    }
+  },
+  "services": {
+    "food": {
+      "title": "Famous FOOD & Restaurants",
+      "subtitle": "Discover cafés, dhabas, and restaurants that serve more than food — they serve stories."
+    },
+    "hotels": {
+      "title": "Hotels & Banquet",
+      "subtitle": "Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "subtitle": "Reach out and let’s bring you closer to the heart of Bundelkhand..",
+      "visitNow": "Visit Now"
+    },
+    "events": {
+      "moreAbout": "More About Event",
+      "listTitle": "Event List"
+    },
+    "creators": {
+      "title": "Meet The Creators",
+      "subtitle": "The storytellers of Bundelkhand.",
+      "categories": "Categories"
+    },
+    "images": {
+      "title": "Images",
+      "subtitle": "Reach out and let’s bring you closer to the heart of Bundelkhand..",
+      "showAll": "Show all photos"
+    },
+    "shop": {
+      "titleSuffix": "Bazaar Tales",
+      "subtitle": "Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
+    },
+    "direction": "Direction"
+  }
+}

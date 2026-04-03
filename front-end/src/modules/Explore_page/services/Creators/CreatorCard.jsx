@@ -20,13 +20,14 @@ const CreatorCard = ({ creator, onClick }) => {
       onClick={onClick}
       className="relative w-full h-72 rounded-2xl cursor-pointer group shadow-lg my-4 overflow-hidden"
     >
-      <img src={profile} className="absolute inset-0 w-full h-full object-cover" />
+      <img src={profile} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
 
       <div className="absolute bottom-2 left-0 pl-4">
         <img
           src={cover}
+          loading="lazy"
           className="w-16 h-16 rounded-full object-cover border-2 border-gray-950 mb-2"
         />
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookMarked } from "lucide-react"; // A fitting icon
+import { useTranslation } from "react-i18next";
 
 // 1. DATA: We moved the images into the data array for a cleaner structure.
 // I've assigned your images to the most relevant points.
@@ -45,6 +46,7 @@ const aboutData = [
 ];
 
 const About = () => {
+  const { t } = useTranslation();
   // 2. STATE: We only need to track which item is selected.
   const [selectedId, setSelectedId] = useState(aboutData[0].id);
 
@@ -71,11 +73,10 @@ const About = () => {
           viewport={{ once: false, amount: 0.2 }}
         >
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-            Echoes of Bundel<span className="border-b-4 border-red-600 " >khand</span>
+            {t("about.title")}<span className="border-b-4 border-red-600 " >{t("about.titleHighlight")}</span>
           </h1>
           <p className="mt-3 text-lg text-gray-300 max-w-2xl">
-            Bundelkhand isn’t just a chapter in history — it’s a living saga of
-            courage, art, and timeless pride.
+            {t("about.subtitle")}
           </p>
         </motion.header>
 
@@ -140,10 +141,10 @@ const About = () => {
                     {/* Text Content */}
                     <div className="flex-1">
                       <span className="text-xs uppercase tracking-widest text-gray-500">
-                        Chapter {item.id}
+                        {t("about.chapter")} {item.id}
                       </span>
                       <h3 className="text-lg md:text-xl font-semibold whitespace-nowrap lg:whitespace-normal">
-                        {item.title}
+                        {t(`about.chapters.${index}.title`)}
                       </h3>
                     </div>
                   </button>
@@ -184,10 +185,10 @@ const About = () => {
                 <div className="mt-6">
                   <h2 className="flex items-center gap-3 text-3xl md:text-4xl font-bold text-orange-400 mb-4">
                     <BookMarked size={32} />
-                    {selectedItem.title}
+                    {t(`about.chapters.${selectedId - 1}.title`)}
                   </h2>
                   <p className="text-base md:text-lg text-gray-200 leading-relaxed">
-                    {selectedItem.description}
+                    {t(`about.chapters.${selectedId - 1}.description`)}
                   </p>
                 </div>
               </motion.div>

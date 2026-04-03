@@ -3,6 +3,7 @@ import multer from "multer";
 
 import Content from "../models/Content.js";
 import cloudinary from "../utils/cloudinary.js";
+import { verifyToken } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -44,6 +45,7 @@ const uploadToCloudinary = (buffer, folder) => {
 
 router.post(
   "/",
+  verifyToken,
   upload.fields([
     { name: "mainImage", maxCount: 1 },
     { name: "gallery", maxCount: 12 },
@@ -164,6 +166,7 @@ router.get("/:region/:category", async (req, res) => {
 
 router.put(
   "/:id",
+  verifyToken,
   upload.fields([
     { name: "mainImage", maxCount: 1 },
     { name: "gallery", maxCount: 12 },
@@ -257,7 +260,7 @@ router.put(
    DELETE CONTENT (DB ONLY — CLOUDINARY SAFE)
 ========================================================= */
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
     await Content.findByIdAndDelete(req.params.id);
     res.json({ message: "Deleted successfully" });

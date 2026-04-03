@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users } from "lucide-react";
 import { useAuthModal } from "../../../../context/AuthModalContext";
@@ -13,6 +14,7 @@ import CategoryNavLink from "./CategoryNavLink";
 
 
 const CreatorPage = ({ region }) => {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedCreator, setSelectedCreator] = useState(null);
 
@@ -50,12 +52,13 @@ const CreatorPage = ({ region }) => {
       <header className="py-12 relative text-center">
         <img
           src={fallbackCover}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm"
         />
         <Users className="w-16 h-16 text-orange-400 mx-auto relative" />
-        <h1 className="text-5xl font-extrabold relative">Meet The Creators</h1>
+        <h1 className="text-5xl font-extrabold relative">{t("services.creators.title")}</h1>
         <p className="text-gray-700 mt-4 relative">
-          The storytellers of Bundelkhand.
+          {t("services.creators.subtitle")}
         </p>
       </header>
 
@@ -64,7 +67,7 @@ const CreatorPage = ({ region }) => {
         <div className="flex gap-10 flex-col md:flex-row">
           <div className="md:w-1/4">
             <div className="bg-gray-900 border border-gray-800 p-4 mt-4 rounded-2xl">
-              <h3 className="font-semibold px-2 mb-2">Categories</h3>
+              <h3 className="font-semibold px-2 mb-2">{t("services.creators.categories")}</h3>
               {categories.map((cat) => (
                 <CategoryNavLink
                   key={cat.id}

@@ -39,3 +39,48 @@ export const loginUser = async (userObject) => {
     throw err;
   }
 };
+
+// get user by id
+export const getUserById = async (userId) => {
+  try {
+    const user = await UserModel.findById(userId).select("-password").exec();
+    return user;
+  } catch (err) {
+    console.log("Error while fetching user:", err);
+    throw err;
+  }
+};
+
+// update user details
+export const updateUserDetails = async (userId, data) => {
+  try {
+    const user = await UserModel.findByIdAndUpdate(userId, { name: data.name }, { new: true }).select("-password").exec();
+    return user;
+  } catch (err) {
+    console.log("Error while updating user:", err);
+    throw err;
+  }
+};
+
+// update user password
+export const updateUserPassword = async (userId, oldPassword, newPassword) => {
+  try {
+    const user = await UserModel.findById(userId).exec();
+    if (!user) throw new Error("User not found");
+
+    // Verify old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) throw new Error("Incorrect current password");
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    
+    user.password = hashedPassword;
+    await user.save();
+    return true;
+  } catch (err) {
+    console.log("Error while updating password:", err);
+    throw err;
+  }
+};

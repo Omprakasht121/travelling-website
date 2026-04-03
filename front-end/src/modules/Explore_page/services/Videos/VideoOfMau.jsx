@@ -5,6 +5,7 @@ import { getContent } from "../../../Admin_Panel/service/adminAPI";
 import { useVideoLogic } from "./VideoLogic";
 import InstagramEmbed from "../../../../shared/instagram-component/InstagramEmbed";
 import { staticReels } from "./StaticReels.js";
+import { SkeletonGrid } from "../../../../shared/component/SkeletonCard";
 
 
 const VideoPage = ({region}) => {
@@ -60,11 +61,7 @@ const VideoPage = ({region}) => {
   };
 
   if (loading)
-    return (
-      <div className="text-center text-white py-24 text-xl">
-        Loading Reels...
-      </div>
-    );
+    return <SkeletonGrid count={3} />;
 
   return (
     <main className="relative min-h-auto w-full text-gray-900 py-8 overflow-hidden">

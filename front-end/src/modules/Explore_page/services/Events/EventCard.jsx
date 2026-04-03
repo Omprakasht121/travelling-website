@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Calendar, GlobeLock, MapPin } from "lucide-react";
 import getImagePath from "../../../shared/utils/getImagePath";
+import WishlistButton from "../../../../shared/component/WishlistButton";
 
 
 const EventCard = ({
@@ -34,6 +35,7 @@ const EventCard = ({
         src={getImagePath(img)}
         className="w-full h-96 object-cover"
         alt={event.title}
+        loading="lazy"
       />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -43,6 +45,18 @@ const EventCard = ({
           {event.badgeDate.month}
         </span>
         <span className="block text-lg">{event.badgeDate.day}</span>
+      </div>
+
+      <div className="absolute top-4 left-4 z-10">
+        <WishlistButton 
+          itemData={{
+            id: `event-${event.title?.toLowerCase().replace(/\s+/g, '-')}`,
+            name: event.title,
+            image: getImagePath(img),
+            link: window.location.pathname,
+            category: "Event"
+          }} 
+        />
       </div>
 
       <div className="absolute bottom-0 left-0 p-4">

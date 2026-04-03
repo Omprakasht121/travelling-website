@@ -8,38 +8,47 @@ import ImagesPage from "../services/Images/ImagesPage";
 import ShopPage from "../services/Shop/ShopPage";
 import VideoPage from "../services/Videos/VideoOfMau";
 import HeroPage from "../services/Hero/HeroPage";
+import ErrorBoundary from "../../../shared/component/ErrorBoundary";
+import ScrollToTop from "../../../shared/component/ScrollToTop";
+import Breadcrumb from "../../../shared/component/Breadcrumb";
 
 
 
+
+import { useTranslation } from "react-i18next";
 
 function ExploringMau(){
+    const { t } = useTranslation();
+
     return(
         <div className="bg-gradient-to-br from-sky-300/30 to-orange-900/40"> 
         <>
         <HeroPage
             region="mauranipur" 
-            title="Mauranipur"
-            desc="A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember,and the moments that were so perfect you forgot to take a picture."/>;
-        <ImagesPage region="mauranipur" />;
-        <DestinationPage region="mauranipur" />;
-        <FoodPage
+            title={t("explore.mauranipur.title")}
+            desc={t("explore.mauranipur.description")}/>;
+        <Breadcrumb items={[{ label: t("explore.mauranipur.title") }]} />
+        <ErrorBoundary><ImagesPage region="mauranipur" /></ErrorBoundary>;
+        <ErrorBoundary><DestinationPage region="mauranipur" /></ErrorBoundary>;
+        <ErrorBoundary><FoodPage
          region="mauranipur"
-        title="Famous FOOD & Restaurants"
-        subtitle="Discover cafés, dhabas, and restaurants that serve more than food — they serve stories."
-        />
-        <HotelPage
+        title={t("services.food.title")}
+        subtitle={t("services.food.subtitle")}
+        /></ErrorBoundary>
+        <ErrorBoundary><HotelPage
         region="mauranipur"
-        title="Hotels & Banquet"
-        subtitle="Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
-        />
+        title={t("services.hotels.title")}
+        subtitle={t("services.hotels.subtitle")}
+        /></ErrorBoundary>
         {/* <ShopPage
             region="mauranipur"
-            title="Mauranipur Bazaar Tales"
-            subtitle="Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
+            title={`Mauranipur ${t("services.shop.titleSuffix")}`}
+            subtitle={t("services.shop.subtitle")}
             /> */}
-        <EventsPage region="mauranipur"/>
-        <CreatorPage region="mauranipur" />;
-        <VideoPage region="mauranipur" />;
+        <ErrorBoundary><EventsPage region="mauranipur"/></ErrorBoundary>
+        <ErrorBoundary><CreatorPage region="mauranipur" /></ErrorBoundary>;
+        <ErrorBoundary><VideoPage region="mauranipur" /></ErrorBoundary>;
+        <ScrollToTop />
         </>
         </div>
     )

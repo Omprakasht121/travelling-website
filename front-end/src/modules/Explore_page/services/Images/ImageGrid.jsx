@@ -9,6 +9,7 @@ const ImageGrid = ({ mainImage, smallImages }) => {
       <div className="h-full w-full col-span-3 md:col-span-2 rounded-xl overflow-hidden">
         <img
           src={getImagePath(mainImage)}
+          loading="lazy"
           className="object-cover h-full w-full rounded-xl border-2 border-black/20"
         />
       </div>

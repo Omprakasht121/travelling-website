@@ -1,5 +1,4 @@
-import React from "react";
-import { Router, Routes } from "react-router-dom";
+
 import Hero from "./Hero";
 import Oneview from "./Oneview";
 import Explore from "./Explore";
@@ -8,6 +7,7 @@ import About from "./About";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "../../../shared/component/ScrollToTop";
 
 function Landing(){
     return(
@@ -23,6 +23,7 @@ function Landing(){
         <Footer/>
         </div>
      </div>
+     <ScrollToTop />
      <Toaster
         position="top-right"
         reverseOrder={false}

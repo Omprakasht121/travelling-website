@@ -1,21 +1,27 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Heart, Image } from "lucide-react";
+
 
 
 import useDestinationData from "./useDestinationData";
 import useMobileObserver from "./useMobileObserver";
 import DestinationGalleryModal from "./DestinationGalleryModal";
 import getImagePath from "../../../shared/utils/getImagePath";
+import { SkeletonDestination } from "../../../../shared/component/SkeletonCard";
+
+import WishlistButton from "../../../../shared/component/WishlistButton";
 
 const DestinationPage = ({ region }) => {
+  const { t } = useTranslation();
   const { destinations, loading } = useDestinationData(region);
   const { containerRef, activeIndex } = useMobileObserver(destinations);
 
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const [galleryDestination, setGalleryDestination] = useState(null);
+  
 
   const nextSlide = () => {
     setDirection(1);
@@ -27,10 +33,7 @@ const DestinationPage = ({ region }) => {
     setIndex((prev) => (prev - 1 + destinations.length) % destinations.length);
   };
 
-  const handleLike = () => {
-    setIsLiked(true);
-    setTimeout(() => setIsLiked(false), 8000);
-  };
+
 
     const variants = {
     enter: (dir) => ({
@@ -59,7 +62,7 @@ const DestinationPage = ({ region }) => {
 
 
   if (loading)
-    return <div className="text-center text-white py-24 text-xl">Loading...</div>;
+    return <SkeletonDestination />;
 
   const leftIndex = (index - 1 + destinations.length) % destinations.length;
   const rightIndex = (index + 1) % destinations.length;
@@ -77,9 +80,9 @@ const DestinationPage = ({ region }) => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold">Destinations</h1>
+          <h1 className="text-3xl md:text-5xl font-extrabold">{t("services.destinations.title")}</h1>
           <p className="mt-2 text-sm md:text-base text-slate-800">
-            Reach out and let’s bring you closer to the heart of Bundelkhand..
+            {t("services.destinations.subtitle")}
           </p>
         </motion.header>
 
@@ -116,6 +119,7 @@ const DestinationPage = ({ region }) => {
                   </h1>
                   <img
                     src={getImagePath(destinations[leftIndex].img)}
+                    loading="lazy"
                     className="md:h-[45vh] lg:h-[55vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm text-center text-slate-800">
@@ -140,21 +144,24 @@ const DestinationPage = ({ region }) => {
                   <div className="relative px-2">
                     <img
                       src={getImagePath(destinations[index].img)}
+                      loading="lazy"
                       className="md:h-[50vh] lg:h-[65vh] w-full rounded-xl object-cover border-2 border-black/20"
                     />
 
                     {/* LIKE BUTTON */}
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={handleLike}
-                      className="absolute top-0 right-0 p-4 rounded-full"
-                    >
-                      <Heart
-                        className={`h-6 w-6 ${
-                          isLiked ? "fill-red-500 text-red-500" : "text-gray-900"
-                        }`}
+                    <div className="absolute top-0 right-0 p-4">
+                      <WishlistButton 
+                        itemData={{
+                          id: `dest-${region}-${destinations[index].name?.toLowerCase().replace(/\s+/g, '-')}`,
+                          name: destinations[index].name,
+                          image: getImagePath(destinations[index].img),
+                          link: window.location.pathname,
+                          category: "Destination"
+                        }} 
                       />
-                    </motion.button>
+                    </div>
+
+
 
                     {/* GALLERY BUTTON */}
                     <button
@@ -191,6 +198,7 @@ const DestinationPage = ({ region }) => {
                   </h1>
                   <img
                     src={getImagePath(destinations[rightIndex].img)}
+                    loading="lazy"
                     className="md:h-[45vh] lg:h-[55vh] rounded-xl object-cover border-2 border-black/20"
                   />
                   <p className="text-sm text-center text-slate-800">
@@ -214,21 +222,24 @@ const DestinationPage = ({ region }) => {
                     <div className="relative">
                       <img
                         src={getImagePath(place.img)}
+                        loading="lazy"
                         className="h-[50vh] w-full rounded-xl object-cover mb-2 border-2 border-black/40"
                       />
 
                       {/* LIKE BUTTON */}
-                      <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleLike}
-                        className="absolute top-0 right-0 p-2 rounded-full"
-                      >
-                        <Heart
-                          className={`h-6 w-6 ${
-                            isLiked ? "fill-red-500 text-red-500" : "text-gray-900"
-                          }`}
+                      <div className="absolute top-0 right-0 p-2">
+                        <WishlistButton 
+                          itemData={{
+                            id: `dest-${region}-${place.name?.toLowerCase().replace(/\s+/g, '-')}`,
+                            name: place.name,
+                            image: getImagePath(place.img),
+                            link: window.location.pathname,
+                            category: "Destination"
+                          }} 
                         />
-                      </motion.button>
+                      </div>
+
+
 
                       {/* GALLERY BUTTON */}
                       <button
@@ -244,7 +255,7 @@ const DestinationPage = ({ region }) => {
                     <button onClick={() => handleGo(destinations[index].location)}
 
                     className="text-white text-lg w-full py-2  bg-blue-700 hover:bg-blue-600 hover:scale-110 rounded-lg transition-transform duration-300 easeInOut shadow-[inset_4px_4px_6px_rgba(50,0,0,0.4),_inset_-4px_-4px_8px_rgba(255,255,255,0.05),_2px_4px_6px_rgba(0,0,0,0.5)]">
-                      Visit Now
+                      {t("services.destinations.visitNow")}
                     </button>
                   </motion.div>
                 ))}

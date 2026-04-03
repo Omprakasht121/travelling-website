@@ -1,6 +1,7 @@
 const staticDestination = [
   {
     name: "Orchha",
+    name_hi: "ओरछा",
     img: "jhansi.jpg",
     desc: "A key city in Uttar Pradesh’s Bundelkhand region, Jhansi is steeped in history...",
     images: ["panna.jpg", "jhansi6.jpg", "orchha3.jpg"],
@@ -10,6 +11,7 @@ const staticDestination = [
   },
   {
     name: "Datia",
+    name_hi: "दतिया",
     img: "datia.jpg",
     desc: "A key city in Uttar Pradesh’s Bundelkhand region...",
     slug: "datia",
@@ -19,6 +21,7 @@ const staticDestination = [
   },
   {
     name: "Chanderi",
+    name_hi: "चंदेरी",
     img: "jhansi2.jpg",
     desc: "A key city in Uttar Pradesh’s Bundelkhand region...",
     slug: "chanderi",
@@ -28,6 +31,7 @@ const staticDestination = [
   },
   {
     name: "Jhansi",
+    name_hi: "झाँसी",
     img: "jhansi6.jpg",
     desc: "A key city in Uttar Pradesh’s Bundelkhand region...",
     slug: "jhansi",
@@ -37,6 +41,7 @@ const staticDestination = [
   },
   {
     name: "Tikamgarh",
+    name_hi: "टीकमगढ़",
     img: "jhansi3.jpg",
     desc: "A key city in Uttar Pradesh’s Bundelkhand region...",
     slug: "tikamgarh",

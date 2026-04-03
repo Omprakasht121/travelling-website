@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { getContent } from "../../../shared/services/contentService"; // <-- keep this
+import { getContent } from "../../../shared/services/contentService";
+import { useTranslation } from "react-i18next";
 
 const Oneview = () => {
+  const { t } = useTranslation();
   // ⭐ STATIC video IDs
   const staticVideos = [
     "8S63BUvVqD4",
@@ -36,13 +38,12 @@ const Oneview = () => {
 
       // ⭐ no double merging → direct set
       setVideos([...staticVideos, ...dynamicIDs]);
-
-    } catch (err) {
-      console.error("Error fetching videos:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        } catch (err) {
+          console.error("Error fetching videos:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
   fetchData();
 }, []);
@@ -86,15 +87,13 @@ const Oneview = () => {
         {/* Header */}
         <header className="mb-8">
           <div className="flex relative ">
-             <img src={`${import.meta.env.BASE_URL}camera.png`} alt="camera.png" className=" absolute -bottom-9 md:-bottom-12 -left-2 h-28 w-28 md:h-36 md:w-36" />
+            <img src={`${import.meta.env.BASE_URL}camera.png`} alt="camera.png" className=" absolute -bottom-9 md:-bottom-12 -left-2 h-28 w-28 md:h-36 md:w-36" />
             <h1 className="text-3xl pl-8 md:pl-12 md:text-5xl font-extrabold tracking-tight">
-            Bundelkhand In <span className="border-b-4 border-red-600">Motion</span>
+            {t("oneview.title")} <span className="border-b-4 border-red-600">{t("oneview.titleHighlight")}</span>
           </h1>
           </div>
           <p className="mt-4 text-sm md:text-base text-gray-800 max-w-2xl mx-auto md:mx-0">
-            Witness Bundelkhand come alive — through sweeping drone views, temple
-            bells, cascading rivers, and inviting you to see, feel, and fall in love
-            with its soul.
+            {t("oneview.description")}
           </p>
         </header>
 
@@ -123,7 +122,6 @@ const Oneview = () => {
                 allowFullScreen
                 className="rounded-2xl"
               />
-
               <button
                 onClick={nextVideo}
                 className="md:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 rounded-full md:p-3 transition-all"

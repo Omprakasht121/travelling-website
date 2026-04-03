@@ -8,40 +8,49 @@ import ImagesPage from "../services/Images/ImagesPage";
 import ShopPage from "../services/Shop/ShopPage";
 import VideoPage from "../services/Videos/VideoOfMau";
 import HeroPage from "../services/Hero/HeroPage";
+import ErrorBoundary from "../../../shared/component/ErrorBoundary";
+import ScrollToTop from "../../../shared/component/ScrollToTop";
+import Breadcrumb from "../../../shared/component/Breadcrumb";
 
 
 
 
-function ExploringJhansi(){
+import { useTranslation } from "react-i18next";
+
+function ExploringBanda(){
+    const { t } = useTranslation();
+
     return(
         <div className="bg-gradient-to-br from-amber-300/10 to-rose-700/10"> 
         <>
         <HeroPage
             region="banda" 
-            title="Banda (बाँदा)"
-            desc="A true traveler collects memories, not destinations. The story isn’t in how many places you’ve been — it’s in how deeply you felt each one. It’s the strangers who became friends, the sunsets you still remember,and the moments that were so perfect you forgot to take a picture."/>;
-        <ImagesPage region="banda" />;
-        <DestinationPage region="banda" />;
-        <FoodPage
+            title={t("explore.banda.title")}
+            desc={t("explore.banda.description")}/>;
+        <Breadcrumb items={[{ label: t("explore.banda.title") }]} />
+        <ErrorBoundary><ImagesPage region="banda" /></ErrorBoundary>;
+        <ErrorBoundary><DestinationPage region="banda" /></ErrorBoundary>;
+        <ErrorBoundary><FoodPage
          region="banda"
-        title="Famous FOOD & Restaurants"
-        subtitle="Discover cafés, dhabas, and restaurants that serve more than food — they serve stories."
-        />
-        <HotelPage
+        title={t("services.food.title")}
+        subtitle={t("services.food.subtitle")}
+        /></ErrorBoundary>
+        <ErrorBoundary><HotelPage
         region="banda"
-        title="Hotels & Banquet"
-        subtitle="Rest, relax, and rejoice — where every stay feels like home and every event feels royal."
-        />
-        <ShopPage
+        title={t("services.hotels.title")}
+        subtitle={t("services.hotels.subtitle")}
+        /></ErrorBoundary>
+        <ErrorBoundary><ShopPage
             region="banda"
-            title="Banda Bazaar Tales"
-            subtitle="Mauranipur’s heart beats in its bustling shops — a blend of heritage, hustle, and handmade beauty."
-            />
-        <EventsPage region="banda"/>
-        <CreatorPage region="banda" />;
-        <VideoPage region="banda" />;
+            title={`${t("explore.banda.title")} ${t("services.shop.titleSuffix")}`}
+            subtitle={t("services.shop.subtitle")}
+            /></ErrorBoundary>
+        <ErrorBoundary><EventsPage region="banda"/></ErrorBoundary>
+        <ErrorBoundary><CreatorPage region="banda" /></ErrorBoundary>;
+        <ErrorBoundary><VideoPage region="banda" /></ErrorBoundary>;
+        <ScrollToTop />
         </>
         </div>
     )
 }
-export default ExploringJhansi;
+export default ExploringBanda;

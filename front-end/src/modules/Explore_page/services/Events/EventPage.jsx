@@ -1,15 +1,18 @@
 // src/modules/events/EventsPage.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight, Music } from "lucide-react";
 import { useEventData } from "./useEventData";
 import EventCard from "./EventCard";
 import getImagePath from "../../../shared/utils/getImagePath";
+import { SkeletonGrid } from "../../../../shared/component/SkeletonCard";
 
 
 
 const EventsPage = ({ region }) => {
-  
+  const { t } = useTranslation();
+
 
 
   const [activeImageIndex, setActiveImageIndex] = useState([]);
@@ -166,11 +169,7 @@ const EventsPage = ({ region }) => {
   };
 
   if (loading)
-    return (
-      <div className="text-center text-white bg-black py-24 text-xl">
-        Loading Events...
-      </div>
-    );
+    return <SkeletonGrid count={3} />;
 
   return (
     <main id="events" className="relative w-full min-h-auto bg-gray-900 text-white overflow-hidden">
@@ -219,7 +218,7 @@ const EventsPage = ({ region }) => {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              More About Event <ArrowRight size={20} />
+              {t("services.events.moreAbout")} <ArrowRight size={20} />
             </motion.button>
           </motion.div>
 
@@ -261,7 +260,7 @@ const EventsPage = ({ region }) => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Event List
+            {t("services.events.listTitle")}
           </motion.h2>
            <div className="  py-4 flex justify-between items-center gap-4 px-4 md:px-12">
                 <button

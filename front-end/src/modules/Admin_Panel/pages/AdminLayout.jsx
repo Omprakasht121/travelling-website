@@ -6,6 +6,7 @@ import Event from "./Event";
 import Creator from "./Creator";
 import PlanJourney from "./PlanJouney";
 import AdminLogin from "../admin-entry/AdminLogin";
+import ErrorBoundary from "../../../shared/component/ErrorBoundary";
 
 const AdminLayout = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,9 +64,10 @@ const AdminLayout = () => {
         </button>
       </div>
 
-      <div className="p-6">{renderPage()}</div>
+      <div className="p-6"><ErrorBoundary>{renderPage()}</ErrorBoundary></div>
     </main>
   );
 };
 
 export default AdminLayout;
+

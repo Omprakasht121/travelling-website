@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Filter, Search, X } from "lucide-react";
 import { staticSearchData } from "./StaticSearchData";
 import PreviousMap_ from "postcss/lib/previous-map";
 
 export default function GlobalSearch({ open, onClose }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [results, setResults] = useState([]);
@@ -13,10 +15,11 @@ export default function GlobalSearch({ open, onClose }) {
 
   const containerRef = useRef(null);
 
-  // Highlight matched text
+  // Highlight matched text (escape regex special chars for safety)
   const highlightMatch = (text) => {
     if (!query) return text;
-    const regex = new RegExp(`(${query})`, "ig");
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escaped})`, "ig");
     return text.replace(regex, "<mark>$1</mark>");
   };
 
@@ -33,8 +36,11 @@ export default function GlobalSearch({ open, onClose }) {
 
         // 1️⃣ Filter static items
         const staticResults = staticSearchData
-  .filter(item => item.title.toLowerCase().includes(query.toLowerCase()))
-  .map(item => ({ ...item, source: "static" }));
+          .filter(item => 
+            (item.title && item.title.toLowerCase().includes(query.toLowerCase())) || 
+            (item.title_hi && item.title_hi.includes(query))
+          )
+          .map(item => ({ ...item, source: "static" }));
 
         // 2️⃣ Fetch from backend
         const res = await fetch(`/api/search?query=${query}&category=${category}`);
@@ -55,6 +61,28 @@ export default function GlobalSearch({ open, onClose }) {
     return () => clearTimeout(delay);
     }, [query, category]);
 
+  const handleResultClick = (item) => {
+    if (item.source === "static") {
+      if (!item.slug) {
+        console.error("Static item missing slug:", item);
+        return;
+      }
+      window.location.href = `/${item.slug}`;
+      return;
+    }
+
+    if (item.source === "db") {
+      if (!item.region || !item.category) {
+        console.error("DB result missing region/category:", item);
+        return;
+      }
+      window.location.href = `/${item.region}/${item.category}`;
+      return;
+    }
+
+    console.error("Unknown item type", item);
+  };
+
 
   // Keyboard navigation
   const handleKeyDown = (e) => {
@@ -68,7 +96,7 @@ export default function GlobalSearch({ open, onClose }) {
     }
     if (e.key === "Enter") {
       if (activeIndex >= 0 && results[activeIndex]) {
-        window.location.href = `/content/${results[activeIndex].slug}`;
+        handleResultClick(results[activeIndex]);
       }
     }
     if (e.key === "Escape") {
@@ -96,7 +124,7 @@ export default function GlobalSearch({ open, onClose }) {
               setActiveIndex(-1);
               setQuery(e.target.value);
             }}
-            placeholder="Search places, foods, creators..."
+            placeholder={t("search.placeholder")}
             className="w-full h-12 outline-none "
           />
 
@@ -119,7 +147,7 @@ export default function GlobalSearch({ open, onClose }) {
                   : "bg-white text-gray-600"
               }`}
             >
-              {c.toUpperCase()}
+              {t(`search.categories.${c}`)}
             </button>
           ))}
         </div>
@@ -138,7 +166,7 @@ export default function GlobalSearch({ open, onClose }) {
                   : "bg-white text-gray-600"
               }`}
             >
-              {c.toUpperCase()}
+              {t(`search.categories.${c}`)}
             </button>
           ))}
         </div>
@@ -148,13 +176,13 @@ export default function GlobalSearch({ open, onClose }) {
           <div className="absolute top-16 md:top-24 w-full bg-white rounded-xl shadow-lg max-h-80 overflow-y-auto">
             {loading && (
               <div className="p-4 text-center text-gray-500 animate-pulse">
-                Searching...
+                {t("search.searching")}
               </div>
             )}
 
             {!loading && results.length === 0 && (
               <div className="p-6 text-center text-gray-600 animate-bounce">
-                No results found 🥲
+                {t("search.noResults")}
               </div>
             )}
 
@@ -169,27 +197,8 @@ export default function GlobalSearch({ open, onClose }) {
         className={`p-3 flex items-center gap-3 cursor-pointer border-b ${
           index === activeIndex ? "bg-gray-200" : "hover:bg-gray-100"
         }`}
-       onClick={() => {
-  if (item.source === "static") {
-    if (!item.slug) {
-      console.error("Static item missing slug:", item);
-      return;
-    }
-    window.location.href = `/${item.slug}`;
-    return;
-  }
+       onClick={() => handleResultClick(item)}
 
-  if (item.source === "db") {
-    if (!item.region || !item.category) {
-      console.error("DB result missing region/category:", item);
-      return;
-    }
-    window.location.href = `/${item.region}/${item.category}`;
-    return;
-  }
-
-  console.error("Unknown item type", item);
-}}
 
       >
         <img
@@ -200,6 +209,7 @@ export default function GlobalSearch({ open, onClose }) {
                 : "/fallback.jpg"
               : item.mainImage || "/fallback.jpg"
           }
+          loading="lazy"
           className="w-12 h-12 object-cover rounded-md"
         />
 
@@ -210,7 +220,7 @@ export default function GlobalSearch({ open, onClose }) {
               __html: highlightMatch(item.title || ""),
             }}
           />
-          <p className="text-xs text-gray-500">{item.category || "other"}</p>
+          <p className="text-xs text-gray-500">{t(`search.categories.${(item.category || "other").toLowerCase()}`)}</p>
         </div>
       </div>
     );

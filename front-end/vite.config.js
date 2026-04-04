@@ -13,7 +13,7 @@ export default defineConfig({
             if (id.includes('framer-motion')) return 'vendor-framer';
             if (id.includes('firebase')) return 'vendor-firebase'; 
             if (id.includes('lucide-react')) return 'vendor-lucide';
-            if (id.includes('react')) return 'vendor-react-core';
+            // MERGED react into misc to avoid initialization errors (Activity is undefined)
             return 'vendor-misc'; 
           }
         },

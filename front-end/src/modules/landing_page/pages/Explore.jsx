@@ -88,7 +88,12 @@ export default function Explore({product}) {
 
 
   const AUTO_SLIDE_MS = 8000; 
-  // removed redundant manual preloading to favor native lazy loading
+  useEffect(() => {
+    allDestinations.forEach((d) => {
+      const img = new Image();
+      img.src = d.img;
+    });
+  }, []);
 
   // auto slide with pause-on-interaction
   useEffect(() => {
@@ -191,12 +196,7 @@ export default function Explore({product}) {
           viewport={{ once: false, amount: 0.2 }}
         >
           <div className="flex items-center">
-            <img 
-              src={`${import.meta.env.BASE_URL}hiking.png`} 
-              alt="The Unseen Bundelkhand Hiking Icon" 
-              className="h-20 w-20" 
-              loading="lazy"
-            />
+            <img src={`${import.meta.env.BASE_URL}hiking.png`} alt="hiking.png" className="h-20 w-20" />
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             {t("exploreSection.title")}<span className="border-b-4 border-red-600">{t("exploreSection.titleHighlight")}</span>
           </h1>
@@ -229,8 +229,7 @@ export default function Explore({product}) {
                 whileInView={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.03 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                className="w-full h-[60vh] md:h-[55vh] object-cover"
-                loading="lazy"
+                className="w-full h-[60vh] md:h-[55vh] object-cover "
               />
             </AnimatePresence>
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
@@ -290,9 +289,8 @@ export default function Explore({product}) {
                   >
                     <img
                       src={d.img}
-                      alt={`Thumbnail for ${d.name}`}
+                      alt={d.name}
                       className="w-40 h-28 lg:w-48 lg:h-32 object-cover"
-                      loading="lazy"
                     />
                     {active && (
                       <span className="absolute -bottom-1 left-0 right-0 h-1 rounded-t-md bg-blue-400 " />
@@ -331,8 +329,8 @@ export default function Explore({product}) {
                 <img
                   src={d.img}
                   alt={d.name}
-                  className="w-full object-cover h-[45vh] border-b-2 border-blue-500"
-                  loading="lazy"
+                 
+                  className="w-full  object-cover h-[45vh] border-b-2 border-blue-500"
                 />
                 <div className="p-4">
                   <div className="flex items-center justify-between gap-2 pr-2">

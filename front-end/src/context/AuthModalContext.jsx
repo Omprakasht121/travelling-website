@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
 import { initializeApp } from "firebase/app";
 import { 
@@ -117,7 +117,7 @@ export const AuthModalProvider = ({ children }) => {
   }, [stableWishlistId, isAuthReady]);
 
   // --- Centralized login function ---
-  const login = (data) => {
+  const login = useCallback((data) => {
     localStorage.setItem("userToken", data.token);
     localStorage.setItem("email", data.email);
     localStorage.setItem("name", data.name);
@@ -130,10 +130,10 @@ export const AuthModalProvider = ({ children }) => {
     };
     setUserData(newUserData);
     toast.success(`Welcome, ${data.name || "User"}! 🎉`);
-  };
+  }, []);
 
   // --- Centralized logout function ---
-  const logout = async () => {
+  const logout = useCallback(async () => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
@@ -147,10 +147,10 @@ export const AuthModalProvider = ({ children }) => {
     } catch (error) {
       console.error("Logout error:", error);
     }
-  };
+  }, []);
 
   // --- Wishlist Actions ---
-  const addToWishlist = async (itemData) => {
+  const addToWishlist = useCallback(async (itemData) => {
     if (!stableWishlistId) return console.warn("Cannot add: No stable ID");
     
     // --- PERMANENT PATH: Keyed by user email or ID ---
@@ -164,9 +164,9 @@ export const AuthModalProvider = ({ children }) => {
       console.error("Error adding to wishlist: ", e);
       toast.error("Failed to save.");
     }
-  };
+  }, [stableWishlistId]);
 
-  const removeFromWishlist = async (itemId) => {
+  const removeFromWishlist = useCallback(async (itemId) => {
     if (!stableWishlistId) return console.warn("Cannot remove: No stable ID");
     
     // --- PERMANENT PATH: Keyed by user email or ID ---
@@ -179,41 +179,57 @@ export const AuthModalProvider = ({ children }) => {
     } catch (e) {
       console.error("Error removing from wishlist: ", e);
     }
-  };
+  }, [stableWishlistId]);
 
   // --- Modal request functions ---
-  const requestAuth = (action) => {
+  const requestAuth = useCallback((action) => {
     setPendingAction(() => action);
     setShowLogin(true);
-  };
-  const requestRegisterAuth = (action) => {
+  }, []);
+
+  const requestRegisterAuth = useCallback((action) => {
     setPendingAction(() => action);
     setShowRegister(true);
-  };
+  }, []);
+
+  // --- MEMOIZED CONTEXT VALUE: Production Performance Fix ---
+  const contextValue = useMemo(() => ({
+    showLogin,
+    setShowLogin,
+    showRegister,
+    setShowRegister,
+    pendingAction,
+    setPendingAction,
+    requestAuth,
+    requestRegisterAuth,
+    
+    userData,
+    isAuthReady,
+    userId,
+    login,
+    logout,
+
+    wishlist,
+    addToWishlist,
+    removeFromWishlist,
+  }), [
+    showLogin, 
+    showRegister, 
+    pendingAction, 
+    requestAuth, 
+    requestRegisterAuth, 
+    userData, 
+    isAuthReady, 
+    userId, 
+    login, 
+    logout, 
+    wishlist, 
+    addToWishlist, 
+    removeFromWishlist
+  ]);
 
   return (
-    <AuthModalContext.Provider
-      value={{
-        showLogin,
-        setShowLogin,
-        showRegister,
-        setShowRegister,
-        pendingAction,
-        setPendingAction,
-        requestAuth,
-        requestRegisterAuth,
-        
-        userData,
-        isAuthReady,
-        userId,
-        login,
-        logout,
-
-        wishlist,
-        addToWishlist,
-        removeFromWishlist,
-      }}
-    >
+    <AuthModalContext.Provider value={contextValue}>
       {children}
     </AuthModalContext.Provider>
   );

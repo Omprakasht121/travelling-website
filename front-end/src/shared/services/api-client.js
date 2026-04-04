@@ -28,3 +28,44 @@ export const sendChatMessage = async (message, history = []) => {
     }
 };
 
+// ✅ Trip Endpoints
+export const getTrips = async () => {
+    try {
+        const response = await apiClient.get('/api/trips');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const createTrip = async (tripData) => {
+    try {
+        const response = await apiClient.post('/api/trips', tripData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const getTrip = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/trips/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const addLocationToTrip = async (tripId, contentId, category, dayNumber) => {
+    try {
+        const response = await apiClient.post(`/api/trips/${tripId}/locations`, {
+            contentId,
+            category,
+            dayNumber
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+

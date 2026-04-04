@@ -19,6 +19,7 @@ export default function Explore({product}) {
 
   const navigate = useNavigate();
   const [exploreData, setExploreData] = useState([]);
+  const [loading, setLoading] = useState(true);
   // navigation of page
   const exploreLinks = [
     () => navigate("/jhansi"),

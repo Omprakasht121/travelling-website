@@ -23,6 +23,8 @@ const Events = lazy(() => import("../../modules/events/Events"));
 const LoginModal = lazy(() => import("../../user/pages/LoginModal"));
 const CreatorProfileModal = lazy(() => import("../../modules/Explore_page/services/Creators/CreatorProfileModal"));
 const AIPlannerPage = lazy(() => import("../../modules/ai_planner/AIPlannerPage"));
+const MyTripDashboard = lazy(() => import("../../modules/dashboard/MyTripDashboard"));
+const PublicTripView = lazy(() => import("../../modules/dashboard/PublicTripView"));
 
 /**
  * PRODUCTION-GRADE ROUTING:
@@ -52,6 +54,8 @@ export const AppRoutes = () => {
                         <Route path="/maucreators" element={<CreatorProfileModal />} />
                         <Route path="/wishlist" element={<WishlistPage />} />
                         <Route path="/ai-planner" element={<AIPlannerPage />} />
+                        <Route path="/my-trip" element={<MyTripDashboard />} />
+                        <Route path="/trip/:shareId" element={<PublicTripView />} />
                         <Route path="/:region/:category" element={<RegionRouter />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>

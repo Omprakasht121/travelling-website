@@ -156,7 +156,14 @@ const Hero = () => {
             </a>
 
             <a
-              className="hover:scale-125 hover:text-orange-700 transition"
+              className="hover:scale-125 hover:text-orange-700 transition cursor-pointer"
+              onClick={() => protectedClick("/my-trip")}
+            >
+              {t("nav.myTrip")}
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition cursor-pointer"
               onClick={() => protectedClick("/creators")}
             >
               {t("nav.creators")}
@@ -298,7 +305,17 @@ const Hero = () => {
             </a>
 
             <a
-              className="hover:scale-125 hover:text-orange-700 transition"
+              className="hover:scale-125 hover:text-orange-700 transition cursor-pointer"
+              onClick={() => {
+                setMobile(false);
+                protectedClick("/my-trip");
+              }}
+            >
+              {t("nav.myTrip")}
+            </a>
+
+            <a
+              className="hover:scale-125 hover:text-orange-700 transition cursor-pointer"
               onClick={() => protectedClick("/creators")}
             >
               {t("nav.creators")}

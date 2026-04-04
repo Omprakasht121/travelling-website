@@ -54,8 +54,9 @@ export const AuthModalProvider = ({ children }) => {
     return null;
   });
 
-  // --- Wishlist State ---
+  // --- Wishlist & Trips State ---
   const [wishlist, setWishlist] = useState([]);
+  const [myTrips, setMyTrips] = useState([]);
 
   // --- Firebase UID & Readiness ---
   const [userId, setUserId] = useState(null);
@@ -111,6 +112,33 @@ export const AuthModalProvider = ({ children }) => {
       setWishlist(items);
     }, (error) => {
         console.error("Wishlist sync error:", error);
+    });
+
+    return () => unsubscribe();
+  }, [stableWishlistId, isAuthReady]);
+
+  // --- EFFECT 3: Sync Trips with Firestore ---
+  useEffect(() => {
+    if (!isAuthReady || !stableWishlistId) {
+      setMyTrips([]); 
+      return;
+    }
+
+    const tripsColPath = `trips/${stableWishlistId}/items`;
+    console.log("Trips: Monitoring path:", tripsColPath);
+    const tripsColRef = collection(db, tripsColPath);
+
+    const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
+      const items = [];
+      snapshot.forEach((doc) => {
+        items.push({ id: doc.id, ...doc.data() });
+      });
+      // Sort by creation date descending
+      items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      console.log("Trips: Sync complete (", items.length, " items)");
+      setMyTrips(items);
+    }, (error) => {
+        console.error("Trips sync error:", error);
     });
 
     return () => unsubscribe();
@@ -181,6 +209,68 @@ export const AuthModalProvider = ({ children }) => {
     }
   }, [stableWishlistId]);
 
+  // --- Trip Saving ---
+  const addTripToFirebase = useCallback(async (tripData) => {
+    if (!stableWishlistId) {
+      toast.error("Please login to save your trip.");
+      return;
+    }
+
+    const tripId = `trip_${Date.now()}`;
+    const docPath = `trips/${stableWishlistId}/items/${tripId}`;
+    const docRef = doc(db, docPath);
+
+    try {
+      await setDoc(docRef, {
+        ...tripData,
+        id: tripId,
+        userId: stableWishlistId,
+        createdAt: new Date().toISOString()
+      });
+      toast.success("Trip saved successfully! 🗺️");
+      return true;
+    } catch (e) {
+      console.error("Error saving trip: ", e);
+      toast.error("Failed to save trip.");
+      return false;
+    }
+  }, [stableWishlistId]);
+
+  const deleteTripFromFirebase = useCallback(async (tripId) => {
+    if (!stableWishlistId) return;
+    
+    const docPath = `trips/${stableWishlistId}/items/${tripId}`;
+    const docRef = doc(db, docPath);
+    
+    try {
+      await deleteDoc(docRef);
+      toast("Trip deleted", { icon: "🗑️" });
+    } catch (e) {
+      console.error("Error deleting trip: ", e);
+      toast.error("Failed to delete trip.");
+    }
+  }, [stableWishlistId]);
+
+  // --- Public Sharing ---
+  const createSharedTrip = useCallback(async (tripData) => {
+    const shareId = `share_${Math.random().toString(36).substr(2, 9)}`;
+    const docRef = doc(db, "shared_trips", shareId);
+
+    try {
+      await setDoc(docRef, {
+        ...tripData,
+        shareId,
+        sharedAt: new Date().toISOString(),
+        isPublic: true
+      });
+      return shareId;
+    } catch (e) {
+      console.error("Error creating shared trip: ", e);
+      toast.error("Failed to generate share link.");
+      return null;
+    }
+  }, []);
+
   // --- Modal request functions ---
   const requestAuth = useCallback((action) => {
     setPendingAction(() => action);
@@ -212,6 +302,10 @@ export const AuthModalProvider = ({ children }) => {
     wishlist,
     addToWishlist,
     removeFromWishlist,
+    myTrips,
+    addTripToFirebase,
+    deleteTripFromFirebase,
+    createSharedTrip,
   }), [
     showLogin, 
     showRegister, 
@@ -225,7 +319,11 @@ export const AuthModalProvider = ({ children }) => {
     logout, 
     wishlist, 
     addToWishlist, 
-    removeFromWishlist
+    removeFromWishlist,
+    myTrips,
+    addTripToFirebase,
+    deleteTripFromFirebase,
+    createSharedTrip,
   ]);
 
   return (

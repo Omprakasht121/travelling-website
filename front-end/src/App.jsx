@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./shared/routes/AppRoutes";
 
 import { AuthModalProvider } from "./context/AuthModalContext";
+import { TripProvider } from "./context/TripContext";
 import AuthModals from "./components/AuthModals";
 import ChatBot from "./shared/component/ChatBot";
 
@@ -36,13 +37,15 @@ function App() {
     }
   }, []); // runs once when app loads
   return (
-    <AuthModalProvider>
-        <BrowserRouter>
-          <AppRoutes />
-          <AuthModals />   {/* Global Modal Renderer */}
-          <ChatBot />      {/* Global Chatbot Widget */}
-        </BrowserRouter>
-    </AuthModalProvider>
+      <AuthModalProvider>
+        <TripProvider>
+          <BrowserRouter>
+            <AppRoutes />
+            <AuthModals />   {/* Global Modal Renderer */}
+            <ChatBot />      {/* Global Chatbot Widget */}
+          </BrowserRouter>
+        </TripProvider>
+      </AuthModalProvider>
   );
 }
 

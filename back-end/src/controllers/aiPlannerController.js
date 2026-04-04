@@ -5,7 +5,11 @@ export const generateHybridItinerary = async (req, res) => {
     const { 
       days = 2, 
       regions = ["Jhansi", "Orchha"], 
-      preferences = "Budget stays, nearby local food, historical exploration"
+      budget = "",
+      travelType = "Solo",
+      interests = [],
+      transport = "Car",
+      preferences = ""
     } = req.body;
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -19,7 +23,7 @@ export const generateHybridItinerary = async (req, res) => {
         { region: { $in: regions.map(r => r.toLowerCase()) } },
         { title: { $regex: /jhansi fort|orchha/i } }
       ]
-    }).select('title region category description price').limit(15);
+    }).select('title region category description price mainImage').limit(15);
 
     // Convert verified DB places into a clean JSON string, truncating massive descriptions.
     const dbContextString = JSON.stringify(
@@ -29,7 +33,8 @@ export const generateHybridItinerary = async (req, res) => {
         type: place.category,
         region: place.region,
         desc: place.description ? place.description.substring(0, 100) : '',
-        price: place.price
+        price: place.price,
+        image: place.mainImage
       }))
     );
 
@@ -37,16 +42,18 @@ export const generateHybridItinerary = async (req, res) => {
     const promptText = `
       You are an expert, local travel planner for the Bundelkhand region of India.
       The user wants a ${days}-day itinerary covering ${regions.join(", ")}.
-      User Preferences: ${preferences}.
+      
+      Trip Profile:
+      - Budget: ${budget || "Not specified"} (Estimate costs in ₹)
+      - Travel Type: ${travelType}
+      - Interests: ${interests.length > 0 ? interests.join(", ") : "General exploration"}
+      - Preferred Transport: ${transport}
+      - Additional Preferences: ${preferences || "None"}.
 
       I am providing you a JSON list of VERIFIED places from our database.
       
-      CRITICAL INSTRUCTIONS:
-      1. You MUST use places from the "VERIFIED DATABASE PLACES" list below whenever possible.
-      2. If our database lacks enough good budget stays or nearby food options for a day, you MUST suggest realistic, real-world alternatives from your LLM knowledge to fill the gaps.
-      3. Organize the itinerary logically by geography so travel time makes sense.
-      4. For every place you use from the verified list, you MUST include its exact "id". For places you invent/suggest from your own knowledge, leave "id" as null.
-
+      5. If you use a VERIFIED DATABASE PLACE, you MUST include its exact "image" as "imageUrl". For AI suggested places, leave "imageUrl" as null.
+      
       VERIFIED DATABASE PLACES:
       ${dbContextString}
     `;
@@ -72,6 +79,7 @@ export const generateHybridItinerary = async (req, res) => {
                      placeName: { type: "STRING" },
                      category: { type: "STRING" },
                      dbId: { type: "STRING" },
+                     imageUrl: { type: "STRING" },
                      isLlmSuggestion: { type: "BOOLEAN" },
                      whyGoHere: { type: "STRING" }
                    },

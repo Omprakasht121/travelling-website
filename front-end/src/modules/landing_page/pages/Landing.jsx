@@ -8,6 +8,7 @@ import ContactUs from "./ContactUs";
 import Footer from "./Footer";
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "../../../shared/component/ScrollToTop";
+import AIPromptModal from "../../ai_planner/components/AIPromptModal";
 
 function Landing(){
     return(
@@ -23,6 +24,7 @@ function Landing(){
         <Footer/>
         </div>
      </div>
+     <AIPromptModal />
      <ScrollToTop />
      <Toaster
         position="top-right"
